@@ -23,10 +23,12 @@ jobs:
 
     - name: Install dependencies
       run: |
+        wget https://evergreen.mongodb.com/clients/linux_amd64/evergreen
+        chmod +x evergreen
         python -m pip install --upgrade pip
         pip install poetry
         poetry install
 
     - name: Test with pytest
       run: |
-        poetry run pytest 
+        PATH="$PATH:." poetry run pytest

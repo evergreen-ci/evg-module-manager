@@ -2,7 +2,7 @@
 
 Manage Evergreen modules in your local environment.
 
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/evergreen-module-manager) [![PyPI](https://img.shields.io/pypi/v/evergreen-module-manager.svg)](https://pypi.org/project/evergreen-module-manager/) 
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/evg-module-manager) [![PyPI](https://img.shields.io/pypi/v/evg-module-manager.svg)](https://pypi.org/project/evg-module-manager/) 
 
 ## Table of contents
 
@@ -22,12 +22,24 @@ Manage Evergreen modules in your local environment.
 
 ## Description
 
-TBD
+The evg-module-manager is a tool to help improve the local workflows of working with modules in
+your evergreen projects. It will help you keep any modules defined in your local project in sync.
+It supports the following functionality:
+
+* List what modules are defined in the local project.
+* List what modules are currently active in your local repo.
+* Clone a module repository.
+* Enable/disable modules in your local repo.
+* Create an evergreen patch build that includes changes from the local patch build and all enabled
+  modules.
+* Submit a changes to the commit-queue that includes changes from the local patch build and all
+  enabled modules.
 
 ## Dependencies
 
 * Python 3.8 or later
 * git
+* evergreen command line tool
 * [Evergreen config file](https://github.com/evergreen-ci/evergreen/wiki/Using-the-Command-Line-Tool#downloading-the-command-line-tool)
 
 ## Installation
@@ -36,12 +48,33 @@ We strongly recommend using a tool like [pipx](https://pypa.github.io/pipx/) to 
 this tool. This will isolate the dependencies and ensure they don't conflict with other tools.
 
 ```bash
-$ pipx install evergreen-module-manager
+$ pipx install evg-module-manager
 ```
 
 ## Usage
 
-TBD
+See the [usage](docs/usage.md) documentation for details about using this tool.
+
+```bash
+evg-module-manager --help
+Usage: evg-module-manager [OPTIONS] COMMAND [ARGS]...
+
+  Evergreen Module Manager is a tool help simplify the local workflows of evergreen modules.
+
+Options:
+  --modules-dir PATH      Directory to store module repositories [default='..']
+  --evg-config-file PATH  Path to file with evergreen auth configuration
+                          [default='/Users/user/.evergreen.yml']
+  --evg-project TEXT      Name of Evergreen project [default='mongodb-mongo-master']
+  --help                  Show this message and exit.
+
+Commands:
+  commit-queue  Submit changes from the base repository and any enabled modules to the...
+  disable       Disable the specified module in the current repo.
+  enable        Enable the specified module in the current repo.
+  list-modules  List the modules available for the current repo.
+  patch         Create an Evergreen patch with changes from the base repo and any enabled...
+```
 
 ## Contributor's Guide
 
@@ -51,7 +84,7 @@ This project uses [poetry](https://python-poetry.org/) for setting up a local en
 
 ```bash
 git clone ...
-cd ...
+cd evg-module-manager
 poetry install
 ```
 
