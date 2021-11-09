@@ -1,10 +1,10 @@
 [tool.poetry]
 name = "evg-module-manager"
-version = "0.1.0"
+version = "0.1.1"
 description = "Manage Evergreen modules locally."
-authors = ["David Bradford <david.bradford@mongodb.com>"]
+authors = ["Dev Prod DAG <dev-prod-dag@mongodb.com>"]
 readme = "README.md"
-repository = "https://github.com/dbradf/evg-module-manager"
+repository = "https://github.com/evergreen-ci/evg-module-manager"
 packages = [
     { include = "emm", from = "src"},
 ]
