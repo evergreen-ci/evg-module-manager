@@ -127,7 +127,7 @@ Please open a Github Pull Request for code review.
 
 ### Deployment
 
-Deployment to pypi is automatically triggered on merges to master.
+Deployment to pypi is automatically triggered on merges to main.
 
 ## Resources
 
