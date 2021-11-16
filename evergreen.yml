@@ -35,6 +35,8 @@ functions:
 
           /opt/mongodbtoolchain/v3/bin/python3 -m venv venv
           . venv/bin/activate
+          PATH=$HOME:$PATH
+          echo $PATH
           pip install --upgrade pip
 
           pip install poetry
@@ -54,7 +56,6 @@ post:
 tasks:
 - name: unit_tests
   commands:
-  - func: create virtualenv
   - command: shell.exec
     params:
       working_dir: src
