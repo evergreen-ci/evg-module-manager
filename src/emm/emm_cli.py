@@ -8,7 +8,7 @@ from typing import List
 import click
 import inject
 import structlog
-from evergreen import EvergreenApi, RetryingEvergreenApi
+from evergreen.api import EvergreenApi, RetryingEvergreenApi
 from structlog.stdlib import LoggerFactory
 
 from emm.options import DEFAULT_EVG_CONFIG, DEFAULT_EVG_PROJECT, DEFAULT_MODULES_PATH, EmmOptions
