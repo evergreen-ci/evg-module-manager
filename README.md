@@ -64,7 +64,7 @@ Usage: evg-module-manager [OPTIONS] COMMAND [ARGS]...
 Options:
   --modules-dir PATH      Directory to store module repositories [default='..']
   --evg-config-file PATH  Path to file with evergreen auth configuration
-                          [default='/Users/user/.evergreen.yml']
+                          [default='/Users/user/evergreen.yml']
   --evg-project TEXT      Name of Evergreen project [default='mongodb-mongo-master']
   --help                  Show this message and exit.
 
