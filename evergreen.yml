@@ -1,0 +1,84 @@
+buildvariants:
+  - display_name: Ubuntu 18.04
+    name: ubuntu1804
+    run_on:
+      - ubuntu1804-small
+    tasks:
+      - name: unit_tests
+      - name: evg_module_manager_install
+
+  - display_name: OSX
+    name: osx
+    run_on:
+      - macos-1015
+    tasks:
+      - name: unit_tests
+
+  - display_name: Windows
+    name: windows
+    run_on:
+      - windows-vsCurrent-small
+    tasks:
+      - name: unit_tests
+
+functions:
+  create virtualenv:
+    - command: shell.exec
+      params:
+        working_dir: src
+        script: |
+          set -o errexit
+          /opt/mongodbtoolchain/v3/bin/python3 -m venv venv
+          . venv/bin/activate
+          pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+pre:
+- command: git.get_project
+  params:
+    directory: src
+- func: create virtualenv
+
+post:
+- command: attach.xunit_results
+  params:
+    file: src/junit-*.xml
+
+tasks:
+- name: unit_tests
+  commands:
+  - command: shell.exec
+    params:
+      working_dir: src
+      script: |
+        set -o errexit
+        set -o verbose
+
+        export LC_ALL=C.UTF-8
+        export LANG=C.UTF-8
+
+        . venv/bin/activate
+
+        poetry run pytest --cov=src --junitxml=junit-test-output.xml
+
+- name: evg_module_manager_install
+  commands:
+  - command: shell.exec
+    params:
+      working_dir: src
+      script: |
+        set -o errexit
+        set -o verbose
+
+        export LC_ALL=C.UTF-8
+        export LANG=C.UTF-8
+
+        /opt/mongodbtoolchain/v3/bin/python3 -m venv emm-cli-venv
+        . emm-cli-venv/bin/activate
+
+        pip install --upgrade pip
+        pip install .
+
+        evg-module-manager --help
+
