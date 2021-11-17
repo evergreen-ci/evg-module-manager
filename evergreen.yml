@@ -8,12 +8,21 @@ buildvariants:
 
 functions:
   create virtualenv:
-    - command: subprocess.exec
+    - command: shell.exec
       params:
         working_dir: ${git_project_directory|src}
-        binary: bash
-        args:
-          - "${pwd}/evergreen_dir/venv_setup.sh"
+        script: |
+          set -o errexit
+          set -o verbose
+
+          echo $pwd
+          echo ${git_project_directory|src}
+
+          PATH="$PATH:$HOME"
+          echo $PATH
+
+          pip install poetry
+          poetry install
 
 
 pre:
