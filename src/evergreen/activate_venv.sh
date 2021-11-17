@@ -28,7 +28,3 @@ function activate_venv {
 
   echo "python set to $(which $python)"
 }
-
-activate_venv
-PATH = $PATH:$HOME
-echo $PATH
