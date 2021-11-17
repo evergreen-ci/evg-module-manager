@@ -15,7 +15,7 @@ functions:
           set -o errexit
           set -o verbose
 
-          pwd
+          ls $(pwd)
 
           PATH="$PATH:$HOME"
           echo $PATH
@@ -54,6 +54,8 @@ tasks:
 
         export LC_ALL=C.UTF-8
         export LANG=C.UTF-8
+
+        . venv/bin/activate
         PATH="$PATH:$HOME"
         poetry run pytest --cov=src --junitxml=junit-test-output.xml
 
