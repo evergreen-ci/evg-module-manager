@@ -6,26 +6,6 @@ buildvariants:
     tasks:
       - name: unit_tests
 
-  - display_name: OSX
-    name: osx
-    run_on:
-      - macos-1015
-    tasks:
-      - name: unit_tests
-
-  - display_name: Windows
-    name: windows
-    run_on:
-      - windows-vsCurrent-small
-    expansions:
-      exe: ".exe"
-      content_type: application/zip
-      compile_flags: --dbg=on --opt=on --win-version-min=win10 -j$(bc <<< "$(grep -c '^processor' /proc/cpuinfo) / 1.5") MONGO_DISTMOD=windows
-      python: '/cygdrive/c/python/python39/python.exe'
-      ext: zip
-    tasks:
-      - name: unit_tests
-
 functions:
   create virtualenv:
     - command: shell.exec
