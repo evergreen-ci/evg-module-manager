@@ -48,17 +48,18 @@ functions:
 
   activate virtualenv:
     - command: subprocess.exec
-        type: test
-        params:
-          binary: bash
-          args:
-            - "./src/evergreen/activate_venv.sh"
+      params:
+        binary: bash
+        args:
+          - "./src/evergreen/activate_venv.sh"
+
 
 pre:
 - command: git.get_project
   params:
     directory: src
 - func: create virtualenv
+- func: activate virtualenv
 
 post:
 - command: attach.xunit_results
