@@ -1,5 +1,6 @@
 # exit immediately if virtualenv is not found
 set -o errexit
+set -o verbose
 
 evergreen_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null 2>&1 && pwd)"
 . "$evergreen_dir/prelude_python.sh"
@@ -10,6 +11,7 @@ if [ -d "$venv_dir" ]; then
   exit 0
 fi
 "$python_loc" -m venv "$venv_dir"
+echo "venv created"
 
 # venv creates its Scripts/activate file with CLRF endings, which
 # cygwin bash does not like. dos2unix it
@@ -27,6 +29,7 @@ export VIRTUAL_ENV_DISABLE_PROMPT=yes
 
 activate_venv
 echo "Upgrading pip to 21.0.1"
+echo "Venv activated"
 
 # ref: https://github.com/grpc/grpc/issues/25082#issuecomment-778392661
 if [ "$(uname -m)" = "arm64" ] && [ "$(uname)" == "Darwin" ]; then
@@ -35,8 +38,9 @@ if [ "$(uname -m)" = "arm64" ] && [ "$(uname)" == "Darwin" ]; then
 fi
 
 python -m pip --disable-pip-version-check install "pip==21.0.1" "wheel==0.37.0" || exit 1
-pip install poetry
+python -m pip install poetry
 poetry install
+echo "$(poetry --version)"
 
 if [ $? != 0 ]; then
   echo "Pip install error"
