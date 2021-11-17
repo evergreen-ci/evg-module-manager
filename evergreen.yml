@@ -30,7 +30,6 @@ functions:
   create virtualenv:
     - command: subprocess.exec
       params:
-        working_dir: src
         binary: bash
         args: ["evg-module-manager/src/evergreen_dir/venv_setup.sh"]
 

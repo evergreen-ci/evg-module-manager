@@ -2,7 +2,7 @@
 
 Manage Evergreen modules in your local environment.
 
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/evg-module-manager) [![PyPI](https://img.shields.io/pypi/v/evg-module-manager.svg)](https://pypi.org/project/evg-module-manager/) 
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/evg-module-manager) [![PyPI](https://img.shields.io/pypi/v/evg-module-manager.svg)](https://pypi.org/project/evg-module-manager/)
 
 ## Table of contents
 
@@ -59,12 +59,12 @@ See the [usage](docs/usage.md) documentation for details about using this tool.
 evg-module-manager --help
 Usage: evg-module-manager [OPTIONS] COMMAND [ARGS]...
 
-  Evergreen Module Manager is a tool help simplify the local workflows of evergreen_dir modules.
+  Evergreen Module Manager is a tool help simplify the local workflows of evergreen modules.
 
 Options:
   --modules-dir PATH      Directory to store module repositories [default='..']
-  --evg-config-file PATH  Path to file with evergreen_dir auth configuration
-                          [default='/Users/user/evergreen_dir.yml']
+  --evg-config-file PATH  Path to file with evergreen auth configuration
+                          [default='/Users/user/evergreen.yml']
   --evg-project TEXT      Name of Evergreen project [default='mongodb-mongo-master']
   --help                  Show this message and exit.
 
@@ -90,7 +90,7 @@ poetry install
 
 ### linting/formatting
 
-This project uses [black](https://black.readthedocs.io/en/stable/) and 
+This project uses [black](https://black.readthedocs.io/en/stable/) and
 [isort](https://pycqa.github.io/isort/) for formatting.
 
 ```bash
@@ -108,7 +108,7 @@ poetry run pytest
 
 ### Automatically running checks on commit
 
-This project has [pre-commit](https://pre-commit.com/) configured. Pre-commit will run 
+This project has [pre-commit](https://pre-commit.com/) configured. Pre-commit will run
 configured checks at git commit time. To enable pre-commit on your local repository run:
 
 ```bash

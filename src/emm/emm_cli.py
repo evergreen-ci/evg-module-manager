@@ -18,7 +18,7 @@ from emm.services.patch_service import PatchService
 LOGGER = structlog.get_logger(__name__)
 
 EXTERNAL_LOGGERS = [
-    "evergreen_dir",
+    "evergreen",
     "inject",
     "urllib3",
 ]
@@ -108,7 +108,7 @@ def configure_logging(verbose: bool) -> None:
     "--evg-config-file",
     default=DEFAULT_EVG_CONFIG,
     type=click.Path(exists=True),
-    help=f"Path to file with evergreen_dir auth configuration [default='{DEFAULT_EVG_CONFIG}']",
+    help=f"Path to file with evergreen auth configuration [default='{DEFAULT_EVG_CONFIG}']",
 )
 @click.option(
     "--evg-project",
@@ -117,7 +117,7 @@ def configure_logging(verbose: bool) -> None:
 )
 @click.pass_context
 def cli(ctx: click.Context, modules_dir: str, evg_config_file: str, evg_project: str) -> None:
-    """Evergreen Module Manager is a tool help simplify the local workflows of evergreen_dir modules."""
+    """Evergreen Module Manager is a tool help simplify the local workflows of evergreen modules."""
     ctx.ensure_object(EmmOptions)
     ctx.obj.modules_directory = Path(modules_dir)
     ctx.obj.evg_config = Path(evg_config_file)
@@ -141,7 +141,7 @@ def cli(ctx: click.Context, modules_dir: str, evg_config_file: str, evg_project:
 @click.option(
     "--sync-commit/--no-sync-commit",
     default=True,
-    help="When true, checkout the commit associated with the base repo in evergreen_dir.",
+    help="When true, checkout the commit associated with the base repo in evergreen.",
 )
 def enable(ctx: click.Context, module: str, sync_commit: bool) -> None:
     """
@@ -170,7 +170,7 @@ def patch(ctx: click.Context) -> None:
     """
     Create an Evergreen patch with changes from the base repo and any enabled modules.
 
-    Any options passed to this command was be forwarded to the `evergreen_dir patch` command. However,
+    Any options passed to this command was be forwarded to the `evergreen patch` command. However,
     the following options are already included and should not be added:
 
     * --skip_confirm, --yes, -y
@@ -191,7 +191,7 @@ def commit_queue(ctx: click.Context) -> None:
     Any enabled modules with changes with be submitted to the commit queue along with changes
     to the base repository.
 
-    Any options passed to this command was be forwarded to the `evergreen_dir patch` command. However,
+    Any options passed to this command was be forwarded to the `evergreen patch` command. However,
     the following options are already included and should not be added:
 
     * --skip_confirm, --yes, -y
