@@ -11,7 +11,9 @@ functions:
     - command: subprocess.exec
       params:
         working_dir: ${git_project_directory|src}
-        command: bash ${pwd}/evergreen_dir/venv_setup.sh
+        binary: bash
+        args:
+          - "${pwd}/evergreen_dir/venv_setup.sh"
 
 
 pre:
