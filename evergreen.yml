@@ -35,7 +35,7 @@ functions:
         working_dir: src
         binary: bash
         args:
-          - "./src/evergreen_dir/venv_setup.sh"
+          - "evergreen_dir/venv_setup.sh"
 
   activate virtualenv:
     - command: subprocess.exec
@@ -93,4 +93,3 @@ tasks:
         pip install .
 
         evg-module-manager --help
-
