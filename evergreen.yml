@@ -28,10 +28,11 @@ buildvariants:
 
 functions:
   create virtualenv:
-    - command: subprocess.exec
+    - command: shell.exec
       params:
+        working_dir: src
         binary: bash
-        args: ["evg-module-manager/src/evergreen_dir/venv_setup.sh"]
+        args: ["./evergreen_dir/venv_setup.sh"]
 
 
 pre:
@@ -57,9 +58,7 @@ tasks:
 
         export LC_ALL=C.UTF-8
         export LANG=C.UTF-8
-
-        . venv/bin/activate
-
+        PATH="$PATH:$HOME"
         poetry run pytest --cov=src --junitxml=junit-test-output.xml
 
 - name: evg_module_manager_install
