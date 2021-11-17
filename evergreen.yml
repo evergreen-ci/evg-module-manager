@@ -15,11 +15,17 @@ functions:
           set -o errexit
           set -o verbose
 
-          echo $pwd
-          echo ${git_project_directory|src}
+          pwd
 
           PATH="$PATH:$HOME"
           echo $PATH
+
+          export LC_ALL=C.UTF-8
+          export LANG=C.UTF-8
+
+          /opt/mongodbtoolchain/v3/bin/python3 -m venv venv
+          . venv/bin/activate
+          pip install --upgrade pip
 
           pip install poetry
           poetry install
