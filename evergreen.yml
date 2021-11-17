@@ -18,6 +18,13 @@ buildvariants:
     name: windows
     run_on:
       - windows-vsCurrent-small
+    expansions:
+      exe: ".exe"
+      content_type: application/zip
+      compile_flags: --dbg=on --opt=on --win-version-min=win10 -j$(bc <<< "$(grep -c '^processor' /proc/cpuinfo) / 1.5") MONGO_DISTMOD=windows
+      num_scons_link_jobs_available: 0.25
+      python: '/cygdrive/c/python/python37/python.exe'
+      ext: zip
     tasks:
       - name: unit_tests
 
@@ -34,13 +41,18 @@ functions:
           export LANG=C.UTF-8
 
           /opt/mongodbtoolchain/v3/bin/python3 -m venv venv
-          . venv/bin/activate
-          PATH=$HOME:$PATH
-          echo $PATH
           pip install --upgrade pip
 
           pip install poetry
           poetry install
+
+  activate virtualenv:
+    - command: subprocess.exec
+        type: test
+        params:
+          binary: bash
+          args:
+            - "./src/evergreen/activate_venv.sh"
 
 pre:
 - command: git.get_project
