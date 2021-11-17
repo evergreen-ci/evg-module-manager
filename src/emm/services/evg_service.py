@@ -4,10 +4,10 @@ from pathlib import Path
 from typing import Dict
 
 import inject
+from evergreen import EvergreenApi, Manifest, Project
 from shrub.v3.evg_project import EvgModule
 
 from emm.services.file_service import FileService
-from evergreen import EvergreenApi, Manifest, Project
 
 
 class EvgService:

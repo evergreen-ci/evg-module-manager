@@ -86,7 +86,9 @@ class ModulesService:
         """
         modules_data = self.evg_service.get_module_map(self.emm_options.evg_project)
         if module_name not in modules_data:
-            raise ValueError(f"Could not find module {module_name} in evergreen_dir project config.")
+            raise ValueError(
+                f"Could not find module {module_name} in evergreen_dir project config."
+            )
 
         return modules_data[module_name]
 
