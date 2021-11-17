@@ -5,7 +5,6 @@ buildvariants:
       - ubuntu1804-small
     tasks:
       - name: unit_tests
-      - name: evg_module_manager_install
 
   - display_name: OSX
     name: osx
@@ -32,17 +31,9 @@ functions:
   create virtualenv:
     - command: subprocess.exec
       params:
-        working_dir: src
+        working_dir: evg-module-manager
         binary: bash
-        args:
-          - "evergreen_dir/venv_setup.sh"
-
-  activate virtualenv:
-    - command: subprocess.exec
-      params:
-        binary: bash
-        args:
-          - "./src/evergreen_dir/activate_venv.sh"
+        args: ["src/evergreen_dir/venv_setup.sh"]
 
 
 pre:
@@ -50,7 +41,6 @@ pre:
   params:
     directory: src
 - func: create virtualenv
-- func: activate virtualenv
 
 post:
 - command: attach.xunit_results
