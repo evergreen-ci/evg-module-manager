@@ -10,14 +10,14 @@ functions:
   create virtualenv:
     - command: subprocess.exec
       params:
-        working_dir: src
-        command: bash evergreen_dir/venv_setup.sh
+        working_dir: ${git_project_directory|src}
+        command: bash ${pwd}/evergreen_dir/venv_setup.sh
 
 
 pre:
 - command: git.get_project
   params:
-    directory: src
+    directory: ${git_project_directory|src}
 - func: create virtualenv
 
 post:
