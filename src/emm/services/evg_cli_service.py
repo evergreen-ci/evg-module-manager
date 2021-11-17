@@ -1,4 +1,4 @@
-"""Service for working with the evergreen CLI."""
+"""Service for working with the evergreen_dir CLI."""
 import re
 from pathlib import Path
 from typing import List, NamedTuple
@@ -17,7 +17,7 @@ class PatchInfo(NamedTuple):
     Information about a created patch.
 
     * patch_id: Id of created patch.
-    * patch_url: URL to patch in the evergreen UI.
+    * patch_url: URL to patch in the evergreen_dir UI.
     """
 
     patch_id: str
@@ -39,7 +39,7 @@ class EvgCliService:
 
     def create_patch(self, extra_args: List[str]) -> PatchInfo:
         """
-        Create a patch in evergreen.
+        Create a patch in evergreen_dir.
 
         :param extra_args: Extra arguments to add to the patch command.
         :return: Details about the created patch.
@@ -51,7 +51,7 @@ class EvgCliService:
         build_url_match = BUILD_URL_RE.search(cmd_output)
         if not patch_match or not build_url_match:
             print(cmd_output)
-            raise ValueError("Could not recognize output from 'evergreen patch'")
+            raise ValueError("Could not recognize output from 'evergreen_dir patch'")
 
         return PatchInfo(
             patch_id=patch_match.group("patch_id"), patch_url=build_url_match.group("build_url")
@@ -96,7 +96,7 @@ class EvgCliService:
         build_url_match = BUILD_URL_RE.search(cmd_output)
         if not patch_match or not build_url_match:
             print(cmd_output)
-            raise ValueError("Could not recognize output from 'evergreen commit-queue'")
+            raise ValueError("Could not recognize output from 'evergreen_dir commit-queue'")
 
         return PatchInfo(
             patch_id=patch_match.group("patch_id"), patch_url=build_url_match.group("build_url")
@@ -132,6 +132,6 @@ class EvgCliService:
 
         :param patch_id: ID of patch to finalize.
         """
-        # evergreen commit-queue merge --resume 5d3b120f1e2d1770d9f2104e
+        # evergreen_dir commit-queue merge --resume 5d3b120f1e2d1770d9f2104e
         args = ["commit-queue", "merge", "--resume", patch_id]
         self.evg_cli[args]()

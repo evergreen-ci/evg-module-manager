@@ -15,7 +15,7 @@ def ns(local_path: str) -> str:
 
 @pytest.fixture()
 def emm_options():
-    emm_options = MagicMock(evg_project="my-evergreen-project")
+    emm_options = MagicMock(evg_project="my-evergreen_dir-project")
     return emm_options
 
 

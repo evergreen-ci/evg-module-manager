@@ -1,4 +1,4 @@
-"""Service for working with evergreen modules."""
+"""Service for working with evergreen_dir modules."""
 from pathlib import Path
 from typing import Dict
 
@@ -12,7 +12,7 @@ from emm.services.git_service import GitService
 
 
 class ModulesService:
-    """A service for working with evergreen modules."""
+    """A service for working with evergreen_dir modules."""
 
     @inject.autoparams()
     def __init__(
@@ -26,7 +26,7 @@ class ModulesService:
         Initialize the service.
 
         :param emm_options: Configuration options for modules.
-        :param evg_service: Service for working with evergreen.
+        :param evg_service: Service for working with evergreen_dir.
         :param git_service: Service for working with git.
         :param file_service: Service for working with files.
         """
@@ -86,7 +86,7 @@ class ModulesService:
         """
         modules_data = self.evg_service.get_module_map(self.emm_options.evg_project)
         if module_name not in modules_data:
-            raise ValueError(f"Could not find module {module_name} in evergreen project config.")
+            raise ValueError(f"Could not find module {module_name} in evergreen_dir project config.")
 
         return modules_data[module_name]
 
@@ -114,7 +114,7 @@ class ModulesService:
 
     def sync_module(self, module_name: str, module_data: EvgModule) -> None:
         """
-        Sync the given module to the commit associated with the base repo in evergreen.
+        Sync the given module to the commit associated with the base repo in evergreen_dir.
 
         :param module_name: Name of module being synced.
         :param module_data: Data about the module.

@@ -35,14 +35,14 @@ functions:
         working_dir: src
         binary: bash
         args:
-          - "./src/evergreen/venv_setup.sh"
+          - "./src/evergreen_dir/venv_setup.sh"
 
   activate virtualenv:
     - command: subprocess.exec
       params:
         binary: bash
         args:
-          - "./src/evergreen/activate_venv.sh"
+          - "./src/evergreen_dir/activate_venv.sh"
 
 
 pre:

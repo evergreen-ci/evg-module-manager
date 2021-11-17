@@ -1,17 +1,17 @@
-"""A service for working with evergreen data."""
+"""A service for working with evergreen_dir data."""
 from functools import lru_cache
 from pathlib import Path
 from typing import Dict
 
 import inject
-from evergreen import EvergreenApi, Manifest, Project
 from shrub.v3.evg_project import EvgModule
 
 from emm.services.file_service import FileService
+from evergreen import EvergreenApi, Manifest, Project
 
 
 class EvgService:
-    """A service for working with evergreen data."""
+    """A service for working with evergreen_dir data."""
 
     @inject.autoparams()
     def __init__(self, evg_api: EvergreenApi, file_service: FileService) -> None:
@@ -21,7 +21,7 @@ class EvgService:
 
     def get_project_config_location(self, project_id: str) -> str:
         """
-        Get the path to the evergreen config file for this project.
+        Get the path to the evergreen_dir config file for this project.
 
         :param project_id: ID of Evergreen project being queried.
         :return: Path to project config file.
@@ -40,7 +40,7 @@ class EvgService:
     @lru_cache(maxsize=None)
     def get_evg_project(self, project_id: str) -> Project:
         """
-        Get the project configuration for the given evergreen project.
+        Get the project configuration for the given evergreen_dir project.
 
         :param project_id: ID of project to lookup.
         :return: Project configuration for specified project.
@@ -75,7 +75,7 @@ class EvgService:
 
     def get_manifest(self, project_id: str, commit_hash: str) -> Manifest:
         """
-        Get the manifest for the given commit and evergreen project.
+        Get the manifest for the given commit and evergreen_dir project.
 
         :param project_id: Evergreen project to query.
         :param commit_hash: Evergreen commit to query.

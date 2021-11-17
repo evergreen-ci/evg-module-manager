@@ -25,8 +25,8 @@ class PatchService:
         Initialize the service.
 
         :param file_service: Service for working with files.
-        :param evg_cli_service: Service for working with the evergreen CLI.
-        :param evg_service: Service for working with evergreen.
+        :param evg_cli_service: Service for working with the evergreen_dir CLI.
+        :param evg_service: Service for working with evergreen_dir.
         :param emm_options: Optional about the command.
         """
         self.file_service = file_service
@@ -36,7 +36,7 @@ class PatchService:
 
     def create_patch(self, extra_args: List[str]) -> PatchInfo:
         """
-        Create an evergreen patch and add any modules to it.
+        Create an evergreen_dir patch and add any modules to it.
 
         :param extra_args: Extra arguments to pass to the patch command.
         """
@@ -54,7 +54,7 @@ class PatchService:
 
     def create_cq_patch(self, extra_args: List[str]) -> PatchInfo:
         """
-        Create an evergreen commit-queue patch.
+        Create an evergreen_dir commit-queue patch.
 
         :param extra_args: Extra arguments to pass to the patch command.
         """

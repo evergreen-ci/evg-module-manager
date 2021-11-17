@@ -59,12 +59,12 @@ See the [usage](docs/usage.md) documentation for details about using this tool.
 evg-module-manager --help
 Usage: evg-module-manager [OPTIONS] COMMAND [ARGS]...
 
-  Evergreen Module Manager is a tool help simplify the local workflows of evergreen modules.
+  Evergreen Module Manager is a tool help simplify the local workflows of evergreen_dir modules.
 
 Options:
   --modules-dir PATH      Directory to store module repositories [default='..']
-  --evg-config-file PATH  Path to file with evergreen auth configuration
-                          [default='/Users/user/evergreen.yml']
+  --evg-config-file PATH  Path to file with evergreen_dir auth configuration
+                          [default='/Users/user/evergreen_dir.yml']
   --evg-project TEXT      Name of Evergreen project [default='mongodb-mongo-master']
   --help                  Show this message and exit.
 
