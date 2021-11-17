@@ -21,8 +21,7 @@ buildvariants:
       exe: ".exe"
       content_type: application/zip
       compile_flags: --dbg=on --opt=on --win-version-min=win10 -j$(bc <<< "$(grep -c '^processor' /proc/cpuinfo) / 1.5") MONGO_DISTMOD=windows
-      num_scons_link_jobs_available: 0.25
-      python: '/cygdrive/c/python/python37/python.exe'
+      python: '/cygdrive/c/python/python39/python.exe'
       ext: zip
     tasks:
       - name: unit_tests
@@ -31,9 +30,9 @@ functions:
   create virtualenv:
     - command: subprocess.exec
       params:
-        working_dir: evg-module-manager
+        working_dir: src
         binary: bash
-        args: ["src/evergreen_dir/venv_setup.sh"]
+        args: ["evg-module-manager/src/evergreen_dir/venv_setup.sh"]
 
 
 pre:
