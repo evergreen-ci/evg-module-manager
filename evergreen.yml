@@ -8,7 +8,7 @@ buildvariants:
 
 functions:
   create virtualenv:
-    - command: shell.exec
+    - command: subprocess.exec
       params:
         working_dir: src
         binary: bash
@@ -38,7 +38,7 @@ tasks:
 
         export LC_ALL=C.UTF-8
         export LANG=C.UTF-8
-
+        PATH="$PATH:$HOME"
         poetry run pytest --cov=src --junitxml=junit-test-output.xml
 
 - name: evg_module_manager_install
