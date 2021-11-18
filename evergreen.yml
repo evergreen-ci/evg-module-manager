@@ -6,19 +6,7 @@ buildvariants:
     tasks:
       - name: unit_tests
 
-  - display_name: Windows
-    name: windows
-    run_on:
-      - windows-vsCurrent-small
-    tasks:
-      - name: unit_tests
 
-  - display_name: OSX
-    name: osx
-    run_on:
-      - macos-1015
-    tasks:
-      - name: unit_tests
 
 functions:
   create virtualenv:

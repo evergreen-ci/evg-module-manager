@@ -52,16 +52,14 @@ class TestPerformGitAction:
             (under_test.GitAction.REBASE, "rebase"),
         ],
     )
-    @patch(ns("local"), return_value=Path.cwd())
+    @patch(ns("local"))
     def test_action_with_revision_and_dir_should_switch_directories(
         self, local_mock, git_service, mock_git, action, git_cmd
     ):
-        dir = f'{"/path/to/dir"}'
-        git_service.perform_git_action(action, "abc123", directory=Path(dir))
+        git_service.perform_git_action(action, "abc123", directory=Path("/path/to/dir"))
 
         mock_git.assert_git_call([git_cmd, "abc123"])
-        # local_mock.cwd.assert_called_with(Path("/path/to/dir"))
-        local_mock.cwd.assert_called_with(Path(dir))
+        local_mock.cwd.assert_called_with(Path("/path/to/dir"))
 
 
 class TestClone:
