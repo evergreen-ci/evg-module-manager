@@ -13,6 +13,13 @@ buildvariants:
     tasks:
       - name: unit_tests
 
+  - display_name: OSX
+    name: osx
+    run_on:
+      - macos-1015
+    tasks:
+      - name: unit_tests
+
 functions:
   create virtualenv:
     - command: shell.exec
@@ -29,6 +36,9 @@ functions:
 
           if [ "Windows_NT" = "$OS" ]; then
             "/cygdrive/c/python/python39/python.exe" -m venv venv
+            # venv creates its Scripts/activate file with CLRF endings, which
+            # cygwin bash does not like. dos2unix it
+            # (See https://bugs.python.org/issue32451)
             dos2unix "venv/Scripts/activate"
             . "venv/Scripts/activate"
             pip install poetry

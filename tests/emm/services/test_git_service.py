@@ -56,10 +56,12 @@ class TestPerformGitAction:
     def test_action_with_revision_and_dir_should_switch_directories(
         self, local_mock, git_service, mock_git, action, git_cmd
     ):
-        git_service.perform_git_action(action, "abc123", directory=Path("/path/to/dir"))
+        p = Path("/path/to/dir")
+        git_service.perform_git_action(action, "abc123", directory=p)
 
         mock_git.assert_git_call([git_cmd, "abc123"])
-        local_mock.cwd.assert_called_with(Path("/path/to/dir"))
+        local_mock.cwd.assert_called_with(p)
+        local_mock.cwd.assert_called_with(Path.cwd() / p)
 
 
 class TestClone:
@@ -227,4 +229,4 @@ class TestDetermineDirectory:
 
     def test_absolute_directory_should_return_directory(self, git_service):
         directory = Path("/a/absolute/path")
-        assert git_service._determine_directory(directory) == directory
+        assert git_service._determine_directory(directory) == Path.cwd() / directory
