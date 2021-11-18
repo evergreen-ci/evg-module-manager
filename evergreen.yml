@@ -6,14 +6,41 @@ buildvariants:
     tasks:
       - name: unit_tests
 
+  - display_name: Windows
+    name: windows
+    run_on:
+      - windows-vsCurrent-small
+    expansions:
+      exe: ".exe"
+      python: '/cygdrive/c/python/python39/python.exe'
+    tasks:
+      - name: unit_tests
+
 functions:
   create virtualenv:
-    - command: subprocess.exec
+    - command: shell.exec
       params:
         working_dir: ${git_project_directory|src}
-        binary: bash
-        args:
-          - "$(pwd)/evergreen_dir/venv_setup.sh"
+        script: |
+          set -o errexit
+          set -o verbose
+
+          PATH="$PATH:$HOME"
+
+          export LC_ALL=C.UTF-8
+          export LANG=C.UTF-8
+
+          if [ "Windows_NT" = "$OS" ]; then
+            "/cygdrive/c/python/python39/python.exe" -m venv venv
+            . "/venv/Scripts/activate"
+          else
+            /opt/mongodbtoolchain/v3/bin/python3 -m venv venv
+            . venv/bin/activate
+          fi
+          pip install --upgrade pip
+
+          pip install poetry
+          poetry install
 
 
 pre:
@@ -40,7 +67,11 @@ tasks:
         export LC_ALL=C.UTF-8
         export LANG=C.UTF-8
 
-        . venv/bin/activate
+        if [ "Windows_NT" = "$OS" ]; then
+          . "/venv/Scripts/activate"
+        else
+          . venv/bin/activate
+        fi
         PATH="$PATH:$HOME"
         poetry run pytest --cov=src --junitxml=junit-test-output.xml
 
