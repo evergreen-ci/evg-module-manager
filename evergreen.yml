@@ -17,7 +17,7 @@ functions:
   create virtualenv:
     - command: shell.exec
       params:
-        working_dir: ${git_project_directory|src}
+        working_dir: ${src}
         script: |
           set -o errexit
           set -o verbose

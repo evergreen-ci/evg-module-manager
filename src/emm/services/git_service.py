@@ -147,4 +147,4 @@ class GitService:
             return Path(local.cwd)
         elif not directory.is_absolute():
             return Path(local.cwd / directory)
-        return Path(directory)
+        return directory
