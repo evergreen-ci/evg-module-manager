@@ -1,0 +1,99 @@
+buildvariants:
+  - display_name: Ubuntu 18.04
+    name: ubuntu1804
+    run_on:
+      - ubuntu1804-small
+    tasks:
+      - name: unit_tests
+
+  - display_name: Windows
+    name: windows
+    run_on:
+      - windows-vsCurrent-small
+    tasks:
+      - name: unit_tests
+
+functions:
+  create virtualenv:
+    - command: shell.exec
+      params:
+        working_dir: ${git_project_directory|src}
+        script: |
+          set -o errexit
+          set -o verbose
+
+          PATH="$PATH:$HOME"
+
+          export LC_ALL=C.UTF-8
+          export LANG=C.UTF-8
+
+          if [ "Windows_NT" = "$OS" ]; then
+            "/cygdrive/c/python/python39/python.exe" -m venv venv
+            # venv creates its Scripts/activate file with CLRF endings, which
+            # cygwin bash does not like. dos2unix it
+            # (See https://bugs.python.org/issue32451)
+            dos2unix "venv/Scripts/activate"
+            . "venv/Scripts/activate"
+            pip install poetry
+          else
+            /opt/mongodbtoolchain/v3/bin/python3 -m venv venv
+            . venv/bin/activate
+            pip install --upgrade pip
+            pip install poetry
+          fi
+
+          poetry install
+
+
+pre:
+- command: git.get_project
+  params:
+    directory: ${git_project_directory|src}
+- func: create virtualenv
+
+post:
+- command: attach.xunit_results
+  params:
+    file: src/junit-*.xml
+
+tasks:
+- name: unit_tests
+  commands:
+  - command: shell.exec
+    params:
+      working_dir: src
+      script: |
+        set -o errexit
+        set -o verbose
+
+        export LC_ALL=C.UTF-8
+        export LANG=C.UTF-8
+
+        if [ "Windows_NT" = "$OS" ]; then
+          dos2unix "venv/Scripts/activate"
+          . "venv/Scripts/activate"
+        else
+          . venv/bin/activate
+        fi
+        PATH="$PATH:$HOME"
+        poetry run pytest --cov=src --junitxml=junit-test-output.xml
+
+- name: evg_module_manager_install
+  commands:
+  - command: shell.exec
+    params:
+      working_dir: src
+      script: |
+        set -o errexit
+        set -o verbose
+
+        export LC_ALL=C.UTF-8
+        export LANG=C.UTF-8
+
+        /opt/mongodbtoolchain/v3/bin/python3 -m venv emm-cli-venv
+        . emm-cli-venv/bin/activate
+
+        pip install --upgrade pip
+        pip install .
+
+        evg-module-manager --help
