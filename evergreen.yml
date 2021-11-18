@@ -8,27 +8,12 @@ buildvariants:
 
 functions:
   create virtualenv:
-    - command: shell.exec
+    - command: subprocess.exec
       params:
         working_dir: ${git_project_directory|src}
-        script: |
-          set -o errexit
-          set -o verbose
-
-          ls $(pwd)/src
-
-          PATH="$PATH:$HOME"
-          echo $PATH
-
-          export LC_ALL=C.UTF-8
-          export LANG=C.UTF-8
-
-          /opt/mongodbtoolchain/v3/bin/python3 -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
-
-          pip install poetry
-          poetry install
+        binary: bash
+        args:
+          - "$(pwd)/evergreen_dir/venv_setup.sh"
 
 
 pre:
