@@ -15,7 +15,7 @@ functions:
           set -o errexit
           set -o verbose
 
-          ls $(pwd)
+          ls $(pwd/src)
 
           PATH="$PATH:$HOME"
           echo $PATH
@@ -24,7 +24,7 @@ functions:
           export LANG=C.UTF-8
 
           /opt/mongodbtoolchain/v3/bin/python3 -m venv venv
-          . venv/bin/activate
+          source venv/bin/activate
           pip install --upgrade pip
 
           pip install poetry
