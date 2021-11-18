@@ -15,7 +15,7 @@ functions:
           set -o errexit
           set -o verbose
 
-          ls $(pwd/src)
+          ls $(pwd)/src
 
           PATH="$PATH:$HOME"
           echo $PATH
