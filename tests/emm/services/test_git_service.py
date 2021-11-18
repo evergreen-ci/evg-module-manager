@@ -8,9 +8,6 @@ import emm.services.git_service as under_test
 
 NAMESPACE = "emm.services.git_service"
 
-sys = MagicMock()
-sys.configure_mock(platform="win32")
-
 
 def ns(local_path: str) -> str:
     return f"{NAMESPACE}.{local_path}"
