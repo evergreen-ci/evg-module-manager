@@ -10,9 +10,6 @@ buildvariants:
     name: windows
     run_on:
       - windows-vsCurrent-small
-    expansions:
-      exe: ".exe"
-      python: '/cygdrive/c/python/python39/python.exe'
     tasks:
       - name: unit_tests
 
@@ -32,7 +29,7 @@ functions:
 
           if [ "Windows_NT" = "$OS" ]; then
             "/cygdrive/c/python/python39/python.exe" -m venv venv
-            . venv\Scripts\activate"
+            . "${working_dir}/venv/Scripts/activate"
           else
             /opt/mongodbtoolchain/v3/bin/python3 -m venv venv
             . venv/bin/activate
@@ -68,7 +65,7 @@ tasks:
         export LANG=C.UTF-8
 
         if [ "Windows_NT" = "$OS" ]; then
-          . venv\Scripts\activate
+          . "${working_dir}/venv/Scripts/activate"
         else
           . venv/bin/activate
         fi
