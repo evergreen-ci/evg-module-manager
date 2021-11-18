@@ -31,13 +31,15 @@ functions:
             "/cygdrive/c/python/python39/python.exe" -m venv venv
             dos2unix "venv/Scripts/activate"
             . "venv/Scripts/activate"
+            pip install --upgrade pip --user
+            pip install poetry --user
           else
             /opt/mongodbtoolchain/v3/bin/python3 -m venv venv
             . venv/bin/activate
+            pip install --upgrade pip
+            pip install poetry
           fi
-          pip install --upgrade pip
 
-          pip install poetry
           poetry install
 
 
