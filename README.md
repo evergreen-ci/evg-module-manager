@@ -2,7 +2,7 @@
 
 Manage Evergreen modules in your local environment.
 
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/evg-module-manager) [![PyPI](https://img.shields.io/pypi/v/evg-module-manager.svg)](https://pypi.org/project/evg-module-manager/) 
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/evg-module-manager) [![PyPI](https://img.shields.io/pypi/v/evg-module-manager.svg)](https://pypi.org/project/evg-module-manager/)
 
 ## Table of contents
 
@@ -90,7 +90,7 @@ poetry install
 
 ### linting/formatting
 
-This project uses [black](https://black.readthedocs.io/en/stable/) and 
+This project uses [black](https://black.readthedocs.io/en/stable/) and
 [isort](https://pycqa.github.io/isort/) for formatting.
 
 ```bash
@@ -108,7 +108,7 @@ poetry run pytest
 
 ### Automatically running checks on commit
 
-This project has [pre-commit](https://pre-commit.com/) configured. Pre-commit will run 
+This project has [pre-commit](https://pre-commit.com/) configured. Pre-commit will run
 configured checks at git commit time. To enable pre-commit on your local repository run:
 
 ```bash
