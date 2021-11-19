@@ -56,32 +56,31 @@ class TestPerformGitAction:
     def test_action_with_revision_and_dir_should_switch_directories(
         self, local_mock, git_service, mock_git, action, git_cmd
     ):
-        git_service.perform_git_action(action, "abc123", directory=Path("/path/to/dir"))
+        path = Path("/a/absolute/path").absolute()
+        git_service.perform_git_action(action, "abc123", directory=path)
 
         mock_git.assert_git_call([git_cmd, "abc123"])
-        local_mock.cwd.assert_called_with(git_service._determine_directory(Path("/path/to/dir")))
+        local_mock.cwd.assert_called_with(path)
 
 
 class TestClone:
     @patch(ns("local"))
     def test_clone_should_call_git_clone(self, local_mock, git_service, mock_git):
-        git_service.clone("module_name", "repo", Path("/path/to/modules"), branch=None)
+        path = Path("/path/to/modules").absolute()
+        git_service.clone("module_name", "repo", path, branch=None)
 
         mock_git.assert_git_call(["clone", "repo", "module_name"])
-        local_mock.cwd.assert_called_with(
-            git_service._determine_directory(Path("/path/to/modules"))
-        )
+        local_mock.cwd.assert_called_with(path)
 
     @patch(ns("local"))
     def test_clone_with_branch_should_call_git_clone_with_branch(
         self, local_mock, git_service, mock_git
     ):
-        git_service.clone("module_name", "repo", Path("/path/to/modules"), branch="main")
+        path = Path("/path/to/modules").absolute()
+        git_service.clone("module_name", "repo", path, branch="main")
 
         mock_git.assert_git_call(["clone", "--branch", "main", "repo", "module_name"])
-        local_mock.cwd.assert_called_with(
-            git_service._determine_directory(Path("/path/to/modules"))
-        )
+        local_mock.cwd.assert_called_with(path)
 
 
 class TestFetch:
@@ -96,12 +95,11 @@ class TestFetch:
     def test_fetch_with_directory_should_call_git_fetch_from_dir(
         self, local_mock, git_service, mock_git
     ):
-        git_service.fetch(directory=Path("/path/to/modules"))
+        path = Path("/path/to/modules").absolute()
+        git_service.fetch(directory=path)
 
         mock_git.assert_git_call(["fetch", "origin"])
-        local_mock.cwd.assert_called_with(
-            git_service._determine_directory(Path("/path/to/modules"))
-        )
+        local_mock.cwd.assert_called_with(path)
 
 
 class TestCheckout:
@@ -125,10 +123,11 @@ class TestCheckout:
     def test_checkout_with_directory_should_call_git_checkout_from_directory(
         self, local_mock, git_service, mock_git
     ):
-        git_service.checkout("abc123", directory=Path("/path/to/repo"), branch_name=None)
+        path = Path("/path/to/repo").absolute()
+        git_service.checkout("abc123", directory=path, branch_name=None)
 
         mock_git.assert_git_call(["checkout", "abc123"])
-        local_mock.cwd.assert_called_with(git_service._determine_directory(Path("/path/to/repo")))
+        local_mock.cwd.assert_called_with(path)
 
 
 class TestRebase:
@@ -145,10 +144,11 @@ class TestRebase:
     def test_rebase_with_directory_should_switch_directories(
         self, local_mock, git_service, mock_git
     ):
-        git_service.rebase("abc123", directory=Path("/path/to/repo"))
+        path = Path("/path/to/repo").absolute()
+        git_service.rebase("abc123", directory=path)
 
         mock_git.assert_git_call(["rebase", "abc123"])
-        local_mock.cwd.assert_called_with(git_service._determine_directory(Path("/path/to/repo")))
+        local_mock.cwd.assert_called_with(path)
 
 
 class TestMerge:
@@ -165,10 +165,11 @@ class TestMerge:
     def test_merge_with_directory_should_switch_directories(
         self, local_mock, git_service, mock_git
     ):
-        git_service.merge("abc123", directory=Path("/path/to/repo"))
+        path = Path("/path/to/repo").absolute()
+        git_service.merge("abc123", directory=path)
 
         mock_git.assert_git_call(["merge", "abc123"])
-        local_mock.cwd.assert_called_with(git_service._determine_directory(Path("/path/to/repo")))
+        local_mock.cwd.assert_called_with(path)
 
 
 class TestCurrentCommit:
@@ -189,11 +190,12 @@ class TestCurrentCommit:
     ):
         mock_git.__getitem__.return_value.return_value = "abc123\n"
 
-        git_commit = git_service.current_commit(directory=Path("/path/to/repo"))
+        path = Path("/path/to/repo").absolute()
+        git_commit = git_service.current_commit(directory=path)
 
         mock_git.assert_git_call(["rev-parse", "HEAD"])
         assert git_commit == "abc123"
-        local_mock.cwd.assert_called_with(git_service._determine_directory(Path("/path/to/repo")))
+        local_mock.cwd.assert_called_with(path)
 
 
 class TestMergeBase:
@@ -214,11 +216,12 @@ class TestMergeBase:
     ):
         mock_git.__getitem__.return_value.return_value = "abc123\n"
 
-        git_commit = git_service.merge_base("commit_1", "HEAD", directory=Path("/path/to/repo"))
+        path = Path("/path/to/repo").absolute()
+        git_commit = git_service.merge_base("commit_1", "HEAD", directory=path)
 
         mock_git.assert_git_call(["merge-base", "commit_1", "HEAD"])
         assert git_commit == "abc123"
-        local_mock.cwd.assert_called_with(git_service._determine_directory(Path("/path/to/repo")))
+        local_mock.cwd.assert_called_with(path)
 
 
 class TestDetermineDirectory:
@@ -233,6 +236,5 @@ class TestDetermineDirectory:
 
     @patch(ns("local"))
     def test_absolute_directory_should_return_directory(self, local_mock, git_service):
-        directory = Path("/a/absolute/path")
-        absolute_directory = Path(local_mock.cwd / directory)
-        assert git_service._determine_directory(absolute_directory) == absolute_directory
+        directory = Path("/a/absolute/path").absolute()
+        assert git_service._determine_directory(directory) == directory
