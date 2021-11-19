@@ -12,7 +12,7 @@ functions:
   create virtualenv:
     - command: shell.exec
       params:
-        working_dir: ${src}
+        working_dir: src
         script: |
           set -o errexit
           set -o verbose
