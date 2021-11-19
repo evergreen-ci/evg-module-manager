@@ -55,7 +55,7 @@ functions:
 pre:
 - command: git.get_project
   params:
-    directory: ${git_project_directory|src}
+    directory: src
 - func: create virtualenv
 
 post:
@@ -84,23 +84,3 @@ tasks:
         fi
         PATH="$PATH:$HOME"
         poetry run pytest --cov=src --junitxml=junit-test-output.xml
-
-- name: evg_module_manager_install
-  commands:
-  - command: shell.exec
-    params:
-      working_dir: src
-      script: |
-        set -o errexit
-        set -o verbose
-
-        export LC_ALL=C.UTF-8
-        export LANG=C.UTF-8
-
-        /opt/mongodbtoolchain/v3/bin/python3 -m venv emm-cli-venv
-        . emm-cli-venv/bin/activate
-
-        pip install --upgrade pip
-        pip install .
-
-        evg-module-manager --help
