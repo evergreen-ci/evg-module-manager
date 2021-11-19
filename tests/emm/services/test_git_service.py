@@ -193,7 +193,7 @@ class TestCurrentCommit:
 
         mock_git.assert_git_call(["rev-parse", "HEAD"])
         assert git_commit == "abc123"
-        local_mock.cwd.assert_called_with(Path("/path/to/repo"))
+        local_mock.cwd.assert_called_with(git_service._determine_directory(Path("/path/to/repo")))
 
 
 class TestMergeBase:
@@ -218,7 +218,7 @@ class TestMergeBase:
 
         mock_git.assert_git_call(["merge-base", "commit_1", "HEAD"])
         assert git_commit == "abc123"
-        local_mock.cwd.assert_called_with(Path("/path/to/repo"))
+        local_mock.cwd.assert_called_with(git_service._determine_directory(Path("/path/to/repo")))
 
 
 class TestDetermineDirectory:
