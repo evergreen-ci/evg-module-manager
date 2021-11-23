@@ -1,14 +1,15 @@
 """Service for working with evergreen modules."""
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 import inject
+from plumbum import ProcessExecutionError
 from shrub.v3.evg_project import EvgModule
 
 from emm.options import EmmOptions
 from emm.services.evg_service import EvgService
 from emm.services.file_service import FileService
-from emm.services.git_service import GitService
+from emm.services.git_service import GitAction, GitService
 
 
 class ModulesService:
@@ -135,3 +136,51 @@ class ModulesService:
 
         self.git_service.fetch(module_location)
         self.git_service.checkout(module_revision, directory=module_location)
+
+    def attempt_git_operation(
+        self,
+        operation: GitAction,
+        revision: str,
+        branch_name: Optional[str] = None,
+        directory: Optional[Path] = None,
+    ) -> Optional[str]:
+        """
+        Attempt to perform the specified git operation.
+
+        :param operation: Git operation to perform.
+        :param revision: Git revision to perform operation on.
+        :param branch_name: Name of branch for git checkout.
+        :param directory: Directory of git repository.
+        :return: Error message if an error was encountered.
+        """
+        try:
+            self.git_service.perform_git_action(operation, revision, branch_name, directory)
+        except ProcessExecutionError:
+            return f"Encountered error performing '{operation}' on '{revision}'"
+        return None
+
+    def git_operate_modules(
+        self, operation: GitAction, revision: str, branch: str, directory: str
+    ) -> Dict[str, str]:
+        """
+        Checkout existing modules to the specific revisions.
+
+        :param operation: Git operation to perform.
+        :param revision: Dictionary of module names and git revision to check out.
+        :param branch: Name of branch for git checkout.
+        :param directory: Directory to execute command at.
+        :return: Dictionary of error encountered.
+        """
+        enabled_modules = self.get_all_modules(True)
+        error_countered = {}
+        new_dir = Path(directory) if directory else None
+        errmsg = self.attempt_git_operation(operation, revision, branch, new_dir)
+        if errmsg:
+            error_countered["BASE"] = errmsg
+        for module in enabled_modules:
+            module_data = self.get_module_data(module)
+            module_location = Path(module_data.prefix) / module
+            errmsg = self.attempt_git_operation(operation, revision, branch, module_location)
+            if errmsg:
+                error_countered[module] = errmsg
+        return error_countered

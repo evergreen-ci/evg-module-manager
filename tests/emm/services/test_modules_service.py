@@ -9,7 +9,7 @@ import emm.services.modules_service as under_test
 from emm.options import EmmOptions
 from emm.services.evg_service import EvgService
 from emm.services.file_service import FileService
-from emm.services.git_service import GitService
+from emm.services.git_service import GitAction, GitService
 
 
 @pytest.fixture()
@@ -237,3 +237,51 @@ class TestSyncModule:
 
         with pytest.raises(ValueError):
             modules_service.sync_module(module_name, module_data)
+
+
+class TestCheckoutModule:
+    def test_checkout_should_call_git_checkout(self, modules_service, evg_service, git_service):
+        revision = "test_revision"
+        modules_service.git_operate_modules(GitAction.CHECKOUT, revision, None, None)
+
+        git_service.perform_git_action.assert_called_with(GitAction.CHECKOUT, revision, None, None)
+
+    def test_checkout_should_create_branch_if_specified(
+        self, modules_service, evg_service, git_service
+    ):
+        revision = "test_revision"
+        branch = "test_branch"
+        modules_service.git_operate_modules(GitAction.CHECKOUT, revision, branch, None)
+        git_service.perform_git_action.assert_called_with(
+            GitAction.CHECKOUT, revision, branch, None
+        )
+
+    def test_checkout_should_apply_to_specified_directory(
+        self, modules_service, evg_service, git_service
+    ):
+        revision = "test_revision"
+        directory = Path("/path/to/module").absolute()
+        modules_service.git_operate_modules(GitAction.CHECKOUT, revision, None, directory)
+        git_service.perform_git_action.assert_called_with(
+            GitAction.CHECKOUT, revision, None, directory
+        )
+
+    def test_rebase_should_apply_to_specified_directory(
+        self, modules_service, evg_service, git_service
+    ):
+        revision = "test_revision"
+        directory = Path("/path/to/module").absolute()
+        modules_service.git_operate_modules(GitAction.REBASE, revision, None, directory)
+        git_service.perform_git_action.assert_called_with(
+            GitAction.REBASE, revision, None, directory
+        )
+
+    def test_merge_should_apply_to_specified_directory(
+        self, modules_service, evg_service, git_service
+    ):
+        revision = "test_revision"
+        directory = Path("/path/to/module").absolute()
+        modules_service.git_operate_modules(GitAction.MERGE, revision, None, directory)
+        git_service.perform_git_action.assert_called_with(
+            GitAction.MERGE, revision, None, directory
+        )

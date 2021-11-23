@@ -12,6 +12,7 @@ from evergreen import EvergreenApi, RetryingEvergreenApi
 from structlog.stdlib import LoggerFactory
 
 from emm.options import DEFAULT_EVG_CONFIG, DEFAULT_EVG_PROJECT, DEFAULT_MODULES_PATH, EmmOptions
+from emm.services.git_service import GitAction
 from emm.services.modules_service import ModulesService
 from emm.services.patch_service import PatchService
 
@@ -78,6 +79,19 @@ class EmmOrchestrator:
                 print(f"\tprefix: {module_data.prefix}")
                 print(f"\trepo: {module_data.repo}")
                 print(f"\tbranch: {module_data.branch}")
+
+    def git_operate_modules(
+        self, revision: str, operation: GitAction, branch: str, directory: str
+    ) -> None:
+        """
+        Git checkout|rebase|merge modules to the specific revision.
+
+        :param revision: Dictionary of module names and git revision to check out.
+        :param operation: Git operation to perform.
+        :param branch: Name of branch for git checkout.
+        :param directory: Directory to execute command at.
+        """
+        self.modules_service.git_operate_modules(operation, revision, branch, directory)
 
 
 def configure_logging(verbose: bool) -> None:
@@ -209,6 +223,26 @@ def list_modules(ctx: click.Context, enabled: bool, show_details: bool) -> None:
     """List the modules available for the current repo."""
     orchestrator = EmmOrchestrator()
     orchestrator.display_modules(enabled, show_details)
+
+
+@cli.command(context_settings=dict(max_content_width=100, allow_extra_args=True))
+@click.option(
+    "--op",
+    "--operation",
+    type=click.Choice([a.value for a in GitAction]),
+    default=GitAction.CHECKOUT,
+    help="Git operations to perform with found commit [default=checkout].",
+)
+@click.option("-b", "--branch", default=None, help="Name of branch for git checkout.")
+@click.option("--directory", default=None, help="Directory to execute command at.")
+@click.pass_context
+def git(ctx: click.Context, op: str, branch: str, directory: str) -> None:
+    """Perform basic git checkout|rebase|merge operations to the specific revision."""
+    orchestrator = EmmOrchestrator()
+    for a in GitAction:
+        if a.value == op:
+            operation = a
+    orchestrator.git_operate_modules(ctx.args, operation, branch, directory)
 
 
 if __name__ == "__main__":

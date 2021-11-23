@@ -72,6 +72,7 @@ Commands:
   commit-queue  Submit changes from the base repository and any enabled modules to the...
   disable       Disable the specified module in the current repo.
   enable        Enable the specified module in the current repo.
+  git           Perform basic git checkout|rebase|merge operations to the specific revision.
   list-modules  List the modules available for the current repo.
   patch         Create an Evergreen patch with changes from the base repo and any enabled...
 ```
