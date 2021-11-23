@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.4 - 2021-11-23
+- Add check to ensure version update
+
 ## 0.1.3 - 2021-11-16
 - Add support for evergreen test
 

@@ -5,6 +5,7 @@ buildvariants:
       - ubuntu1804-small
     tasks:
       - name: unit_tests
+      - name: check_pypi_version
 
   - display_name: Windows
     name: windows
@@ -51,6 +52,18 @@ functions:
 
           poetry install
 
+  check_version_update:
+    - command: shell.exec
+      params:
+        working_dir: src
+        script: |
+          set -o errexit
+          set -o verbose
+
+          wget -q https://github.com/dbradf/pypi-version-check/releases/download/v0.1.2/pypi-version-check
+          chmod +x pypi-version-check
+          ./pypi-version-check
+
 
 pre:
 - command: git.get_project
@@ -84,3 +97,8 @@ tasks:
         fi
         PATH="$PATH:$HOME"
         poetry run pytest --cov=src --junitxml=junit-test-output.xml
+
+- name: check_pypi_version
+  commands:
+  - func: check_version_update
+
