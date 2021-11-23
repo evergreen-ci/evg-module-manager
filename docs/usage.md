@@ -66,7 +66,7 @@ evg-module-manager disable --module wiredtiger
 
 Once a revision is found on the base repo, that revision can be used to perform
 certain git operations. By default, a git checkout action will be performed to the revision
-in the base repository. However, the `git --op` option can be provided to change this
+in the base repository. However, the `git-branch --operation` option can be provided to change this
 behavior.
 
 The option takes one of the following as an argument:
@@ -84,7 +84,7 @@ For the **checkout** option, you can specify a branch name to create on checkout
 For example, to create a branch named `my-branch`, use the following:
 
 ```bash
-evg-module-manager git -o checkout --branch my-branch
+evg-module-manager git-branch -o checkout --branch my-branch
 ```
 
 ### Examples
@@ -92,12 +92,12 @@ evg-module-manager git -o checkout --branch my-branch
 To merge my active branch on the most recent comment:
 
 ```bash
-evg-module-manager git --operation=merge
+evg-module-manager git-branch --operation=merge
 ```
 
 To rebase my active branch on the most recent commit on a given directory:
 ```bash
-evg-module-manager git -o rebase --directory=/path/to/rebase
+evg-module-manager git-branch -o rebase --directory=/path/to/rebase
 ```
 
 ## Submitting a patch build
