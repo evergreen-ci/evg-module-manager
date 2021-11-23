@@ -3,13 +3,16 @@ from pathlib import Path
 from typing import Dict, Optional
 
 import inject
+import structlog
 from plumbum import ProcessExecutionError
 from shrub.v3.evg_project import EvgModule
 
 from emm.options import EmmOptions
-from emm.services.evg_service import EvgService
+from emm.services.evg_service import EvgService, Manifest
 from emm.services.file_service import FileService
 from emm.services.git_service import GitAction, GitService
+
+LOGGER = structlog.get_logger(__name__)
 
 
 class ModulesService:
@@ -113,6 +116,17 @@ class ModulesService:
         module_location = Path(module_data.prefix) / module_name
         return self.file_service.path_exists(module_location)
 
+    def get_evg_manifest(self, evg_project: str) -> Manifest:
+        """
+        Get the evergreen manifest base on evergreen project.
+
+        :param evg_project: The project to retrieve manifest.
+        :return: The manifest modules in evergreen associate with the latest commit in evergreen history.
+        """
+        project_branch = self.evg_service.get_project_branch(evg_project)
+        base_revision = self.git_service.merge_base(project_branch, "HEAD")
+        return self.evg_service.get_manifest(evg_project, base_revision)
+
     def sync_module(self, module_name: str, module_data: EvgModule) -> None:
         """
         Sync the given module to the commit associated with the base repo in evergreen.
@@ -120,9 +134,7 @@ class ModulesService:
         :param module_name: Name of module being synced.
         :param module_data: Data about the module.
         """
-        project_branch = self.evg_service.get_project_branch(self.emm_options.evg_project)
-        base_revision = self.git_service.merge_base(project_branch, "HEAD")
-        manifest = self.evg_service.get_manifest(self.emm_options.evg_project, base_revision)
+        manifest = self.get_evg_manifest(self.emm_options.evg_project)
         manifest_modules = manifest.modules
         if manifest_modules is None:
             raise ValueError("Modules not found in manifest")
@@ -156,6 +168,7 @@ class ModulesService:
         try:
             self.git_service.perform_git_action(operation, revision, branch_name, directory)
         except ProcessExecutionError:
+            LOGGER.warning("Error encountered during git operation", exc_info=True)
             return f"Encountered error performing '{operation}' on '{revision}'"
         return None
 
@@ -163,7 +176,7 @@ class ModulesService:
         self, operation: GitAction, revision: str, branch: str, directory: str
     ) -> Dict[str, str]:
         """
-        Checkout existing modules to the specific revisions.
+        Checkout modules to the specific revisions.
 
         :param operation: Git operation to perform.
         :param revision: Dictionary of module names and git revision to check out.
@@ -171,16 +184,24 @@ class ModulesService:
         :param directory: Directory to execute command at.
         :return: Dictionary of error encountered.
         """
-        enabled_modules = self.get_all_modules(True)
         error_countered = {}
         new_dir = Path(directory) if directory else None
         errmsg = self.attempt_git_operation(operation, revision, branch, new_dir)
         if errmsg:
             error_countered["BASE"] = errmsg
-        for module in enabled_modules:
-            module_data = self.get_module_data(module)
+
+        enabled_modules = self.get_all_modules(True)
+        manifest = self.get_evg_manifest(self.emm_options.evg_project)
+        for module, module_data in enabled_modules.items():
             module_location = Path(module_data.prefix) / module
-            errmsg = self.attempt_git_operation(operation, revision, branch, module_location)
+            manifest_modules = manifest.modules
+            if manifest_modules is None:
+                raise ValueError("Modules not found in manifest")
+            module_manifest = manifest_modules.get(module)
+            if module_manifest is None:
+                raise ValueError(f"Module not found in manifest: {module}")
+            module_rev = module_manifest.revision
+            errmsg = self.attempt_git_operation(operation, module_rev, branch, module_location)
             if errmsg:
                 error_countered[module] = errmsg
         return error_countered

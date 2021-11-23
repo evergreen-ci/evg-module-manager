@@ -84,7 +84,7 @@ For the **checkout** option, you can specify a branch name to create on checkout
 For example, to create a branch named `my-branch`, use the following:
 
 ```bash
-evg-module-manager git --op=checkout --branch my-branch
+evg-module-manager git -o checkout --branch my-branch
 ```
 
 ### Examples
@@ -92,12 +92,12 @@ evg-module-manager git --op=checkout --branch my-branch
 To merge my active branch on the most recent comment:
 
 ```bash
-evg-module-manager git --op=merge
+evg-module-manager git --operation=merge
 ```
 
 To rebase my active branch on the most recent commit on a given directory:
 ```bash
-evg-module-manager git --op=rebase --directory=/path/to/rebase
+evg-module-manager git -o rebase --directory=/path/to/rebase
 ```
 
 ## Submitting a patch build

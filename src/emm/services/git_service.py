@@ -6,7 +6,7 @@ from typing import Optional
 from plumbum import local
 
 
-class GitAction(Enum):
+class GitAction(str, Enum):
     """Actions to perform on a git repository."""
 
     CHECKOUT = "checkout"

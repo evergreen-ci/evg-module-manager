@@ -227,7 +227,7 @@ def list_modules(ctx: click.Context, enabled: bool, show_details: bool) -> None:
 
 @cli.command(context_settings=dict(max_content_width=100, allow_extra_args=True))
 @click.option(
-    "--op",
+    "-o",
     "--operation",
     type=click.Choice([a.value for a in GitAction]),
     default=GitAction.CHECKOUT,
@@ -236,12 +236,9 @@ def list_modules(ctx: click.Context, enabled: bool, show_details: bool) -> None:
 @click.option("-b", "--branch", default=None, help="Name of branch for git checkout.")
 @click.option("--directory", default=None, help="Directory to execute command at.")
 @click.pass_context
-def git(ctx: click.Context, op: str, branch: str, directory: str) -> None:
+def git_branch(ctx: click.Context, operation: GitAction, branch: str, directory: str) -> None:
     """Perform basic git checkout|rebase|merge operations to the specific revision."""
     orchestrator = EmmOrchestrator()
-    for a in GitAction:
-        if a.value == op:
-            operation = a
     orchestrator.git_operate_modules(ctx.args, operation, branch, directory)
 
 
