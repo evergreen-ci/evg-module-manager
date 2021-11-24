@@ -80,7 +80,7 @@ class EmmOrchestrator:
                 print(f"\trepo: {module_data.repo}")
                 print(f"\tbranch: {module_data.branch}")
 
-    def git_operate_modules(
+    def git_operate_base(
         self, revision: str, operation: GitAction, branch: str, directory: str
     ) -> None:
         """
@@ -91,7 +91,7 @@ class EmmOrchestrator:
         :param branch: Name of branch for git checkout.
         :param directory: Directory to execute command at.
         """
-        self.modules_service.git_operate_modules(operation, revision, branch, directory)
+        self.modules_service.git_operate_base(operation, revision, branch, directory)
 
 
 def configure_logging(verbose: bool) -> None:
@@ -242,7 +242,7 @@ def git_branch(
 ) -> None:
     """Perform basic git checkout|rebase|merge operations to the specific revision."""
     orchestrator = EmmOrchestrator()
-    orchestrator.git_operate_modules(revision, operation, branch, directory)
+    orchestrator.git_operate_base(revision, operation, branch, directory)
 
 
 if __name__ == "__main__":

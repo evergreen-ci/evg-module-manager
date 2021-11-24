@@ -1,6 +1,6 @@
 """Unit tests for modules_service.py."""
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, call
 
 import pytest
 from shrub.v3.evg_project import EvgModule
@@ -239,10 +239,10 @@ class TestSyncModule:
             modules_service.sync_module(module_name, module_data)
 
 
-class TestCheckoutModule:
+class TestGitOperateBase:
     def test_checkout_should_call_git_checkout(self, modules_service, evg_service, git_service):
         revision = "test_revision"
-        modules_service.git_operate_modules(GitAction.CHECKOUT, revision, None, None)
+        modules_service.git_operate_base(GitAction.CHECKOUT, revision, None, None)
 
         git_service.perform_git_action.assert_called_with(GitAction.CHECKOUT, revision, None, None)
 
@@ -251,7 +251,7 @@ class TestCheckoutModule:
     ):
         revision = "test_revision"
         branch = "test_branch"
-        modules_service.git_operate_modules(GitAction.CHECKOUT, revision, branch, None)
+        modules_service.git_operate_base(GitAction.CHECKOUT, revision, branch, None)
         git_service.perform_git_action.assert_called_with(
             GitAction.CHECKOUT, revision, branch, None
         )
@@ -261,7 +261,7 @@ class TestCheckoutModule:
     ):
         revision = "test_revision"
         directory = Path("/path/to/module").absolute()
-        modules_service.git_operate_modules(GitAction.CHECKOUT, revision, None, directory)
+        modules_service.git_operate_base(GitAction.CHECKOUT, revision, None, directory)
         git_service.perform_git_action.assert_called_with(
             GitAction.CHECKOUT, revision, None, directory
         )
@@ -271,7 +271,7 @@ class TestCheckoutModule:
     ):
         revision = "test_revision"
         directory = Path("/path/to/module").absolute()
-        modules_service.git_operate_modules(GitAction.REBASE, revision, None, directory)
+        modules_service.git_operate_base(GitAction.REBASE, revision, None, directory)
         git_service.perform_git_action.assert_called_with(
             GitAction.REBASE, revision, None, directory
         )
@@ -281,7 +281,44 @@ class TestCheckoutModule:
     ):
         revision = "test_revision"
         directory = Path("/path/to/module").absolute()
-        modules_service.git_operate_modules(GitAction.MERGE, revision, None, directory)
+        modules_service.git_operate_base(GitAction.MERGE, revision, None, directory)
         git_service.perform_git_action.assert_called_with(
             GitAction.MERGE, revision, None, directory
         )
+
+
+class TestGitOperateModule:
+    def test_operate_module_with_no_manifest_should_raise_exception(
+        self, modules_service, evg_service, git_service
+    ):
+        evg_service.get_manifest.return_value.modules = None
+        enabled_module = {"module_name": build_module_data()}
+
+        with pytest.raises(ValueError):
+            modules_service.git_operate_modules(GitAction.CHECKOUT, None, enabled_module)
+
+    def test_operate_module_with_no_module_should_raise_exception(
+        self, modules_service, evg_service, git_service
+    ):
+        evg_service.get_manifest.return_value.modules = {}
+        enabled_module = {"module_name": build_module_data()}
+
+        with pytest.raises(ValueError):
+            modules_service.git_operate_modules(GitAction.CHECKOUT, None, enabled_module)
+
+    def test_checkout_should_apply_revision_and_directory_to_each_module(
+        self, modules_service, evg_service, git_service
+    ):
+        evg_service.get_manifest.return_value.modules = {
+            f"module_name_{i}": MagicMock(revision=f"revision_{i}") for i in range(5)
+        }
+        enabled_module = {f"module_name_{i}": build_module_data() for i in range(5)}
+
+        modules_service.git_operate_modules(GitAction.CHECKOUT, None, enabled_module)
+        calls = [
+            call(
+                GitAction.CHECKOUT, f"revision_{i}", None, Path("src/modules") / f"module_name_{i}"
+            )
+            for i in range(5)
+        ]
+        git_service.perform_git_action.assert_has_calls(calls, any_order=True)

@@ -173,10 +173,37 @@ class ModulesService:
         return None
 
     def git_operate_modules(
+        self, operation: GitAction, branch: str, enabled_modules: Dict[str, EvgModule]
+    ) -> Dict[str, str]:
+        """
+        Git operate modules to the specific revisions.
+
+        :param operation: Git operation to perform.
+        :param branch: Name of branch for git checkout.
+        :param enabled_modules: Dictionary of enabled modules.
+        :return: Dictionary of error encountered.
+        """
+        error_encountered = {}
+        manifest = self.get_evg_manifest(self.emm_options.evg_project)
+        manifest_modules = manifest.modules
+        if manifest_modules is None:
+            raise ValueError("Modules not found in manifest")
+        for module, module_data in enabled_modules.items():
+            module_location = Path(module_data.prefix) / module
+            module_manifest = manifest_modules.get(module)
+            if module_manifest is None:
+                raise ValueError(f"Module not found in manifest: {module}")
+            module_rev = module_manifest.revision
+            errmsg = self.attempt_git_operation(operation, module_rev, branch, module_location)
+            if errmsg:
+                error_encountered[module] = errmsg
+        return error_encountered
+
+    def git_operate_base(
         self, operation: GitAction, revision: str, branch: str, directory: str
     ) -> Dict[str, str]:
         """
-        Checkout modules to the specific revisions.
+        Git operate base to the specific revisions.
 
         :param operation: Git operation to perform.
         :param revision: Dictionary of module names and git revision to check out.
@@ -184,24 +211,10 @@ class ModulesService:
         :param directory: Directory to execute command at.
         :return: Dictionary of error encountered.
         """
-        error_countered = {}
-        new_dir = Path(directory) if directory else None
-        errmsg = self.attempt_git_operation(operation, revision, branch, new_dir)
-        if errmsg:
-            error_countered["BASE"] = errmsg
-
+        real_dir = Path(directory) if directory else None
+        errmsg = self.attempt_git_operation(operation, revision, branch, real_dir)
         enabled_modules = self.get_all_modules(True)
-        manifest = self.get_evg_manifest(self.emm_options.evg_project)
-        for module, module_data in enabled_modules.items():
-            module_location = Path(module_data.prefix) / module
-            manifest_modules = manifest.modules
-            if manifest_modules is None:
-                raise ValueError("Modules not found in manifest")
-            module_manifest = manifest_modules.get(module)
-            if module_manifest is None:
-                raise ValueError(f"Module not found in manifest: {module}")
-            module_rev = module_manifest.revision
-            errmsg = self.attempt_git_operation(operation, module_rev, branch, module_location)
-            if errmsg:
-                error_countered[module] = errmsg
-        return error_countered
+        error_encountered = self.git_operate_modules(operation, branch, enabled_modules)
+        if errmsg:
+            error_encountered["BASE"] = errmsg
+        return error_encountered
