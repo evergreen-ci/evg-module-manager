@@ -168,7 +168,9 @@ class ModulesService:
         try:
             self.git_service.perform_git_action(operation, revision, branch_name, directory)
         except ProcessExecutionError:
-            LOGGER.warning("Error encountered during git operation", exc_info=True)
+            LOGGER.warning(
+                f"Error encountered during git operation {operation} on {revision}", exc_info=True
+            )
             return f"Encountered error performing '{operation}' on '{revision}'"
         return None
 
@@ -188,31 +190,29 @@ class ModulesService:
         manifest_modules = manifest.modules
         if manifest_modules is None:
             raise ValueError("Modules not found in manifest")
+
         for module, module_data in enabled_modules.items():
-            module_location = Path(module_data.prefix) / module
             module_manifest = manifest_modules.get(module)
             if module_manifest is None:
                 raise ValueError(f"Module not found in manifest: {module}")
+
             module_rev = module_manifest.revision
+            module_location = Path(module_data.prefix) / module
             errmsg = self.attempt_git_operation(operation, module_rev, branch, module_location)
             if errmsg:
                 error_encountered[module] = errmsg
         return error_encountered
 
-    def git_operate_base(
-        self, operation: GitAction, revision: str, branch: str, directory: str
-    ) -> Dict[str, str]:
+    def git_operate_base(self, operation: GitAction, revision: str, branch: str) -> Dict[str, str]:
         """
         Git operate base to the specific revisions.
 
         :param operation: Git operation to perform.
         :param revision: Dictionary of module names and git revision to check out.
         :param branch: Name of branch for git checkout.
-        :param directory: Directory to execute command at.
         :return: Dictionary of error encountered.
         """
-        real_dir = Path(directory) if directory else None
-        errmsg = self.attempt_git_operation(operation, revision, branch, real_dir)
+        errmsg = self.attempt_git_operation(operation, revision, branch)
         enabled_modules = self.get_all_modules(True)
         error_encountered = self.git_operate_modules(operation, branch, enabled_modules)
         if errmsg:

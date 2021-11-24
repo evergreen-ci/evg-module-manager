@@ -242,7 +242,7 @@ class TestSyncModule:
 class TestGitOperateBase:
     def test_checkout_should_call_git_checkout(self, modules_service, evg_service, git_service):
         revision = "test_revision"
-        modules_service.git_operate_base(GitAction.CHECKOUT, revision, None, None)
+        modules_service.git_operate_base(GitAction.CHECKOUT, revision, None)
 
         git_service.perform_git_action.assert_called_with(GitAction.CHECKOUT, revision, None, None)
 
@@ -251,40 +251,20 @@ class TestGitOperateBase:
     ):
         revision = "test_revision"
         branch = "test_branch"
-        modules_service.git_operate_base(GitAction.CHECKOUT, revision, branch, None)
+        modules_service.git_operate_base(GitAction.CHECKOUT, revision, branch)
         git_service.perform_git_action.assert_called_with(
             GitAction.CHECKOUT, revision, branch, None
         )
 
-    def test_checkout_should_apply_to_specified_directory(
-        self, modules_service, evg_service, git_service
-    ):
+    def test_rebase_should_call_git_rebase(self, modules_service, evg_service, git_service):
         revision = "test_revision"
-        directory = Path("/path/to/module").absolute()
-        modules_service.git_operate_base(GitAction.CHECKOUT, revision, None, directory)
-        git_service.perform_git_action.assert_called_with(
-            GitAction.CHECKOUT, revision, None, directory
-        )
+        modules_service.git_operate_base(GitAction.REBASE, revision, None)
+        git_service.perform_git_action.assert_called_with(GitAction.REBASE, revision, None, None)
 
-    def test_rebase_should_apply_to_specified_directory(
-        self, modules_service, evg_service, git_service
-    ):
+    def test_merge_should_should_call_git_merge(self, modules_service, evg_service, git_service):
         revision = "test_revision"
-        directory = Path("/path/to/module").absolute()
-        modules_service.git_operate_base(GitAction.REBASE, revision, None, directory)
-        git_service.perform_git_action.assert_called_with(
-            GitAction.REBASE, revision, None, directory
-        )
-
-    def test_merge_should_apply_to_specified_directory(
-        self, modules_service, evg_service, git_service
-    ):
-        revision = "test_revision"
-        directory = Path("/path/to/module").absolute()
-        modules_service.git_operate_base(GitAction.MERGE, revision, None, directory)
-        git_service.perform_git_action.assert_called_with(
-            GitAction.MERGE, revision, None, directory
-        )
+        modules_service.git_operate_base(GitAction.MERGE, revision, None)
+        git_service.perform_git_action.assert_called_with(GitAction.MERGE, revision, None, None)
 
 
 class TestGitOperateModule:

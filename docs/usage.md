@@ -62,10 +62,10 @@ the cloned repository.
 evg-module-manager disable --module wiredtiger
 ```
 
-## Performing git actions
+## Handling git branches
 
-Once a revision is found on the base repo, that revision can be used to perform
-certain git operations. By default, a git checkout action will be performed to the revision
+Use `git-branch` command to work on branch related cases on base repo and any enabled modules.
+By default, a git checkout action will be performed to the revision
 in the base repository. However, the `git-branch --operation` option can be provided to change this
 behavior.
 
@@ -75,20 +75,33 @@ The option takes one of the following as an argument:
 * **rebase** - Perform a `git rebase` to rebase changes on top of the found revision.
 * **merge** - Perform a `git merge` to merge changes up to the found revision into the current branch.
 
-For the **rebase** and **merge** operations, if any merge conflicts occur, they will be reported and
-the repository will be left in the unmerged state for manually resolution.
+### Checkout branches
+To create a new branch or checkout to a certain revision. The revision to be checked out would be the
+revision for the module in the evergreen manifest associated with the latest commit in the history that
+was run in evergreen.
 
-For the **checkout** option, you can specify a branch name to create on checkout with the `-b` or
+For the **checkout** option, you can specify a branch name to create with the `-b` or
 `--branch` option.
 
-For example, to create a branch named `my-branch`, use the following:
+#### Examples
+To create a branch named `my-branch`, use the following:
 
 ```bash
 evg-module-manager git-branch -o checkout --branch my-branch
 ```
 
-### Examples
+Checkout to a certain revision, you can issue the following:
+```bash
+evg-module-manager git-branch -o checkout "revision_to_checkout"
+```
 
+### Rebase/Merge branches
+To update the branch with the latest comment on all enabled modules.
+
+For the **rebase** and **merge** operations, if any merge conflicts occur, they will be reported and
+the repository will be left in the unmerged state for manually resolution.
+
+#### Examples
 To merge my active branch on the most recent comment:
 
 ```bash

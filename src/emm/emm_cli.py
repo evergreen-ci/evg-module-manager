@@ -80,18 +80,15 @@ class EmmOrchestrator:
                 print(f"\trepo: {module_data.repo}")
                 print(f"\tbranch: {module_data.branch}")
 
-    def git_operate_base(
-        self, revision: str, operation: GitAction, branch: str, directory: str
-    ) -> None:
+    def git_operate_base(self, revision: str, operation: GitAction, branch: str) -> None:
         """
         Git checkout|rebase|merge modules to the specific revision.
 
         :param revision: Dictionary of module names and git revision to check out.
         :param operation: Git operation to perform.
         :param branch: Name of branch for git checkout.
-        :param directory: Directory to execute command at.
         """
-        self.modules_service.git_operate_base(operation, revision, branch, directory)
+        self.modules_service.git_operate_base(operation, revision, branch)
 
 
 def configure_logging(verbose: bool) -> None:
@@ -235,14 +232,11 @@ def list_modules(ctx: click.Context, enabled: bool, show_details: bool) -> None:
     help="Git operations to perform with found commit [default=checkout].",
 )
 @click.option("-b", "--branch", default=None, help="Name of branch for git checkout.")
-@click.option("--directory", default=None, help="Directory to execute command at.")
 @click.pass_context
-def git_branch(
-    ctx: click.Context, revision: str, operation: GitAction, branch: str, directory: str
-) -> None:
+def git_branch(ctx: click.Context, revision: str, operation: GitAction, branch: str) -> None:
     """Perform basic git checkout|rebase|merge operations to the specific revision."""
     orchestrator = EmmOrchestrator()
-    orchestrator.git_operate_base(revision, operation, branch, directory)
+    orchestrator.git_operate_base(revision, operation, branch)
 
 
 if __name__ == "__main__":
