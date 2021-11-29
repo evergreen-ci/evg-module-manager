@@ -89,10 +89,6 @@ To create a branch named `my-branch`, use the following:
 ```bash
 evg-module-manager git-branch --operation=checkout --branch my-branch --revision HEAD
 ```
-or the same command as above with shortcut
-```bash
-evg-module-manager git-branch -o checkout -b my-branch -r HEAD
-```
 
 Checkout to a certain revision, you can issue the following:
 ```bash
