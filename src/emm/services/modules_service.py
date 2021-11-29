@@ -135,3 +135,16 @@ class ModulesService:
 
         self.git_service.fetch(module_location)
         self.git_service.checkout(module_revision, directory=module_location)
+
+    def git_commit_modules(self, commit: str) -> None:
+        """
+        Git commit all changes to all modules.
+
+        :param commit: Commit content for all changes.
+        """
+        enabled_modules = self.get_all_modules(True)
+        self.git_service.commit_all(commit)
+        for module in enabled_modules:
+            module_data = self.get_module_data(module)
+            module_location = Path(module_data.prefix) / module
+            self.git_service.commit_all(commit, module_location)

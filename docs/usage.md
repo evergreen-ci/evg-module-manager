@@ -2,7 +2,7 @@
 
 ## Overview
 
-`evg-module-manager` is a tool to help work with [Evergreen](https://github.com/evergreen-ci/evergreen) 
+`evg-module-manager` is a tool to help work with [Evergreen](https://github.com/evergreen-ci/evergreen)
 modules on your local workstation.
 
 ### Prerequisites
@@ -47,7 +47,7 @@ local repository.
 
 ## Enabling/disabling modules
 
-To enable a modules in your local repo, use the `enable` command. If the module code is not 
+To enable a modules in your local repo, use the `enable` command. If the module code is not
 available locally, it will be cloned into the directory specified by the `modules-dir` option.
 Modules are enabled by adding a symlink to the cloned repository at the modules "prefix".
 
@@ -62,10 +62,21 @@ the cloned repository.
 evg-module-manager disable --module wiredtiger
 ```
 
+## Performing git commit all
+
+Use the `git-commit` command to commit all your git tracked changes to your base repository and any
+modules that are currently enabled. The tool has already specified `--all` and `--message` option to git, which means
+it would automatically add and commit all the modifications that git has tracked.
+
+To commit all the tracked changes in base repo and any enabled modules:
+```bash
+evg-module-manager git-commit --commit-message "my commit message"
+```
+
 ## Submitting a patch build
 
 Use the `patch` command to create a patch build with changes to your base repository and any
-modules that are currently enabled. You can pass along any options that the `evergreen patch` 
+modules that are currently enabled. You can pass along any options that the `evergreen patch`
 command supports, however, the `--skip_confirm` and `--project` options are already specified
 by the tools are should not be included.
 
@@ -75,12 +86,12 @@ evg-module-manager patch -d "my patch description" -u
 
 ## Submitting to the commit-queue
 
-Use the `commit-queue` command to submit changes to the commit-queue that include changes to 
-your base repository and any modules that are currently enabled. You can pass along any 
-options that the `evergreen commit-queue merge` command supports, however, the 
-`--skip_confirm` and `--project` options are already specified by the tools are should not 
+Use the `commit-queue` command to submit changes to the commit-queue that include changes to
+your base repository and any modules that are currently enabled. You can pass along any
+options that the `evergreen commit-queue merge` command supports, however, the
+`--skip_confirm` and `--project` options are already specified by the tools are should not
 be included.
 
 ```bash
-evg-module-manager commit-queue 
+evg-module-manager commit-queue
 ```
