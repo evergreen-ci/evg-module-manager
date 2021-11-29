@@ -87,12 +87,16 @@ For the **checkout** option, you can specify a branch name to create with the `-
 To create a branch named `my-branch`, use the following:
 
 ```bash
-evg-module-manager git-branch -o checkout --branch my-branch
+evg-module-manager git-branch --operation=checkout --branch my-branch
+```
+or the same command as above
+```bash
+evg-module-manager git-branch -o checkout -b my-branch
 ```
 
 Checkout to a certain revision, you can issue the following:
 ```bash
-evg-module-manager git-branch -o checkout "revision_to_checkout"
+evg-module-manager git-branch --operation=checkout "revision_to_checkout"
 ```
 
 ### Rebase/Merge branches
@@ -110,7 +114,7 @@ evg-module-manager git-branch --operation=merge
 
 To rebase my active branch on the most recent commit on a given directory:
 ```bash
-evg-module-manager git-branch -o rebase --directory=/path/to/rebase
+evg-module-manager git-branch --operation=rebase --directory=/path/to/rebase
 ```
 
 ## Submitting a patch build
