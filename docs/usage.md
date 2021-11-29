@@ -62,55 +62,46 @@ the cloned repository.
 evg-module-manager disable --module wiredtiger
 ```
 
-## Handling git branches
+## Creating a branch
 
-Use `git-branch` command to work on branch related cases on base repo and any enabled modules.
-By default, a git checkout action will be performed to the revision
-in the base repository. However, the `git-branch --operation` option can be provided to change this
-behavior.
+Use `git-branch` command to create a new branch on base repo and any enabled modules.
+To create a new branch, you can use the **checkout** option along with the revision
+you want to work with. If you want to create a new branch with a certain name,
+specify the branch name to create with the `-b` or `--branch` option.
 
-The option takes one of the following as an argument:
+Checkout to the revision you want to work with:
+```bash
+evg-module-manager git-branch --operation checkout --revision "revision_to_checkout"
+```
 
-* **checkout** [default] - Perform a `git checkout` to checkout the found revision.
-* **rebase** - Perform a `git rebase` to rebase changes on top of the found revision.
-* **merge** - Perform a `git merge` to merge changes up to the found revision into the current branch.
+To create a branch named `my-branch`, use the following:
+```bash
+evg-module-manager git-branch --operation checkout --branch my-branch --revision HEAD
+```
 
-### Checkout branches
-To create a new branch or checkout to a certain revision. The revision to be checked out would be the
+
+## Updating existing git branches
+
+Use `git-branch` command to update your existing branches on base repo and any enabled modules.
+By default, a git checkout action will be performed to the user provided revision
+in the base repository.
+
+For revisions on modules, the revision to be checked out would be the
 revision for the module in the evergreen manifest associated with the latest commit in the history that
 was run in evergreen.
 
-For the **checkout** option, you can specify a branch name to create with the `-b` or
-`--branch` option.
-
-#### Examples
-To create a branch named `my-branch`, use the following:
-
-```bash
-evg-module-manager git-branch --operation=checkout --branch my-branch --revision HEAD
-```
-
-Checkout to a certain revision, you can issue the following:
-```bash
-evg-module-manager git-branch --operation=checkout --revision "revision_to_checkout"
-```
-
-### Rebase/Merge branches
-To update the branch with the latest comment on all enabled modules.
-
-For the **rebase** and **merge** operations, if any merge conflicts occur, they will be reported and
+To update the branch with the latest comment on all enabled modules. You can use the **rebase** or
+**merge** operations, if any merge conflicts occur, they will be reported and
 the repository will be left in the unmerged state for manually resolution.
 
-#### Examples
 To merge my active branch on the most recent comment:
-
 ```bash
-evg-module-manager git-branch --operation=merge
+evg-module-manager git-branch --operation merge --revision HEAD
 ```
 
-To rebase my active branch on the most recent commit on a given directory:
+To rebase my active branch on the most recent commit:
 ```bash
-evg-module-manager git-branch --operation=rebase --directory=/path/to/rebase
+evg-module-manager git-branch --operation rebase --revision HEAD
 ```
 
 ## Performing git commit all

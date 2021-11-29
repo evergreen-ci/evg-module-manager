@@ -231,7 +231,9 @@ def list_modules(ctx: click.Context, enabled: bool, show_details: bool) -> None:
 
 
 @cli.command(context_settings=dict(max_content_width=100))
-@click.option("-r", "--revision", required=True, help="Revision to be checked out.")
+@click.option(
+    "-r", "--revision", required=True, help="Revision to be checked out or updated the branch from."
+)
 @click.option(
     "-o",
     "--operation",
