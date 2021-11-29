@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.5 - 2021-11-24
+- Ability to create commits in enabled modules
+
 ## 0.1.4 - 2021-11-23
 - Add check to ensure version update
 

@@ -79,6 +79,14 @@ class EmmOrchestrator:
                 print(f"\trepo: {module_data.repo}")
                 print(f"\tbranch: {module_data.branch}")
 
+    def git_commit_modules(self, commit_message: str) -> None:
+        """
+        Git commit all changes to all modules.
+
+        :param commit_message: Commit content for all changes.
+        """
+        self.modules_service.git_commit_modules(commit_message)
+
 
 def configure_logging(verbose: bool) -> None:
     """
@@ -209,6 +217,24 @@ def list_modules(ctx: click.Context, enabled: bool, show_details: bool) -> None:
     """List the modules available for the current repo."""
     orchestrator = EmmOrchestrator()
     orchestrator.display_modules(enabled, show_details)
+
+
+@cli.command(context_settings=dict(max_content_width=100))
+@click.option("--commit-message", required=True, help="Commit message to apply.")
+@click.pass_context
+def git_commit(ctx: click.Context, commit_message: str) -> None:
+    """
+    Create a git commit of changes in each module.
+
+    Any enabled modules with git tracked changes will be committed with the commit message
+    along with changes to the base repository.
+
+    The following options are already included in the git commit command:
+    * --all, -a
+    * --message, -m
+    """
+    orchestrator = EmmOrchestrator()
+    orchestrator.git_commit_modules(commit_message)
 
 
 if __name__ == "__main__":

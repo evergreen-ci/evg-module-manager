@@ -1,6 +1,6 @@
 """Unit tests for modules_service.py."""
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, call
 
 import pytest
 from shrub.v3.evg_project import EvgModule
@@ -237,3 +237,33 @@ class TestSyncModule:
 
         with pytest.raises(ValueError):
             modules_service.sync_module(module_name, module_data)
+
+
+class TestCommitModule:
+    def test_commit_should_call_git_commit_all(
+        self,
+        modules_service,
+        evg_service,
+        git_service,
+    ):
+        commit = "test_commit"
+        modules_service.git_commit_modules(commit)
+        git_service.commit_all.assert_called_with(commit)
+
+    def test_commit_should_apply_path_to_each_module(
+        self,
+        modules_service,
+        evg_service,
+        git_service,
+    ):
+        commit = "test_commit"
+        evg_service.get_module_map.return_value = {
+            f"module_name_{i}": build_module_data() for i in range(3)
+        }
+        modules_service.git_commit_modules(commit)
+        calls = [
+            call(commit),
+            call(commit, Path("src/modules") / "module_name_1"),
+            call(commit, Path("src/modules") / "module_name_2"),
+        ]
+        git_service.commit_all.assert_has_calls(calls, any_order=True)
