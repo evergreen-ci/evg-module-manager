@@ -144,7 +144,7 @@ class GitService:
         """
         args = ["commit", "--all", "--message", commit_message]
         with local.cwd(self._determine_directory(directory)):
-            self.git[args]().strip()
+            self.git[args]()
 
     @staticmethod
     def _determine_directory(directory: Optional[Path] = None) -> Path:
