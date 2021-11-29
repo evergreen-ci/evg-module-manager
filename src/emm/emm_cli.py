@@ -90,6 +90,14 @@ class EmmOrchestrator:
         """
         self.modules_service.git_operate_base(operation, revision, branch)
 
+    def git_commit_modules(self, commit_message: str) -> None:
+        """
+        Git commit all changes to all modules.
+
+        :param commit_message: Commit content for all changes.
+        """
+        self.modules_service.git_commit_modules(commit_message)
+
 
 def configure_logging(verbose: bool) -> None:
     """
@@ -237,6 +245,23 @@ def git_branch(ctx: click.Context, revision: str, operation: GitAction, branch: 
     """Perform basic git checkout|rebase|merge operations to the specific revision."""
     orchestrator = EmmOrchestrator()
     orchestrator.git_operate_base(revision, operation, branch)
+
+
+@click.option("--commit-message", required=True, help="Commit message to apply.")
+@click.pass_context
+def git_commit(ctx: click.Context, commit_message: str) -> None:
+    """
+    Create a git commit of changes in each module.
+
+    Any enabled modules with git tracked changes will be committed with the commit message
+    along with changes to the base repository.
+
+    The following options are already included in the git commit command:
+    * --all, -a
+    * --message, -m
+    """
+    orchestrator = EmmOrchestrator()
+    orchestrator.git_commit_modules(commit_message)
 
 
 if __name__ == "__main__":

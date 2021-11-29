@@ -117,6 +117,17 @@ To rebase my active branch on the most recent commit on a given directory:
 evg-module-manager git-branch --operation=rebase --directory=/path/to/rebase
 ```
 
+## Performing git commit all
+
+Use the `git-commit` command to commit all your git tracked changes to your base repository and any
+modules that are currently enabled. The tool has already specified `--all` and `--message` option to git, which means
+it would automatically add and commit all the modifications that git has tracked.
+
+To commit all the tracked changes in base repo and any enabled modules:
+```bash
+evg-module-manager git-commit --commit-message "my commit message"
+```
+
 ## Submitting a patch build
 
 Use the `patch` command to create a patch build with changes to your base repository and any

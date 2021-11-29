@@ -73,6 +73,7 @@ Commands:
   disable       Disable the specified module in the current repo.
   enable        Enable the specified module in the current repo.
   git-branch    Perform basic git checkout|rebase|merge operations to the specific revision.
+  git-commit    Perform git commit of changes in each module.
   list-modules  List the modules available for the current repo.
   patch         Create an Evergreen patch with changes from the base repo and any enabled...
 ```

@@ -302,3 +302,33 @@ class TestGitOperateModule:
             for i in range(5)
         ]
         git_service.perform_git_action.assert_has_calls(calls, any_order=True)
+
+
+class TestCommitModule:
+    def test_commit_should_call_git_commit_all(
+        self,
+        modules_service,
+        evg_service,
+        git_service,
+    ):
+        commit = "test_commit"
+        modules_service.git_commit_modules(commit)
+        git_service.commit_all.assert_called_with(commit)
+
+    def test_commit_should_apply_path_to_each_module(
+        self,
+        modules_service,
+        evg_service,
+        git_service,
+    ):
+        commit = "test_commit"
+        evg_service.get_module_map.return_value = {
+            f"module_name_{i}": build_module_data() for i in range(3)
+        }
+        modules_service.git_commit_modules(commit)
+        calls = [
+            call(commit),
+            call(commit, Path("src/modules") / "module_name_1"),
+            call(commit, Path("src/modules") / "module_name_2"),
+        ]
+        git_service.commit_all.assert_has_calls(calls, any_order=True)

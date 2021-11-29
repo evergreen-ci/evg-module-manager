@@ -135,6 +135,17 @@ class GitService:
         with local.cwd(self._determine_directory(directory)):
             return self.git[args]().strip()
 
+    def commit_all(self, commit_message: str, directory: Optional[Path] = None) -> None:
+        """
+        Get the commit hash of the current HEAD of a repository.
+
+        :param commit_message: Commit message for all the changes.
+        :param directory: Directory to execute command at.
+        """
+        args = ["commit", "--all", "--message", commit_message]
+        with local.cwd(self._determine_directory(directory)):
+            self.git[args]()
+
     @staticmethod
     def _determine_directory(directory: Optional[Path] = None) -> Path:
         """
