@@ -231,22 +231,29 @@ def list_modules(ctx: click.Context, enabled: bool, show_details: bool) -> None:
 
 
 @cli.command(context_settings=dict(max_content_width=100))
-@click.option(
-    "-r", "--revision", required=True, help="Revision to be checked out or updated the branch from."
-)
+@click.option("-b", "--branch", default=None, help="Name of branch for git checkout.")
+@click.option("-r", "--revision", default="HEAD", help="Revision to be checked out.")
+@click.pass_context
+def create_branch(ctx: click.Context, revision: str, branch: str) -> None:
+    """Perform git checkout operation to create the branch."""
+    orchestrator = EmmOrchestrator()
+    orchestrator.git_operate_base(revision, GitAction.CHECKOUT, branch)
+
+
+@cli.command(context_settings=dict(max_content_width=100))
 @click.option(
     "-o",
     "--operation",
-    type=click.Choice([a.value for a in GitAction]),
-    default=GitAction.CHECKOUT,
-    help="Git operations to perform with found commit [default=checkout].",
+    type=click.Choice([GitAction.MERGE, GitAction.REBASE]),
+    default=GitAction.MERGE,
+    help="Git operations to perform with the given revision[default=merge].",
 )
-@click.option("-b", "--branch", default=None, help="Name of branch for git checkout.")
+@click.option("-r", "--revision", required=True, help="Revision to be updated the branch from.")
 @click.pass_context
-def git_branch(ctx: click.Context, revision: str, operation: GitAction, branch: str) -> None:
-    """Perform basic git checkout|rebase|merge operations to the specific revision."""
+def update_branch(ctx: click.Context, revision: str, operation: GitAction) -> None:
+    """Perform git merge|rebase operation to update the branch."""
     orchestrator = EmmOrchestrator()
-    orchestrator.git_operate_base(revision, operation, branch)
+    orchestrator.git_operate_base(revision, operation, None)
 
 
 @click.option("--commit-message", required=True, help="Commit message to apply.")

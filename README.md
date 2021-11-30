@@ -70,12 +70,13 @@ Options:
 
 Commands:
   commit-queue  Submit changes from the base repository and any enabled modules to the...
+  create-branch Perform git checkout operation to create the branch.
   disable       Disable the specified module in the current repo.
   enable        Enable the specified module in the current repo.
-  git-branch    Perform basic git checkout|rebase|merge operations to the specific revision.
   git-commit    Perform git commit of changes in each module.
   list-modules  List the modules available for the current repo.
   patch         Create an Evergreen patch with changes from the base repo and any enabled...
+  update-branch Perform git merge|rebase operation to update the branch.
 ```
 
 ## Contributor's Guide

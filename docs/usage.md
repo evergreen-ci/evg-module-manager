@@ -64,29 +64,29 @@ evg-module-manager disable --module wiredtiger
 
 ## Creating a branch
 
-Use `git-branch` command to create a new branch on base repo and any enabled modules.
-To create a new branch, you can use the **checkout** option along with the revision
-you want to work with. If you want to create a new branch with a certain name,
+Use `create-branch` command to create a new branch on base repo and any enabled modules.
+To create a new branch, you can use the revision you want to work with `-r` or `--revsion` option.
+If you want to create a new branch with a certain name,
 specify the branch name to create with the `-b` or `--branch` option.
 
 Checkout to the revision you want to work with:
 ```bash
-evg-module-manager git-branch --operation checkout --revision "revision_to_checkout"
+evg-module-manager create-branch --revision "revision_to_checkout"
 ```
 
 To create a branch named `my-branch`, use the following:
 ```bash
-evg-module-manager git-branch --operation checkout --branch my-branch --revision HEAD
+evg-module-manager create-branch --branch my-branch
 ```
 
 
 ## Updating existing git branches
 
-Use `git-branch` command to update your existing branches on base repo and any enabled modules.
-By default, a git checkout action will be performed to the user provided revision
+Use `update-branch` command to update your existing branches on base repo and any enabled modules.
+By default, a git merge action will be performed to the user provided revision
 in the base repository.
 
-For revisions on modules, the revision to be checked out would be the
+For revisions on modules, the revision to be merged or rebased would be the
 revision for the module in the evergreen manifest associated with the latest commit in the history that
 was run in evergreen.
 
@@ -94,14 +94,14 @@ To update the branch with the latest comment on all enabled modules. You can use
 **merge** operations, if any merge conflicts occur, they will be reported and
 the repository will be left in the unmerged state for manually resolution.
 
-To merge my active branch on the most recent comment:
+To merge the most recent comment on master into my active branch:
 ```bash
-evg-module-manager git-branch --operation merge --revision HEAD
+evg-module-manager update-branch --operation merge --revision master
 ```
 
-To rebase my active branch on the most recent commit:
+To rebase the most recent comment on master into my active branch:
 ```bash
-evg-module-manager git-branch --operation rebase --revision HEAD
+evg-module-manager update-branch --operation rebase --revision master
 ```
 
 ## Performing git commit all
