@@ -256,7 +256,8 @@ def update_branch(ctx: click.Context, revision: str, operation: GitAction) -> No
     orchestrator.git_operate_base(revision, operation, None)
 
 
-@click.option("--commit-message", required=True, help="Commit message to apply.")
+@cli.command(context_settings=dict(max_content_width=100))
+@click.option("-m", "--commit-message", required=True, help="Commit message to apply.")
 @click.pass_context
 def git_commit(ctx: click.Context, commit_message: str) -> None:
     """

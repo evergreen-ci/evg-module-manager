@@ -65,19 +65,23 @@ evg-module-manager disable --module wiredtiger
 ## Creating a branch
 
 Use `create-branch` command to create a new branch on base repo and any enabled modules.
-To create a new branch, you can use the revision you want to work with `-r` or `--revsion` option.
-If you want to create a new branch with a certain name,
+To create a new branch with a certain name,
 specify the branch name to create with the `-b` or `--branch` option.
-
-Checkout to the revision you want to work with:
-```bash
-evg-module-manager create-branch --revision "revision_to_checkout"
-```
 
 To create a branch named `my-branch`, use the following:
 ```bash
 evg-module-manager create-branch --branch my-branch
 ```
+
+Use the revision you can also create a branch base off that revision. The branch name would
+be the revision you specified with `-r` or `--revsion` option.
+
+To create a branch with the revision you want to start work with:
+```bash
+evg-module-manager create-branch --revision "revision_to_checkout"
+```
+
+
 
 
 ## Updating existing git branches
