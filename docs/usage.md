@@ -62,6 +62,52 @@ the cloned repository.
 evg-module-manager disable --module wiredtiger
 ```
 
+## Creating a branch
+
+Use `create-branch` command to create a new branch on base repo and any enabled modules.
+To create a new branch with a certain name,
+specify the branch name to create with the `-b` or `--branch` option.
+
+To create a branch named `my-branch`, use the following:
+```bash
+evg-module-manager create-branch --branch my-branch
+```
+
+Use the revision you can also create a branch base off that revision. The branch name would
+be the revision you specified with `-r` or `--revsion` option.
+
+To create a branch with the revision you want to start work with:
+```bash
+evg-module-manager create-branch --revision "revision_to_checkout"
+```
+
+
+
+
+## Updating existing git branches
+
+Use `update-branch` command to update your existing branches on base repo and any enabled modules.
+By default, a git merge action will be performed to the user provided revision
+in the base repository.
+
+For revisions on modules, the revision to be merged or rebased would be the
+revision for the module in the evergreen manifest associated with the latest commit in the history that
+was run in evergreen.
+
+To update the branch with the latest comment on all enabled modules. You can use the **rebase** or
+**merge** operations, if any merge conflicts occur, they will be reported and
+the repository will be left in the unmerged state for manually resolution.
+
+To merge the most recent comment on master into my active branch:
+```bash
+evg-module-manager update-branch --operation merge --revision master
+```
+
+To rebase the most recent comment on master into my active branch:
+```bash
+evg-module-manager update-branch --operation rebase --revision master
+```
+
 ## Performing git commit all
 
 Use the `git-commit` command to commit all your git tracked changes to your base repository and any

@@ -12,6 +12,7 @@ from evergreen import EvergreenApi, RetryingEvergreenApi
 from structlog.stdlib import LoggerFactory
 
 from emm.options import DEFAULT_EVG_CONFIG, DEFAULT_EVG_PROJECT, DEFAULT_MODULES_PATH, EmmOptions
+from emm.services.git_service import GitAction
 from emm.services.modules_service import ModulesService
 from emm.services.patch_service import PatchService
 
@@ -78,6 +79,16 @@ class EmmOrchestrator:
                 print(f"\tprefix: {module_data.prefix}")
                 print(f"\trepo: {module_data.repo}")
                 print(f"\tbranch: {module_data.branch}")
+
+    def git_operate_base(self, revision: str, operation: GitAction, branch: str) -> None:
+        """
+        Git checkout|rebase|merge modules to the specific revision.
+
+        :param revision: Dictionary of module names and git revision to check out.
+        :param operation: Git operation to perform.
+        :param branch: Name of branch for git checkout.
+        """
+        self.modules_service.git_operate_base(operation, revision, branch)
 
     def git_commit_modules(self, commit_message: str) -> None:
         """
@@ -220,7 +231,33 @@ def list_modules(ctx: click.Context, enabled: bool, show_details: bool) -> None:
 
 
 @cli.command(context_settings=dict(max_content_width=100))
-@click.option("--commit-message", required=True, help="Commit message to apply.")
+@click.option("-b", "--branch", default=None, help="Name of branch for git checkout.")
+@click.option("-r", "--revision", default="HEAD", help="Revision to be checked out.")
+@click.pass_context
+def create_branch(ctx: click.Context, revision: str, branch: str) -> None:
+    """Perform git checkout operation to create the branch."""
+    orchestrator = EmmOrchestrator()
+    orchestrator.git_operate_base(revision, GitAction.CHECKOUT, branch)
+
+
+@cli.command(context_settings=dict(max_content_width=100))
+@click.option(
+    "-o",
+    "--operation",
+    type=click.Choice([GitAction.MERGE, GitAction.REBASE]),
+    default=GitAction.MERGE,
+    help="Git operations to perform with the given revision[default=merge].",
+)
+@click.option("-r", "--revision", required=True, help="Revision to be updated the branch from.")
+@click.pass_context
+def update_branch(ctx: click.Context, revision: str, operation: GitAction) -> None:
+    """Perform git merge|rebase operation to update the branch."""
+    orchestrator = EmmOrchestrator()
+    orchestrator.git_operate_base(revision, operation, None)
+
+
+@cli.command(context_settings=dict(max_content_width=100))
+@click.option("-m", "--commit-message", required=True, help="Commit message to apply.")
 @click.pass_context
 def git_commit(ctx: click.Context, commit_message: str) -> None:
     """
