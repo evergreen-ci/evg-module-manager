@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.7 - 2021-12-05
+- Add check for changelog updates
+
 ## 0.1.6 - 2021-11-29
 - Adding branching support
 
