@@ -1,7 +1,8 @@
 """Service for working with git."""
+import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import Dict, Optional
 
 from plumbum import local
 
@@ -145,6 +146,131 @@ class GitService:
         args = ["commit", "--all", "--message", commit_message]
         with local.cwd(self._determine_directory(directory)):
             self.git[args]()
+
+    def rev_list(
+        self, date: datetime.datetime, revision: Optional[str], directory: Optional[Path] = None
+    ) -> str:
+        """
+        Get the list of revisions in range start to end.
+
+        :param date: End date to get rev_list.
+        :param revision: Revision to get rev_list.
+        :param directory: Directory to execute command at.git
+        :return: List of revisions.
+        """
+        args = ["rev-list", revision, "--max-count=1", f"--before={date}"]
+        with local.cwd(self._determine_directory(directory)):
+            res = self.git[args]().strip()
+            print(res)
+            return res
+
+    def datetime_to_string(self, datetimes: datetime.datetime) -> str:
+        """Convert datetime object to string."""
+        if datetimes.hour == 0 and datetimes.minute == 0 and datetimes.second == 0:
+            return datetimes.strftime("%Y.%m.%d")
+        return datetimes.strftime("%Y.%m.%d.%H.%M.%S")
+
+    def string_to_datetime(self, dates: str) -> datetime.datetime:
+        """Convert date string to datetime object."""
+        fields = dates.split(".")
+        if len(fields) == 6:
+            return datetime.datetime(
+                int(fields[0]),
+                int(fields[1]),
+                int(fields[2]),
+                int(fields[3]),
+                int(fields[4]),
+                int(fields[5]),
+            )
+        if len(fields) == 4:
+            return datetime.datetime(int(fields[0]), int(fields[1]), int(fields[2]), int(fields[3]))
+        if len(fields) == 3:
+            return datetime.datetime(int(fields[0]), int(fields[1]), int(fields[2]))
+        raise ValueError("Invalid Date format.")
+
+    def bisect_in_dates(
+        self, start: datetime.datetime, end: datetime.datetime
+    ) -> datetime.datetime:
+        """Get the middle date between two datetime objects."""
+        delta = (end - start) / 2
+        print(delta)
+        if delta.total_seconds() < 3600:
+            raise ValueError("No more dates left.")
+
+        mid = start + delta
+        if mid.minute != 0 or mid.second != 0:
+            mid = mid.replace(minute=0, second=0)
+        if delta.total_seconds() > 86400 and start.hour == 0 and end.hour == 0:
+            if mid.hour != 0:
+                mid = mid.replace(hour=0)
+        return mid
+
+    def write_states(self, states_dict: Dict[str, str]) -> None:
+        """Write the bisect state file."""
+        state_path = Path(local.cwd) / "bisect"
+        file = open(state_path, "w")
+        file.write("start=%s\n" % (states_dict["start"]))
+        file.write("end=%s\n" % (states_dict["end"]))
+        file.close()
+
+    def read_state(self) -> Dict[str, str]:
+        """Read the previous bisect state."""
+        state_path = Path(local.cwd) / "bisect"
+        file = open(state_path, "r")
+        state = dict()
+        for line in file:
+            dates, dates_value = line.strip().split("=")
+            state[dates] = dates_value
+        file.close()
+        return state
+
+    def bisect_start(
+        self,
+        state_dict: Dict[str, str],
+        date: datetime.datetime,
+        revision: Optional[str] = "HEAD",
+        directory: Optional[Path] = None,
+    ) -> None:
+        """Start the bisect operation."""
+        self.write_states(state_dict)
+        self.rev_list(date, revision, directory)
+
+    def bisect_mark(
+        self, action: str, revision: Optional[str], directory: Optional[Path] = None
+    ) -> None:
+        """Mark the bisect results."""
+        state = self.read_state()
+        start_date = self.string_to_datetime(state["start"])
+        end_date = self.string_to_datetime(state["end"])
+        mid = self.bisect_in_dates(start_date, end_date)
+        if action == "good":
+            state["start"] = self.datetime_to_string(mid)
+        else:
+            state["end"] = self.datetime_to_string(mid)
+        states_dict = {"start": state["start"], "end": state["end"]}
+        print(f"bisect between {state['start']} and {state['end']}")
+        self.bisect_start(states_dict, mid, revision, directory)
+
+    def perform_bisect_action(
+        self,
+        bisect_action: str,
+        start: str,
+        end: str,
+        revision: Optional[str] = "HEAD",
+        directory: Optional[Path] = None,
+    ) -> None:
+        """Execute the bisect method."""
+        if bisect_action == "start":
+            states_dict = {"start": start, "end": end}
+            start_date = self.string_to_datetime(start)
+            end_date = self.string_to_datetime(end)
+            mid = self.bisect_in_dates(start_date, end_date)
+            print(f"bisect between {start} and {end}")
+            self.bisect_start(states_dict, mid, revision, directory)
+        elif bisect_action in ("good", "bad"):
+            self.bisect_mark(bisect_action, revision, directory)
+        else:
+            raise ValueError(f"Unknown bisect action: {bisect_action}")
 
     @staticmethod
     def _determine_directory(directory: Optional[Path] = None) -> Path:

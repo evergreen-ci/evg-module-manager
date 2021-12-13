@@ -98,6 +98,10 @@ class EmmOrchestrator:
         """
         self.modules_service.git_commit_modules(commit_message)
 
+    def bisect(self, action: str, revision: str, start: str, end: str) -> None:
+        """Git bisect across multiple repos."""
+        self.modules_service.bisect(action, revision, start, end)
+
 
 def configure_logging(verbose: bool) -> None:
     """
@@ -272,6 +276,32 @@ def git_commit(ctx: click.Context, commit_message: str) -> None:
     """
     orchestrator = EmmOrchestrator()
     orchestrator.git_commit_modules(commit_message)
+
+
+@cli.command(context_settings=dict(max_content_width=100))
+@click.option(
+    "-a",
+    "--action",
+    type=click.Choice(["start", "good", "bad"]),
+    default="start",
+    help="Bisect actions to perform the git bisect[default=start].",
+)
+@click.option("-r", "--revision", default="HEAD", help="Revision to start the bisect.")
+@click.option(
+    "-s",
+    "--start",
+    help="Start date to do the bisection. Valid formats:  YYYY.MM.DD.HH.MM.SS  YYYY.MM.DD.HH  YYYY.MM.DD.",
+)
+@click.option(
+    "-e",
+    "--end",
+    help="End date to do the bisection. Valid formats:  YYYY.MM.DD.HH.MM.SS  YYYY.MM.DD.HH  YYYY.MM.DD.",
+)
+@click.pass_context
+def bisect(ctx: click.Context, action: str, revision: str, start: str, end: str) -> None:
+    """Bisect across base repo and enabled modules."""
+    orchestrator = EmmOrchestrator()
+    orchestrator.bisect(action, revision, start, end)
 
 
 if __name__ == "__main__":

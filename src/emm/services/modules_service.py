@@ -231,3 +231,46 @@ class ModulesService:
             module_data = self.get_module_data(module)
             module_location = Path(module_data.prefix) / module
             self.git_service.commit_all(commit, module_location)
+
+    def attempt_bisect(
+        self,
+        action: str,
+        start: str,
+        end: str,
+        revision: Optional[str] = "HEAD",
+        directory: Optional[Path] = None,
+    ) -> Optional[str]:
+        """
+        Attempt to perform the specified git operation.
+
+        :param action: Action to perform.
+        :param start: Date to start with.
+        :param end: Date to end up with.
+        :param revision: Git revision to perform bisect action on.
+        :param directory: Directory of git repository.
+        :return: Error message if an error was encountered.
+        """
+        try:
+            self.git_service.perform_bisect_action(action, start, end, revision, directory)
+        except ProcessExecutionError:
+            LOGGER.warning(
+                f"Error encountered during bisect operation {action} on {revision}", exc_info=True
+            )
+            return f"Encountered error performing '{action}' on '{revision}'"
+        return None
+
+    def bisect(self, action: str, revision: str, start: str, end: str) -> None:
+        """
+        Bisect on base repo and enabled modules based on date range.
+
+        :param action: Action to perform.
+        :param start: Date to start with.
+        :param end: Date to end up with.
+        :param revision: Git revision to perform bisect action on.
+        """
+        enabled_modules = self.get_all_modules(True)
+        self.git_service.perform_bisect_action(action, start, end)
+        for module in enabled_modules:
+            module_data = self.get_module_data(module)
+            module_location = Path(module_data.prefix) / module
+            self.attempt_bisect(action, start, end, revision, module_location)
