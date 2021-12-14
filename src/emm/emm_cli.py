@@ -98,6 +98,10 @@ class EmmOrchestrator:
         """
         self.modules_service.git_commit_modules(commit_message)
 
+    def git_pull_request(self, args: List[str]) -> None:
+        """Create pull request to all modules."""
+        self.modules_service.git_pull_request(args)
+
 
 def configure_logging(verbose: bool) -> None:
     """
@@ -272,6 +276,16 @@ def git_commit(ctx: click.Context, commit_message: str) -> None:
     """
     orchestrator = EmmOrchestrator()
     orchestrator.git_commit_modules(commit_message)
+
+
+@cli.command(
+    context_settings=dict(max_content_width=100, ignore_unknown_options=True, allow_extra_args=True)
+)
+@click.pass_context
+def pull_request(ctx: click.Context) -> None:
+    """Create pull request for the changes in each module."""
+    orchestrator = EmmOrchestrator()
+    orchestrator.git_pull_request(ctx.args)
 
 
 if __name__ == "__main__":

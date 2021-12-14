@@ -1,6 +1,6 @@
 """Service for working with evergreen modules."""
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 import inject
 import structlog
@@ -231,3 +231,11 @@ class ModulesService:
             module_data = self.get_module_data(module)
             module_location = Path(module_data.prefix) / module
             self.git_service.commit_all(commit, module_location)
+
+    def git_pull_request(self, args: List[str]) -> None:
+        """
+        Create pull request for each module.
+
+        :param args: Arguments to pass to the github CLi.
+        """
+        self.git_service.pull_request(args)

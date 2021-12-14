@@ -1,7 +1,7 @@
 """Service for working with git."""
 from enum import Enum
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 from plumbum import local
 
@@ -20,6 +20,7 @@ class GitService:
     def __init__(self) -> None:
         """Initialize the service."""
         self.git = local.cmd.git
+        self.gh = local.cmd.gh
 
     def perform_git_action(
         self,
@@ -145,6 +146,18 @@ class GitService:
         args = ["commit", "--all", "--message", commit_message]
         with local.cwd(self._determine_directory(directory)):
             self.git[args]()
+
+    def pull_request(self, extra_args: List[str], directory: Optional[Path] = None) -> str:
+        """
+        Create the pull request using Github CLI.
+
+        :param extra_args: Extra arguments to pass to the github CLI.
+        :param directory: Directory to execute command at.
+        """
+        args = ["pr", "create"]
+        args.extend(extra_args)
+        with local.cwd(self._determine_directory(directory)):
+            return self.gh[args]()
 
     @staticmethod
     def _determine_directory(directory: Optional[Path] = None) -> Path:
