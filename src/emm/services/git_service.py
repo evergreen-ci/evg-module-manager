@@ -20,7 +20,6 @@ class GitService:
     def __init__(self) -> None:
         """Initialize the service."""
         self.git = local.cmd.git
-        self.gh = local.cmd.gh
 
     def perform_git_action(
         self,
@@ -153,11 +152,24 @@ class GitService:
 
         :param extra_args: Extra arguments to pass to the github CLI.
         :param directory: Directory to execute command at.
+        :return: Url of the created pull request.
         """
         args = ["pr", "create"]
         args.extend(extra_args)
         with local.cwd(self._determine_directory(directory)):
-            return self.gh[args]()
+            return local.cmd.gh[args]().strip()
+
+    def pr_comment(self, pr_url: str, pr_links: str, directory: Optional[Path] = None) -> None:
+        """
+        Add Pull Request url as comments for each repo.
+
+        :param pr_url: Pull request url to add the comment.
+        :param pr_links: Other modules pull request url.
+        :param directory: Directory to execute command at.
+        """
+        args = ["pr", "comment", pr_url, "--body", pr_links]
+        with local.cwd(self._determine_directory(directory)):
+            local.cmd.gh[args]()
 
     @staticmethod
     def _determine_directory(directory: Optional[Path] = None) -> Path:

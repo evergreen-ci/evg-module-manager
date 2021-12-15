@@ -224,6 +224,51 @@ class TestMergeBase:
         local_mock.cwd.assert_called_with(path)
 
 
+class TestPullRequest:
+    @patch(ns("local"))
+    def test_pull_request_with_correct_args_should_return_pr_url(self, local_mock, git_service):
+        local_mock.cmd.gh = MagicMock()
+        local_mock.cmd.gh.assert_gh_call = (
+            lambda args: local_mock.cmd.gh.__getitem__.assert_any_call(args)
+        )
+        local_mock.cmd.gh.__getitem__.return_value.return_value = "github.com/pull/123"
+
+        pr_url = git_service.pull_request(["--title", "Test title", "--body", "Test Body"])
+
+        local_mock.cmd.gh.assert_gh_call(
+            ["pr", "create", "--title", "Test title", "--body", "Test Body"]
+        )
+        assert pr_url == "github.com/pull/123"
+
+    @patch(ns("local"))
+    def test_pr_comment_should_call_gh_commit(self, local_mock, git_service):
+        local_mock.cmd.gh = MagicMock()
+        local_mock.cmd.gh.assert_gh_call = (
+            lambda args: local_mock.cmd.gh.__getitem__.assert_any_call(args)
+        )
+
+        git_service.pr_comment("github.com/pull/123", "module_repo: github/pull/234")
+
+        local_mock.cmd.gh.assert_gh_call(
+            ["pr", "comment", "github.com/pull/123", "--body", "module_repo: github/pull/234"]
+        )
+
+    @patch(ns("local"))
+    def test_pr_comment_with_directory_should_switch_directory(self, local_mock, git_service):
+        local_mock.cmd.gh = MagicMock()
+        local_mock.cmd.gh.assert_gh_call = (
+            lambda args: local_mock.cmd.gh.__getitem__.assert_any_call(args)
+        )
+
+        path = Path("/path/to/repo").absolute()
+        git_service.pr_comment("github.com/pull/234", "base_repo: github/pull/123", directory=path)
+
+        local_mock.cmd.gh.assert_gh_call(
+            ["pr", "comment", "github.com/pull/234", "--body", "base_repo: github/pull/123"]
+        )
+        local_mock.cwd.assert_called_with(path)
+
+
 class TestDetermineDirectory:
     @patch(ns("local"))
     def test_directory_of_none_should_return_cwd(self, local_mock, git_service):

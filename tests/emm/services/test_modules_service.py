@@ -332,3 +332,37 @@ class TestCommitModule:
             call(commit, Path("src/modules") / "module_name_2"),
         ]
         git_service.commit_all.assert_has_calls(calls, any_order=True)
+
+
+class TestPullRequestModule:
+    def test_pull_request_should_call_git_pull_request(
+        self,
+        modules_service,
+        evg_service,
+        git_service,
+    ):
+        args = ["--title", "Test title", "--body", "Test body"]
+        modules_service.git_pull_request(args)
+
+        git_service.pull_request.assert_called_with(args)
+
+    def test_pull_request_comment_should_call_git_pr_comment(
+        self,
+        modules_service,
+        evg_service,
+        git_service,
+    ):
+        comments = {"base": "github.com/pull/123", "module_name_1": "github.com/pull/234"}
+        evg_service.get_module_map.return_value = {"module_name_1": build_module_data()}
+        modules_service.add_pr_link(comments)
+
+        calls = [
+            call("github.com/pull/123", "module_name_1 pr: github.com/pull/234"),
+            call(
+                "github.com/pull/234",
+                "base pr: github.com/pull/123",
+                Path("src/modules") / "module_name_1",
+            ),
+        ]
+
+        git_service.pr_comment.assert_has_calls(calls, any_order=True)

@@ -232,10 +232,44 @@ class ModulesService:
             module_location = Path(module_data.prefix) / module
             self.git_service.commit_all(commit, module_location)
 
+    def add_pr_link(self, comments: Dict[str, str]) -> None:
+        """
+        Add link to each module.
+
+        :param comments: Dictionary of module and its pull request url.
+        """
+        for module, pr_url in comments.items():
+            if module != "base":
+                module_data = self.get_module_data(module)
+                module_location = Path(module_data.prefix) / module
+                pr_links = "\n".join(
+                    "{} pr: {}".format(repo, link)
+                    for repo, link in comments.items()
+                    if repo != module
+                )
+                self.git_service.pr_comment(pr_url, pr_links, module_location)
+                print("module ", module, " pr: ", pr_url)
+            else:
+                pr_links = "\n".join(
+                    "{} pr: {}".format(repo, link)
+                    for repo, link in comments.items()
+                    if repo != "base"
+                )
+                self.git_service.pr_comment(pr_url, pr_links)
+                print("base repo pr: ", pr_url)
+
     def git_pull_request(self, args: List[str]) -> None:
         """
         Create pull request for each module.
 
         :param args: Arguments to pass to the github CLi.
         """
-        self.git_service.pull_request(args)
+        enabled_modules = self.get_all_modules(True)
+        pr_link = self.git_service.pull_request(args)
+        comment_dict = {"base": pr_link}
+        for module in enabled_modules:
+            module_data = self.get_module_data(module)
+            module_location = Path(module_data.prefix) / module
+            link = self.git_service.pull_request(args, module_location)
+            comment_dict[module] = link
+        self.add_pr_link(comment_dict)
