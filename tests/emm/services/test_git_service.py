@@ -224,49 +224,45 @@ class TestMergeBase:
         local_mock.cwd.assert_called_with(path)
 
 
-class TestPullRequest:
+class TestGetBaseName:
     @patch(ns("local"))
-    def test_pull_request_with_correct_args_should_return_pr_url(self, local_mock, git_service):
-        local_mock.cmd.gh = MagicMock()
-        local_mock.cmd.gh.assert_gh_call = (
-            lambda args: local_mock.cmd.gh.__getitem__.assert_any_call(args)
-        )
-        local_mock.cmd.gh.__getitem__.return_value.return_value = "github.com/pull/123"
+    def test_get_base_name_should_return_default_basename(self, local_mock, git_service, mock_git):
+        mock_git.__getitem__.return_value.return_value = "origin/master"
 
-        pr_url = git_service.pull_request(["--title", "Test title", "--body", "Test Body"])
+        git_service.get_base_name()
+        mock_git.assert_git_call(["symbolic-ref", "refs/remotes/origin/HEAD"])
+        local_mock.cmd.basename.assert_called_with("origin/master")
 
-        local_mock.cmd.gh.assert_gh_call(
-            ["pr", "create", "--title", "Test title", "--body", "Test Body"]
-        )
-        assert pr_url == "github.com/pull/123"
 
+class TestPushBranchToRemote:
     @patch(ns("local"))
-    def test_pr_comment_should_call_gh_commit(self, local_mock, git_service):
-        local_mock.cmd.gh = MagicMock()
-        local_mock.cmd.gh.assert_gh_call = (
-            lambda args: local_mock.cmd.gh.__getitem__.assert_any_call(args)
-        )
+    def test_check_changes_should_return_changes(self, local_mock, git_service, mock_git):
+        mock_git.__getitem__.return_value.return_value = "diff --git aaa bbb\n"
 
-        git_service.pr_comment("github.com/pull/123", "module_repo: github/pull/234")
+        diff = git_service.check_changes("master")
 
-        local_mock.cmd.gh.assert_gh_call(
-            ["pr", "comment", "github.com/pull/123", "--body", "module_repo: github/pull/234"]
-        )
+        mock_git.assert_git_call(["diff", "master..HEAD"])
+        assert diff == "diff --git aaa bbb"
 
     @patch(ns("local"))
-    def test_pr_comment_with_directory_should_switch_directory(self, local_mock, git_service):
-        local_mock.cmd.gh = MagicMock()
-        local_mock.cmd.gh.assert_gh_call = (
-            lambda args: local_mock.cmd.gh.__getitem__.assert_any_call(args)
-        )
+    def test_current_branch_should_return_branch_name(self, local_mock, git_service, mock_git):
+        mock_git.__getitem__.return_value.return_value = "branch\n"
 
-        path = Path("/path/to/repo").absolute()
-        git_service.pr_comment("github.com/pull/234", "base_repo: github/pull/123", directory=path)
+        diff = git_service.current_branch()
 
-        local_mock.cmd.gh.assert_gh_call(
-            ["pr", "comment", "github.com/pull/234", "--body", "base_repo: github/pull/123"]
-        )
-        local_mock.cwd.assert_called_with(path)
+        mock_git.assert_git_call(["branch", "--show-current"])
+        assert diff == "branch"
+
+    @patch(ns("local"))
+    def test_branch_exist_on_remote_should_return_remote_branch(
+        self, local_mock, git_service, mock_git
+    ):
+        mock_git.__getitem__.return_value.return_value = "origin/branch\n"
+
+        remote_branch = git_service.current_branch_exist_on_remote("branch")
+
+        mock_git.assert_git_call(["branch", "--remotes", "--contains", "branch"])
+        assert remote_branch == "origin/branch"
 
 
 class TestDetermineDirectory:

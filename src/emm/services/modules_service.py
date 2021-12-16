@@ -11,8 +11,11 @@ from emm.options import EmmOptions
 from emm.services.evg_service import EvgService, Manifest
 from emm.services.file_service import FileService
 from emm.services.git_service import GitAction, GitService
+from emm.services.github_service import GithubService
 
 LOGGER = structlog.get_logger(__name__)
+
+BASE_REPO = "base"
 
 
 class ModulesService:
@@ -24,6 +27,7 @@ class ModulesService:
         emm_options: EmmOptions,
         evg_service: EvgService,
         git_service: GitService,
+        github_service: GithubService,
         file_service: FileService,
     ) -> None:
         """
@@ -37,6 +41,7 @@ class ModulesService:
         self.emm_options = emm_options
         self.evg_service = evg_service
         self.git_service = git_service
+        self.github_service = github_service
         self.file_service = file_service
 
     def enable(self, module_name: str, sync_commit: bool = True) -> None:
@@ -225,19 +230,21 @@ class ModulesService:
 
         :param commit: Commit content for all changes.
         """
-        enabled_modules = self.get_all_modules(True)
         self.git_service.commit_all(commit)
+        enabled_modules = self.get_all_modules(True)
         for module in enabled_modules:
             module_data = self.get_module_data(module)
             module_location = Path(module_data.prefix) / module
             self.git_service.commit_all(commit, module_location)
 
-    def add_pr_link(self, comments: Dict[str, str]) -> None:
+    def add_pr_links(self, comments: Dict[str, str]) -> List[str]:
         """
         Add link to each module.
 
         :param comments: Dictionary of module and its pull request url.
+        :return: List of pull requests being created associate with its link.
         """
+        all_pull_requests = []
         for module, pr_url in comments.items():
             if module != "base":
                 module_data = self.get_module_data(module)
@@ -247,29 +254,75 @@ class ModulesService:
                     for repo, link in comments.items()
                     if repo != module
                 )
-                self.git_service.pr_comment(pr_url, pr_links, module_location)
-                print("module ", module, " pr: ", pr_url)
+                self.github_service.pr_comment(pr_url, pr_links, module_location)
+                pr_result = f"Module {module} pull request: {pr_url}"
+                all_pull_requests.append(pr_result)
             else:
                 pr_links = "\n".join(
                     "{} pr: {}".format(repo, link)
                     for repo, link in comments.items()
                     if repo != "base"
                 )
-                self.git_service.pr_comment(pr_url, pr_links)
-                print("base repo pr: ", pr_url)
+                self.github_service.pr_comment(pr_url, pr_links)
+                pr_result = f"Base pull request: {pr_url}"
+                all_pull_requests.append(pr_result)
+        return all_pull_requests
 
-    def git_pull_request(self, args: List[str]) -> None:
+    def check_push_branch_to_remote(self, directory: Optional[Path] = None) -> str:
+        """
+        Determine if need push current branch to remote.
+
+        :param directory: Directory to execute the command at.
+        :return: Errors that occur during push branch to remote.
+        """
+        branch = self.git_service.current_branch(directory)
+        if not self.git_service.current_branch_exist_on_remote(branch, directory):
+            return self.git_service.push_branch_to_remote(directory)
+        return ""
+
+    def module_pull_request(self, args: List[str], comment_dict: Dict[str, str]) -> None:
         """
         Create pull request for each module.
 
         :param args: Arguments to pass to the github CLi.
+        :param comment_dict: Dictionary of module and its pull request url.
         """
         enabled_modules = self.get_all_modules(True)
-        pr_link = self.git_service.pull_request(args)
-        comment_dict = {"base": pr_link}
         for module in enabled_modules:
             module_data = self.get_module_data(module)
             module_location = Path(module_data.prefix) / module
-            link = self.git_service.pull_request(args, module_location)
-            comment_dict[module] = link
-        self.add_pr_link(comment_dict)
+            basename = self.git_service.get_base_name(module_location)
+            if basename and self.git_service.check_changes(basename, module_location):
+                error = self.check_push_branch_to_remote(module_location)
+                if error:
+                    raise EnvironmentError(f"{module} could not push to remote.")
+
+                link = self.github_service.pull_request(args, module_location)
+                comment_dict[module] = link
+
+    def base_pull_request(self, args: List[str], comment_dict: Dict[str, str]) -> None:
+        """
+        Create pull request for base repo.
+
+        :param args: Arguments to pass to the github CLi.
+        :param comment_dict: Dictionary of base repo and its pull request url.
+        """
+        err = self.check_push_branch_to_remote()
+        if err:
+            raise EnvironmentError("Base branch could not push to remote.")
+
+        pr_link = self.github_service.pull_request(args)
+        comment_dict[BASE_REPO] = pr_link
+
+    def git_pull_request(self, args: List[str]) -> List[str]:
+        """
+        Create pull request for each module.
+
+        :param args: Arguments to pass to the github CLi.
+        :return: List of pull requests being created associate with its link.
+        """
+        comment_dict: Dict[str, str] = {}
+        self.base_pull_request(args, comment_dict)
+        self.module_pull_request(args, comment_dict)
+
+        return self.add_pr_links(comment_dict)

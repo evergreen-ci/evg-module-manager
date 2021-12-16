@@ -10,6 +10,7 @@ from emm.options import EmmOptions
 from emm.services.evg_service import EvgService
 from emm.services.file_service import FileService
 from emm.services.git_service import GitAction, GitService
+from emm.services.github_service import GithubService
 
 
 @pytest.fixture()
@@ -32,14 +33,22 @@ def git_service():
 
 
 @pytest.fixture()
+def github_service():
+    github_service = MagicMock(spec_set=GithubService)
+    return github_service
+
+
+@pytest.fixture()
 def file_service():
     file_service = MagicMock(spec_set=FileService)
     return file_service
 
 
 @pytest.fixture()
-def modules_service(emm_options, evg_service, git_service, file_service):
-    modules_service = under_test.ModulesService(emm_options, evg_service, git_service, file_service)
+def modules_service(emm_options, evg_service, git_service, github_service, file_service):
+    modules_service = under_test.ModulesService(
+        emm_options, evg_service, git_service, github_service, file_service
+    )
     return modules_service
 
 
@@ -335,26 +344,60 @@ class TestCommitModule:
 
 
 class TestPullRequestModule:
-    def test_pull_request_should_call_git_pull_request(
+    def test_base_pull_request_should_call_github_pull_request(
+        self,
+        modules_service,
+        evg_service,
+        github_service,
+    ):
+        args = ["--title", "Test title", "--body", "Test body"]
+        comment_dict = {}
+        modules_service.base_pull_request(args, comment_dict)
+
+        github_service.pull_request.assert_called_with(args)
+
+    def test_module_pull_request_with_changes_should_call_github_pull_request(
         self,
         modules_service,
         evg_service,
         git_service,
+        github_service,
     ):
         args = ["--title", "Test title", "--body", "Test body"]
-        modules_service.git_pull_request(args)
+        comment_dict = {}
+        evg_service.get_module_map.return_value = {"module_name_1": build_module_data()}
+        git_service.check_changes.return_value = "diff a b"
 
-        git_service.pull_request.assert_called_with(args)
+        modules_service.module_pull_request(args, comment_dict)
+
+        directory = Path("src/modules") / "module_name_1"
+        github_service.pull_request.assert_called_with(args, directory)
+
+    def test_module_pull_request_without_changes_should_not_call_github_pull_request(
+        self,
+        modules_service,
+        evg_service,
+        git_service,
+        github_service,
+    ):
+        args = ["--title", "Test title", "--body", "Test body"]
+        comment_dict = {}
+        evg_service.get_module_map.return_value = {"module_name_1": build_module_data()}
+        git_service.check_changes.return_value = None
+
+        modules_service.module_pull_request(args, comment_dict)
+
+        github_service.pull_request.assert_not_called()
 
     def test_pull_request_comment_should_call_git_pr_comment(
         self,
         modules_service,
         evg_service,
-        git_service,
+        github_service,
     ):
         comments = {"base": "github.com/pull/123", "module_name_1": "github.com/pull/234"}
         evg_service.get_module_map.return_value = {"module_name_1": build_module_data()}
-        modules_service.add_pr_link(comments)
+        modules_service.add_pr_links(comments)
 
         calls = [
             call("github.com/pull/123", "module_name_1 pr: github.com/pull/234"),
@@ -365,4 +408,20 @@ class TestPullRequestModule:
             ),
         ]
 
-        git_service.pr_comment.assert_has_calls(calls, any_order=True)
+        github_service.pr_comment.assert_has_calls(calls, any_order=True)
+
+    def test_push_branch_to_remote_should_push_local_branch_to_remote(
+        self,
+        modules_service,
+        evg_service,
+        git_service,
+    ):
+        directory = Path("src/modules") / "module_name"
+        git_service.current_branch.return_value = "branch"
+        git_service.current_branch_exist_on_remote.return_value = None
+
+        modules_service.check_push_branch_to_remote(directory)
+
+        git_service.current_branch.assert_called_with(directory)
+        git_service.current_branch_exist_on_remote.assert_called_with("branch", directory)
+        git_service.push_branch_to_remote.assert_called_with(directory)

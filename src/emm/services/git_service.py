@@ -1,7 +1,7 @@
 """Service for working with git."""
 from enum import Enum
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 from plumbum import local
 
@@ -146,30 +146,62 @@ class GitService:
         with local.cwd(self._determine_directory(directory)):
             self.git[args]()
 
-    def pull_request(self, extra_args: List[str], directory: Optional[Path] = None) -> str:
+    def get_base_name(self, directory: Optional[Path] = None) -> str:
         """
-        Create the pull request using Github CLI.
+        Get the base name of current repo.
 
-        :param extra_args: Extra arguments to pass to the github CLI.
         :param directory: Directory to execute command at.
-        :return: Url of the created pull request.
+        :return: Default basename of current repo.
         """
-        args = ["pr", "create"]
-        args.extend(extra_args)
+        args = ["symbolic-ref", "refs/remotes/origin/HEAD"]
         with local.cwd(self._determine_directory(directory)):
-            return local.cmd.gh[args]().strip()
+            symbolic_ref = self.git[args]()
+            return local.cmd.basename(symbolic_ref).strip()
 
-    def pr_comment(self, pr_url: str, pr_links: str, directory: Optional[Path] = None) -> None:
+    def check_changes(self, basename: str, directory: Optional[Path] = None) -> str:
         """
-        Add Pull Request url as comments for each repo.
+        Check if module have made any active changes.
 
-        :param pr_url: Pull request url to add the comment.
-        :param pr_links: Other modules pull request url.
+        :param basename: Basename of current repo.
+        :param directory: Directory to execute command at.
+        :return: Changes in the current branch.
+        """
+        args = ["diff", f"{basename}..HEAD"]
+        with local.cwd(self._determine_directory(directory)):
+            return self.git[args]().strip()
+
+    def current_branch(self, directory: Optional[Path] = None) -> str:
+        """
+        Get the current branch.
+
         :param directory: Directory to execute command at.
         """
-        args = ["pr", "comment", pr_url, "--body", pr_links]
+        args = ["branch", "--show-current"]
         with local.cwd(self._determine_directory(directory)):
-            local.cmd.gh[args]()
+            return self.git[args]().strip()
+
+    def current_branch_exist_on_remote(self, branch: str, directory: Optional[Path] = None) -> str:
+        """
+        Check if current branch exist on remote.
+
+        :param branch: Name of current branch.
+        :param directory: Directory to execute command at.
+        :return: Branch in remote.
+        """
+        args = ["branch", "--remotes", "--contains", branch]
+        with local.cwd(self._determine_directory(directory)):
+            return self.git[args]().strip()
+
+    def push_branch_to_remote(self, directory: Optional[Path] = None) -> str:
+        """
+        Push current branch to remote.
+
+        :param directory: Directory to execute command at.
+        :return: Errors that occur during push branch to remote.
+        """
+        args = ["push", "origin", "HEAD"]
+        with local.cwd(self._determine_directory(directory)):
+            return self.git[args]().strip()
 
     @staticmethod
     def _determine_directory(directory: Optional[Path] = None) -> Path:
