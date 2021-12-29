@@ -242,7 +242,7 @@ class TestPushBranchToRemote:
         diff = git_service.check_changes("master")
 
         mock_git.assert_git_call(["diff", "master..HEAD"])
-        assert diff == "diff --git aaa bbb"
+        assert diff is True
 
     @patch(ns("local"))
     def test_current_branch_should_return_branch_name(self, local_mock, git_service, mock_git):

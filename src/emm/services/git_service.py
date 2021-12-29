@@ -158,17 +158,17 @@ class GitService:
             symbolic_ref = self.git[args]()
             return local.cmd.basename(symbolic_ref).strip()
 
-    def check_changes(self, basename: str, directory: Optional[Path] = None) -> str:
+    def check_changes(self, basename: str, directory: Optional[Path] = None) -> bool:
         """
         Check if module have made any active changes.
 
         :param basename: Basename of current repo.
         :param directory: Directory to execute command at.
-        :return: Changes in the current branch.
+        :return: Whether there are changes in the current branch.
         """
         args = ["diff", f"{basename}..HEAD"]
         with local.cwd(self._determine_directory(directory)):
-            return self.git[args]().strip()
+            return True if self.git[args]().strip() else False
 
     def current_branch(self, directory: Optional[Path] = None) -> str:
         """

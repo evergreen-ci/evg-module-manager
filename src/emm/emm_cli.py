@@ -294,23 +294,15 @@ def pull_request(ctx: click.Context) -> None:
     Any enabled modules with committed changes would create a pull request,
     each pull request would contain links of other modules' pull request as comment.
 
-    To create a pull request the following options are mandatory:
+    Use --title and --body to create a pull request or use --fill autofill these values from git commits.:
     * -t, --title <string> Title for the pull request
     * -b, --body <string> Body for the pull request
+    * -f, --fill Do not prompt for title/body and just use commit info
 
-    Other available options:
-    * -a, --assignee <login> Assign people by their login. Use "@me" to self-assign.
-    * -B, --base <branch> The branch into which you want your code merged
-    * -F, --body-file <file> Read body text from file
-    * -d, --draft Mark pull request as a draft
-    * -H, --head <branch> The branch that contains commits for your pull request (default: current branch)
-    * -l, --label <name> Add labels by name
-    * -m, --milestone <name> Add the pull request to a milestone by name
-    * --no-maintainer-edit Disable maintainer's ability to modify pull request
-    * -p, --project <name> Add the pull request to projects by name
-    * --recover <string> Recover input from a failed run of create
-    * -r, --reviewer <handle> Request reviews from people or teams by their handle
-    * -w, --web Open the web browser to create a pull request
+
+    Other options will be passed to github CLI and processed, the documentation is
+    in following link:
+       https://cli.github.com/manual/gh_pr_create
     """
     orchestrator = EmmOrchestrator()
     orchestrator.git_pull_request(ctx.args)

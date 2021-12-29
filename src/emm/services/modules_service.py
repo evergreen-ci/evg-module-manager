@@ -237,82 +237,96 @@ class ModulesService:
             module_location = Path(module_data.prefix) / module
             self.git_service.commit_all(commit, module_location)
 
-    def add_pr_links(self, comments: Dict[str, str]) -> List[str]:
+    def add_pr_links(self, comments: Dict[str, str]) -> Dict[str, List[str]]:
         """
         Add link to each module.
 
         :param comments: Dictionary of module and its pull request url.
+        :return: Dictionary of pull request associate with other modules' pull requests.
+        """
+        pr_dict: Dict[str, List[str]] = {}
+        for module, pr_url in comments.items():
+            pr_links = "\n".join(
+                "{} pr: {}".format(repo, link) for repo, link in comments.items() if repo != module
+            )
+            pr_dict[module] = []
+            pr_dict[module].append(pr_url)
+            pr_dict[module].append(pr_links)
+        return pr_dict
+
+    def update_pr_links(self, comment_links: Dict[str, List[str]]) -> List[str]:
+        """
+        Update link to each module.
+
+        :param comment_links: Dictionary of module with its location and other modules' pull request link.
         :return: List of pull requests being created associate with its link.
         """
         all_pull_requests = []
-        for module, pr_url in comments.items():
+        lines = (
+            "This code review is spread across multiple repositories. "
+            "Links to the other components of this review can be found:\n "
+        )
+        for module, pr_list in comment_links.items():
+            pr_url = pr_list[0]
             if module != "base":
                 module_data = self.get_module_data(module)
                 module_location = Path(module_data.prefix) / module
-                pr_links = "\n".join(
-                    "{} pr: {}".format(repo, link)
-                    for repo, link in comments.items()
-                    if repo != module
-                )
+                pr_links = lines + pr_list[1]
                 self.github_service.pr_comment(pr_url, pr_links, module_location)
-                pr_result = f"Module {module} pull request: {pr_url}"
-                all_pull_requests.append(pr_result)
+                all_pull_requests.append(pr_url)
+                all_pull_requests.append(pr_links)
             else:
-                pr_links = "\n".join(
-                    "{} pr: {}".format(repo, link)
-                    for repo, link in comments.items()
-                    if repo != "base"
-                )
+                pr_links = lines + pr_list[1]
                 self.github_service.pr_comment(pr_url, pr_links)
-                pr_result = f"Base pull request: {pr_url}"
-                all_pull_requests.append(pr_result)
+                all_pull_requests.append(pr_url)
+                all_pull_requests.append(pr_links)
+
         return all_pull_requests
 
-    def check_push_branch_to_remote(self, directory: Optional[Path] = None) -> str:
+    def push_branch_to_remote(self, directory: Optional[Path] = None) -> None:
         """
         Determine if need push current branch to remote.
 
         :param directory: Directory to execute the command at.
-        :return: Errors that occur during push branch to remote.
         """
         branch = self.git_service.current_branch(directory)
-        if not self.git_service.current_branch_exist_on_remote(branch, directory):
-            return self.git_service.push_branch_to_remote(directory)
-        return ""
+        if branch == "main" or branch == "master":
+            raise ValueError("Cannot push unreviewed modification to master.")
 
-    def module_pull_request(self, args: List[str], comment_dict: Dict[str, str]) -> None:
+        if not self.git_service.current_branch_exist_on_remote(branch, directory):
+            self.git_service.push_branch_to_remote(directory)
+
+    def module_pull_request(self, args: List[str]) -> Dict[str, str]:
         """
         Create pull request for each module.
 
         :param args: Arguments to pass to the github CLi.
-        :param comment_dict: Dictionary of module and its pull request url.
+        :return: Dictionary of module and its pull request url.
         """
+        comment_dict = {}
         enabled_modules = self.get_all_modules(True)
         for module in enabled_modules:
             module_data = self.get_module_data(module)
             module_location = Path(module_data.prefix) / module
             basename = self.git_service.get_base_name(module_location)
             if basename and self.git_service.check_changes(basename, module_location):
-                error = self.check_push_branch_to_remote(module_location)
-                if error:
-                    raise EnvironmentError(f"{module} could not push to remote.")
-
+                self.push_branch_to_remote(module_location)
                 link = self.github_service.pull_request(args, module_location)
                 comment_dict[module] = link
+        return comment_dict
 
-    def base_pull_request(self, args: List[str], comment_dict: Dict[str, str]) -> None:
+    def base_pull_request(self, args: List[str]) -> Dict[str, str]:
         """
         Create pull request for base repo.
 
         :param args: Arguments to pass to the github CLi.
-        :param comment_dict: Dictionary of base repo and its pull request url.
+        :return: Dictionary of base repo and its pull request url.
         """
-        err = self.check_push_branch_to_remote()
-        if err:
-            raise EnvironmentError("Base branch could not push to remote.")
-
+        comment_dict = {}
+        self.push_branch_to_remote()
         pr_link = self.github_service.pull_request(args)
         comment_dict[BASE_REPO] = pr_link
+        return comment_dict
 
     def git_pull_request(self, args: List[str]) -> List[str]:
         """
@@ -321,8 +335,8 @@ class ModulesService:
         :param args: Arguments to pass to the github CLi.
         :return: List of pull requests being created associate with its link.
         """
-        comment_dict: Dict[str, str] = {}
-        self.base_pull_request(args, comment_dict)
-        self.module_pull_request(args, comment_dict)
+        comment_dict = self.base_pull_request(args)
+        comment_dict = {**comment_dict, **self.module_pull_request(args)}
 
-        return self.add_pr_links(comment_dict)
+        comment_links = self.add_pr_links(comment_dict)
+        return self.update_pr_links(comment_links)
