@@ -2,15 +2,12 @@
 from pathlib import Path
 from typing import List, Optional
 
+import plumbum
 from plumbum import local
 
 
 class GithubService:
     """A service for interacting with github CLI."""
-
-    def __init__(self) -> None:
-        """Initialize the service."""
-        pass
 
     def pull_request(self, extra_args: List[str], directory: Optional[Path] = None) -> str:
         """
@@ -36,6 +33,18 @@ class GithubService:
         args = ["pr", "comment", pr_url, "--body", pr_links]
         with local.cwd(self._determine_directory(directory)):
             local.cmd.gh[args]()
+
+    def validate_github_authentication(self, directory: Optional[Path] = None) -> bool:
+        """
+        Validate the github CLI is authenticated.
+
+        :param directory: Directory to execute command at.
+        :return The authentication result from github CLI.
+        """
+        args = ["auth", "status"]
+        with local.cwd(self._determine_directory(directory)):
+            res = local.cmd.gh[args] & plumbum.TF(FG=True)
+            return res
 
     @staticmethod
     def _determine_directory(directory: Optional[Path] = None) -> Path:

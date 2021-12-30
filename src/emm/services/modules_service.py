@@ -1,4 +1,5 @@
 """Service for working with evergreen modules."""
+from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -16,6 +17,7 @@ from emm.services.github_service import GithubService
 LOGGER = structlog.get_logger(__name__)
 
 BASE_REPO = "base"
+PROTECTED_BRANCHES = {"main", "master"}
 
 
 class ModulesService:
@@ -237,6 +239,10 @@ class ModulesService:
             module_location = Path(module_data.prefix) / module
             self.git_service.commit_all(commit, module_location)
 
+    def validate_github_authentication(self) -> bool:
+        """Check if github CLI already authenticated."""
+        return self.github_service.validate_github_authentication()
+
     def add_pr_links(self, comments: Dict[str, str]) -> Dict[str, List[str]]:
         """
         Add link to each module.
@@ -244,7 +250,7 @@ class ModulesService:
         :param comments: Dictionary of module and its pull request url.
         :return: Dictionary of pull request associate with other modules' pull requests.
         """
-        pr_dict: Dict[str, List[str]] = {}
+        pr_dict: Dict[str, List[str]] = defaultdict(list)
         for module, pr_url in comments.items():
             pr_links = "\n".join(
                 "{} pr: {}".format(repo, link) for repo, link in comments.items() if repo != module
@@ -285,12 +291,12 @@ class ModulesService:
 
     def push_branch_to_remote(self, directory: Optional[Path] = None) -> None:
         """
-        Determine if need push current branch to remote.
+        Push current branch to remote if current branch is not protected branch.
 
         :param directory: Directory to execute the command at.
         """
         branch = self.git_service.current_branch(directory)
-        if branch == "main" or branch == "master":
+        if branch in PROTECTED_BRANCHES:
             raise ValueError("Cannot push unreviewed modification to master.")
 
         if not self.git_service.current_branch_exist_on_remote(branch, directory):
@@ -308,11 +314,17 @@ class ModulesService:
         for module in enabled_modules:
             module_data = self.get_module_data(module)
             module_location = Path(module_data.prefix) / module
-            basename = self.git_service.get_base_name(module_location)
+            basename = self.git_service.get_base_branch_name(module_location)
             if basename and self.git_service.check_changes(basename, module_location):
                 self.push_branch_to_remote(module_location)
-                link = self.github_service.pull_request(args, module_location)
-                comment_dict[module] = link
+            else:
+                raise ValueError("No changes found in current branch.")
+
+        for module in enabled_modules:
+            module_data = self.get_module_data(module)
+            module_location = Path(module_data.prefix) / module
+            link = self.github_service.pull_request(args, module_location)
+            comment_dict[module] = link
         return comment_dict
 
     def base_pull_request(self, args: List[str]) -> Dict[str, str]:

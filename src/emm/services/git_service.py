@@ -1,5 +1,6 @@
 """Service for working with git."""
 from enum import Enum
+from os import path
 from pathlib import Path
 from typing import Optional
 
@@ -146,9 +147,9 @@ class GitService:
         with local.cwd(self._determine_directory(directory)):
             self.git[args]()
 
-    def get_base_name(self, directory: Optional[Path] = None) -> str:
+    def get_base_branch_name(self, directory: Optional[Path] = None) -> str:
         """
-        Get the base name of current repo.
+        Get the base branch name of current repo.
 
         :param directory: Directory to execute command at.
         :return: Default basename of current repo.
@@ -156,7 +157,7 @@ class GitService:
         args = ["symbolic-ref", "refs/remotes/origin/HEAD"]
         with local.cwd(self._determine_directory(directory)):
             symbolic_ref = self.git[args]()
-            return local.cmd.basename(symbolic_ref).strip()
+            return path.basename(symbolic_ref).strip()
 
     def check_changes(self, basename: str, directory: Optional[Path] = None) -> bool:
         """

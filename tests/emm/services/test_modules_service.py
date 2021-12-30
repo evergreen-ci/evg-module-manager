@@ -382,9 +382,9 @@ class TestPullRequestModule:
         evg_service.get_module_map.return_value = {"module_name_1": build_module_data()}
         git_service.check_changes.return_value = None
 
-        modules_service.module_pull_request(args)
-
-        github_service.pull_request.assert_not_called()
+        with pytest.raises(ValueError, match="No changes found in current branch."):
+            modules_service.module_pull_request(args)
+            github_service.pull_request.assert_not_called()
 
     def test_pull_request_comment_should_call_git_pr_comment(
         self,

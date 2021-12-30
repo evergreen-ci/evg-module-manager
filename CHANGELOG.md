@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.8 - 2021-12-15
+## 0.1.8 - 2021-12-29
 - Add support for github pull request
 
 ## 0.1.7 - 2021-12-05
