@@ -1,7 +1,6 @@
 """Service for working with evergreen modules."""
-from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List, NamedTuple, Optional
 
 import inject
 import structlog
@@ -18,6 +17,24 @@ LOGGER = structlog.get_logger(__name__)
 
 BASE_REPO = "base"
 PROTECTED_BRANCHES = {"main", "master"}
+PULL_REQUEST_INFORMATION = (
+    "This code review is spread across multiple repositories. "
+    "Links to the other components of this review can be found:\n "
+)
+
+
+class PullRequestInfo(NamedTuple):
+    """
+    Information about a created pull request.
+
+    * module: The module name of this pull request.
+    * pr_url: URL to pull request in github.
+    * pr_links: The link of string to all enabled modules.
+    """
+
+    module: str
+    pr_url: str
+    pr_links: str
 
 
 class ModulesService:
@@ -243,46 +260,42 @@ class ModulesService:
         """Check if github CLI already authenticated."""
         return self.github_service.validate_github_authentication()
 
-    def add_pr_links(self, comments: Dict[str, str]) -> Dict[str, List[str]]:
+    def add_pr_links(self, comments: Dict[str, str]) -> List[PullRequestInfo]:
         """
         Add link to each module.
 
         :param comments: Dictionary of module and its pull request url.
-        :return: Dictionary of pull request associate with other modules' pull requests.
+        :return: List of pull request information object.
         """
-        pr_dict: Dict[str, List[str]] = defaultdict(list)
+        pr_dict: List[PullRequestInfo] = []
         for module, pr_url in comments.items():
             pr_links = "\n".join(
-                "{} pr: {}".format(repo, link) for repo, link in comments.items() if repo != module
+                "* {} pr: {}".format(repo, link)
+                for repo, link in comments.items()
+                if repo != module
             )
-            pr_dict[module] = []
-            pr_dict[module].append(pr_url)
-            pr_dict[module].append(pr_links)
+            pr_dict.append(PullRequestInfo(module=module, pr_url=pr_url, pr_links=pr_links))
         return pr_dict
 
-    def update_pr_links(self, comment_links: Dict[str, List[str]]) -> List[str]:
+    def update_pr_links(self, comment_links: List[PullRequestInfo]) -> List[str]:
         """
         Update link to each module.
 
-        :param comment_links: Dictionary of module with its location and other modules' pull request link.
+        :param comment_links: List of pull request information object.
         :return: List of pull requests being created associate with its link.
         """
         all_pull_requests = []
-        lines = (
-            "This code review is spread across multiple repositories. "
-            "Links to the other components of this review can be found:\n "
-        )
-        for module, pr_list in comment_links.items():
-            pr_url = pr_list[0]
-            if module != "base":
-                module_data = self.get_module_data(module)
-                module_location = Path(module_data.prefix) / module
-                pr_links = lines + pr_list[1]
+        for pr_info in comment_links:
+            pr_url = pr_info.pr_url
+            if pr_info.module != BASE_REPO:
+                module_data = self.get_module_data(pr_info.module)
+                module_location = Path(module_data.prefix) / pr_info.module
+                pr_links = PULL_REQUEST_INFORMATION + pr_info.pr_links
                 self.github_service.pr_comment(pr_url, pr_links, module_location)
                 all_pull_requests.append(pr_url)
                 all_pull_requests.append(pr_links)
             else:
-                pr_links = lines + pr_list[1]
+                pr_links = PULL_REQUEST_INFORMATION + pr_info.pr_links
                 self.github_service.pr_comment(pr_url, pr_links)
                 all_pull_requests.append(pr_url)
                 all_pull_requests.append(pr_links)
@@ -310,17 +323,17 @@ class ModulesService:
         :return: Dictionary of module and its pull request url.
         """
         comment_dict = {}
+        changed_modules = []
         enabled_modules = self.get_all_modules(True)
         for module in enabled_modules:
             module_data = self.get_module_data(module)
             module_location = Path(module_data.prefix) / module
-            basename = self.git_service.get_base_branch_name(module_location)
+            basename = self.git_service.get_mergebase_branch_name(module_location)
             if basename and self.git_service.check_changes(basename, module_location):
                 self.push_branch_to_remote(module_location)
-            else:
-                raise ValueError("No changes found in current branch.")
+                changed_modules.append(module)
 
-        for module in enabled_modules:
+        for module in changed_modules:
             module_data = self.get_module_data(module)
             module_location = Path(module_data.prefix) / module
             link = self.github_service.pull_request(args, module_location)

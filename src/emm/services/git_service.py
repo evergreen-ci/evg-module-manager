@@ -147,7 +147,7 @@ class GitService:
         with local.cwd(self._determine_directory(directory)):
             self.git[args]()
 
-    def get_base_branch_name(self, directory: Optional[Path] = None) -> str:
+    def get_mergebase_branch_name(self, directory: Optional[Path] = None) -> str:
         """
         Get the base branch name of current repo.
 

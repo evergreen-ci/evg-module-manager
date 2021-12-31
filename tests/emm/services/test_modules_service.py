@@ -11,6 +11,7 @@ from emm.services.evg_service import EvgService
 from emm.services.file_service import FileService
 from emm.services.git_service import GitAction, GitService
 from emm.services.github_service import GithubService
+from emm.services.modules_service import PullRequestInfo
 
 
 @pytest.fixture()
@@ -382,9 +383,8 @@ class TestPullRequestModule:
         evg_service.get_module_map.return_value = {"module_name_1": build_module_data()}
         git_service.check_changes.return_value = None
 
-        with pytest.raises(ValueError, match="No changes found in current branch."):
-            modules_service.module_pull_request(args)
-            github_service.pull_request.assert_not_called()
+        modules_service.module_pull_request(args)
+        github_service.pull_request.assert_not_called()
 
     def test_pull_request_comment_should_call_git_pr_comment(
         self,
@@ -393,8 +393,16 @@ class TestPullRequestModule:
         github_service,
     ):
         comments = {
-            "base": ["github.com/pull/123", "module_name_1 pr: github.com/pull/234"],
-            "module_name_1": ["github.com/pull/234", "base pr: github.com/pull/123"],
+            PullRequestInfo(
+                module="base",
+                pr_url="github.com/pull/123",
+                pr_links="module_name_1 pr: github.com/pull/234",
+            ),
+            PullRequestInfo(
+                module="module_name_1",
+                pr_url="github.com/pull/234",
+                pr_links="base pr: github.com/pull/123",
+            ),
         }
         evg_service.get_module_map.return_value = {"module_name_1": build_module_data()}
         modules_service.update_pr_links(comments)

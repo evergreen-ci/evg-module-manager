@@ -229,7 +229,7 @@ class TestGetBaseName:
     def test_get_base_name_should_return_default_basename(self, local_mock, git_service, mock_git):
         mock_git.__getitem__.return_value.return_value = "origin/master"
 
-        basename = git_service.get_base_branch_name()
+        basename = git_service.get_mergebase_branch_name()
         mock_git.assert_git_call(["symbolic-ref", "refs/remotes/origin/HEAD"])
         assert basename == "master"
 

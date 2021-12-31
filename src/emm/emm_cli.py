@@ -106,7 +106,7 @@ class EmmOrchestrator:
         """
         authenticated = self.modules_service.validate_github_authentication()
         if not authenticated:
-            print("Please authenticate github CLI.")
+            raise click.ClickException("Please authenticate github CLI.")
         else:
             all_pull_requests = self.modules_service.git_pull_request(args)
             print(all_pull_requests)
@@ -295,7 +295,8 @@ def pull_request(ctx: click.Context) -> None:
     """
     Create pull request for the changes in each module.
 
-    Before use this command, you have to authenticate through github by 'gh auth login'.
+    Before use this command, you have to authenticate to github by 'gh auth login'.
+
     Any enabled modules with committed changes would create a pull request,
     each pull request would contain links of other modules' pull request as comment.
 
