@@ -106,8 +106,14 @@ class EmmOrchestrator:
         """
         authenticated = self.modules_service.validate_github_authentication()
         if not authenticated:
+            # Note: github CLI is running on Front Process, it would display:
+            # You are not logged into any GitHub hosts. Run **gh auth login** to authenticate.
+            # Also github CLI would exit with a non-zero code if authenticated is true.
             raise click.ClickException("Please authenticate github CLI.")
         else:
+            # Note: we would pass args to github CLI to handle cases when option title&body or fill
+            # are not provided. Github CLI would error out and prompt error message that require user
+            # to fill those fields.
             all_pull_requests = self.modules_service.git_pull_request(args)
             print(all_pull_requests)
 

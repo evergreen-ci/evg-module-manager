@@ -14,53 +14,50 @@ def ns(local_path: str) -> str:
 
 
 @pytest.fixture()
-def github_service() -> under_test.GithubService:
+def mock_github_cli():
+    github_mock = MagicMock()
+    github_mock.assert_gh_call = lambda args: github_mock.__getitem__.assert_any_call(args)
+    return github_mock
+
+
+@pytest.fixture()
+def github_service(mock_github_cli) -> under_test.GithubService:
     github_service = under_test.GithubService()
+    github_service.github = mock_github_cli
     return github_service
 
 
 class TestPullRequest:
     @patch(ns("local"))
-    def test_pull_request_with_correct_args_should_return_pr_url(self, local_mock, github_service):
-        local_mock.cmd.gh = MagicMock()
-        local_mock.cmd.gh.assert_gh_call = (
-            lambda args: local_mock.cmd.gh.__getitem__.assert_any_call(args)
-        )
-        local_mock.cmd.gh.__getitem__.return_value.return_value = "github.com/pull/123"
+    def test_pull_request_with_correct_args_should_return_pr_url(
+        self, local_mock, github_service, mock_github_cli
+    ):
+        mock_github_cli.__getitem__.return_value.return_value = "github.com/pull/123"
+        pr_link = github_service.pull_request(["--title", "Test title", "--body", "Test Body"])
 
-        pr_url = github_service.pull_request(["--title", "Test title", "--body", "Test Body"])
-
-        local_mock.cmd.gh.assert_gh_call(
+        mock_github_cli.assert_gh_call(
             ["pr", "create", "--title", "Test title", "--body", "Test Body"]
         )
-        assert pr_url == "github.com/pull/123"
+        assert pr_link == "github.com/pull/123"
 
     @patch(ns("local"))
-    def test_pr_comment_should_call_gh_commit(self, local_mock, github_service):
-        local_mock.cmd.gh = MagicMock()
-        local_mock.cmd.gh.assert_gh_call = (
-            lambda args: local_mock.cmd.gh.__getitem__.assert_any_call(args)
-        )
-
+    def test_pr_comment_should_call_gh_commit(self, local_mock, github_service, mock_github_cli):
         github_service.pr_comment("github.com/pull/123", "module_repo: github/pull/234")
 
-        local_mock.cmd.gh.assert_gh_call(
+        mock_github_cli.assert_gh_call(
             ["pr", "comment", "github.com/pull/123", "--body", "module_repo: github/pull/234"]
         )
 
     @patch(ns("local"))
-    def test_pr_comment_with_directory_should_switch_directory(self, local_mock, github_service):
-        local_mock.cmd.gh = MagicMock()
-        local_mock.cmd.gh.assert_gh_call = (
-            lambda args: local_mock.cmd.gh.__getitem__.assert_any_call(args)
-        )
-
+    def test_pr_comment_with_directory_should_switch_directory(
+        self, local_mock, github_service, mock_github_cli
+    ):
         path = Path("/path/to/repo").absolute()
         github_service.pr_comment(
             "github.com/pull/234", "base_repo: github/pull/123", directory=path
         )
 
-        local_mock.cmd.gh.assert_gh_call(
+        mock_github_cli.assert_gh_call(
             ["pr", "comment", "github.com/pull/234", "--body", "base_repo: github/pull/123"]
         )
         local_mock.cwd.assert_called_with(path)

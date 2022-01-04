@@ -392,7 +392,7 @@ class TestPullRequestModule:
         evg_service,
         github_service,
     ):
-        comments = {
+        comments = [
             PullRequestInfo(
                 module="base",
                 pr_url="github.com/pull/123",
@@ -403,7 +403,7 @@ class TestPullRequestModule:
                 pr_url="github.com/pull/234",
                 pr_links="base pr: github.com/pull/123",
             ),
-        }
+        ]
         evg_service.get_module_map.return_value = {"module_name_1": build_module_data()}
         modules_service.update_pr_links(comments)
 

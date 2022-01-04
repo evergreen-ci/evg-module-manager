@@ -9,6 +9,10 @@ from plumbum import local
 class GithubService:
     """A service for interacting with github CLI."""
 
+    def __init__(self) -> None:
+        """Initialize the service."""
+        self.github = local.cmd.gh
+
     def pull_request(self, extra_args: List[str], directory: Optional[Path] = None) -> str:
         """
         Create the pull request using Github CLI.
@@ -20,19 +24,19 @@ class GithubService:
         args = ["pr", "create"]
         args.extend(extra_args)
         with local.cwd(self._determine_directory(directory)):
-            return local.cmd.gh[args]().strip()
+            return self.github[args]().strip()
 
-    def pr_comment(self, pr_url: str, pr_links: str, directory: Optional[Path] = None) -> None:
+    def pr_comment(self, pr_url: str, comment: str, directory: Optional[Path] = None) -> None:
         """
         Add Pull Request url as comments for each repo.
 
         :param pr_url: Pull request url to add the comment.
-        :param pr_links: Other modules pull request url.
+        :param comment: Comment to add for the given pull request.
         :param directory: Directory to execute command at.
         """
-        args = ["pr", "comment", pr_url, "--body", pr_links]
+        args = ["pr", "comment", pr_url, "--body", comment]
         with local.cwd(self._determine_directory(directory)):
-            local.cmd.gh[args]()
+            self.github[args]()
 
     def validate_github_authentication(self, directory: Optional[Path] = None) -> bool:
         """
@@ -43,7 +47,7 @@ class GithubService:
         """
         args = ["auth", "status"]
         with local.cwd(self._determine_directory(directory)):
-            res = local.cmd.gh[args] & plumbum.TF(FG=True)
+            res = self.github[args] & plumbum.TF(FG=True)
             return res
 
     @staticmethod

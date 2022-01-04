@@ -260,32 +260,31 @@ class ModulesService:
         """Check if github CLI already authenticated."""
         return self.github_service.validate_github_authentication()
 
-    def add_pr_links(self, comments: Dict[str, str]) -> List[PullRequestInfo]:
+    def combine_pr_comments(self, comments: Dict[str, str]) -> List[PullRequestInfo]:
         """
-        Add link to each module.
+        Combine the pull request comment string for each module.
 
         :param comments: Dictionary of module and its pull request url.
         :return: List of pull request information object.
         """
-        pr_dict: List[PullRequestInfo] = []
+        pr_list: List[PullRequestInfo] = []
+        new_line = "\n"
         for module, pr_url in comments.items():
-            pr_links = "\n".join(
-                "* {} pr: {}".format(repo, link)
-                for repo, link in comments.items()
-                if repo != module
+            pr_links = new_line.join(
+                f"* {repo} pr: {link}" for repo, link in comments.items() if repo != module
             )
-            pr_dict.append(PullRequestInfo(module=module, pr_url=pr_url, pr_links=pr_links))
-        return pr_dict
+            pr_list.append(PullRequestInfo(module=module, pr_url=pr_url, pr_links=pr_links))
+        return pr_list
 
-    def update_pr_links(self, comment_links: List[PullRequestInfo]) -> List[str]:
+    def update_pr_links(self, pr_list: List[PullRequestInfo]) -> List[str]:
         """
         Update link to each module.
 
-        :param comment_links: List of pull request information object.
+        :param pr_list: List of pull request information object.
         :return: List of pull requests being created associate with its link.
         """
         all_pull_requests = []
-        for pr_info in comment_links:
+        for pr_info in pr_list:
             pr_url = pr_info.pr_url
             if pr_info.module != BASE_REPO:
                 module_data = self.get_module_data(pr_info.module)
@@ -363,5 +362,5 @@ class ModulesService:
         comment_dict = self.base_pull_request(args)
         comment_dict = {**comment_dict, **self.module_pull_request(args)}
 
-        comment_links = self.add_pr_links(comment_dict)
+        comment_links = self.combine_pr_comments(comment_dict)
         return self.update_pr_links(comment_links)
