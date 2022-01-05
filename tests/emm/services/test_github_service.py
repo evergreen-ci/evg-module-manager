@@ -22,8 +22,7 @@ def mock_github_cli():
 
 @pytest.fixture()
 def github_service(mock_github_cli) -> under_test.GithubService:
-    github_service = under_test.GithubService()
-    github_service.github = mock_github_cli
+    github_service = under_test.GithubService(mock_github_cli)
     return github_service
 
 

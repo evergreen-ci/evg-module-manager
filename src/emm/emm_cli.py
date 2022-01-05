@@ -13,6 +13,7 @@ from structlog.stdlib import LoggerFactory
 
 from emm.options import DEFAULT_EVG_CONFIG, DEFAULT_EVG_PROJECT, DEFAULT_MODULES_PATH, EmmOptions
 from emm.services.git_service import GitAction
+from emm.services.github_service import GithubService
 from emm.services.modules_service import ModulesService
 from emm.services.patch_service import PatchService
 
@@ -169,6 +170,7 @@ def cli(ctx: click.Context, modules_dir: str, evg_config_file: str, evg_project:
     def dependencies(binder: inject.Binder) -> None:
         binder.bind(EvergreenApi, evg_api)
         binder.bind(EmmOptions, ctx.obj)
+        binder.bind(GithubService, GithubService.create())
 
     inject.configure(dependencies)
 
