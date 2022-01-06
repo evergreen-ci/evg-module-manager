@@ -119,6 +119,23 @@ To commit all the tracked changes in base repo and any enabled modules:
 evg-module-manager git-commit --commit-message "my commit message"
 ```
 
+## Creating github pull request
+
+Use `pull-request` command to create pull requests across base repo and all enabled modules with local changes.
+In order to utilize this function, [github CLI](https://cli.github.com/) need to be installed
+in your system. After the installation, you need to give authorization to the github CLI, by issuing
+[gh auth login](https://cli.github.com/manual/gh_auth_login). Github CLI would prompt interactive command
+line and errors.
+
+After local changes have committed in all repos, you can create the pull request from the base repo, and all
+enabled modules with changes would create a separate pull request. Each pull request would have comments that
+contain links for all other modules' pull requests.
+
+To create pull requests in base repo and all enabled modules:
+```bash
+evg-module-manager pull-request --title "my pull request title" --body "my pull request body"
+```
+
 ## Submitting a patch build
 
 Use the `patch` command to create a patch build with changes to your base repository and any

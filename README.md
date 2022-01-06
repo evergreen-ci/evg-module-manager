@@ -41,6 +41,7 @@ It supports the following functionality:
 * git
 * evergreen command line tool
 * [Evergreen config file](https://github.com/evergreen-ci/evergreen/wiki/Using-the-Command-Line-Tool#downloading-the-command-line-tool)
+* [github CLI](https://cli.github.com/)
 
 ## Installation
 
@@ -76,6 +77,7 @@ Commands:
   git-commit    Perform git commit of changes in each module.
   list-modules  List the modules available for the current repo.
   patch         Create an Evergreen patch with changes from the base repo and any enabled...
+  pull-request   Create pull request for the changes in each module.
   update-branch Perform git merge|rebase operation to update the branch.
 ```
 

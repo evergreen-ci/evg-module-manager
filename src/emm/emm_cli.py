@@ -13,6 +13,7 @@ from structlog.stdlib import LoggerFactory
 
 from emm.options import DEFAULT_EVG_CONFIG, DEFAULT_EVG_PROJECT, DEFAULT_MODULES_PATH, EmmOptions
 from emm.services.git_service import GitAction
+from emm.services.github_service import GithubService
 from emm.services.modules_service import ModulesService
 from emm.services.patch_service import PatchService
 
@@ -98,6 +99,25 @@ class EmmOrchestrator:
         """
         self.modules_service.git_commit_modules(commit_message)
 
+    def git_pull_request(self, args: List[str]) -> None:
+        """
+        Create pull request to all modules.
+
+        :param args: Arguments pass to the github CLI.
+        """
+        authenticated = self.modules_service.validate_github_authentication()
+        if not authenticated:
+            # Note: github CLI is running on Front Process, it would display:
+            # You are not logged into any GitHub hosts. Run **gh auth login** to authenticate.
+            # Also github CLI would exit with a non-zero code if authenticated is true.
+            raise click.ClickException("Please authenticate github CLI.")
+        else:
+            # Note: we would pass args to github CLI to handle cases when option title&body or fill
+            # are not provided. Github CLI would error out and prompt error message that require user
+            # to fill those fields.
+            all_pull_requests = self.modules_service.git_pull_request(args)
+            print(all_pull_requests)
+
 
 def configure_logging(verbose: bool) -> None:
     """
@@ -150,6 +170,7 @@ def cli(ctx: click.Context, modules_dir: str, evg_config_file: str, evg_project:
     def dependencies(binder: inject.Binder) -> None:
         binder.bind(EvergreenApi, evg_api)
         binder.bind(EmmOptions, ctx.obj)
+        binder.bind(GithubService, GithubService.create())
 
     inject.configure(dependencies)
 
@@ -272,6 +293,33 @@ def git_commit(ctx: click.Context, commit_message: str) -> None:
     """
     orchestrator = EmmOrchestrator()
     orchestrator.git_commit_modules(commit_message)
+
+
+@cli.command(
+    context_settings=dict(max_content_width=100, ignore_unknown_options=True, allow_extra_args=True)
+)
+@click.pass_context
+def pull_request(ctx: click.Context) -> None:
+    """
+    Create pull request for the changes in each module.
+
+    Before use this command, you have to authenticate to github by 'gh auth login'.
+
+    Any enabled modules with committed changes would create a pull request,
+    each pull request would contain links of other modules' pull request as comment.
+
+    Use --title and --body to create a pull request or use --fill autofill these values from git commits.:
+    * -t, --title <string> Title for the pull request
+    * -b, --body <string> Body for the pull request
+    * -f, --fill Do not prompt for title/body and just use commit info
+
+
+    Other options will be passed to github CLI and processed, the documentation is
+    in following link:
+       https://cli.github.com/manual/gh_pr_create
+    """
+    orchestrator = EmmOrchestrator()
+    orchestrator.git_pull_request(ctx.args)
 
 
 if __name__ == "__main__":

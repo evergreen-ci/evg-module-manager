@@ -1,5 +1,6 @@
 """Service for working with git."""
 from enum import Enum
+from os import path
 from pathlib import Path
 from typing import Optional
 
@@ -145,6 +146,63 @@ class GitService:
         args = ["commit", "--all", "--message", commit_message]
         with local.cwd(self._determine_directory(directory)):
             self.git[args]()
+
+    def get_mergebase_branch_name(self, directory: Optional[Path] = None) -> str:
+        """
+        Get the base branch name of current repo.
+
+        :param directory: Directory to execute command at.
+        :return: Default basename of current repo.
+        """
+        args = ["symbolic-ref", "refs/remotes/origin/HEAD"]
+        with local.cwd(self._determine_directory(directory)):
+            symbolic_ref = self.git[args]()
+            return path.basename(symbolic_ref).strip()
+
+    def check_changes(self, basename: str, directory: Optional[Path] = None) -> bool:
+        """
+        Check if module have made any active changes.
+
+        :param basename: Basename of current repo.
+        :param directory: Directory to execute command at.
+        :return: Whether there are changes in the current branch.
+        """
+        args = ["diff", f"{basename}..HEAD"]
+        with local.cwd(self._determine_directory(directory)):
+            return True if self.git[args]().strip() else False
+
+    def current_branch(self, directory: Optional[Path] = None) -> str:
+        """
+        Get the current branch.
+
+        :param directory: Directory to execute command at.
+        """
+        args = ["branch", "--show-current"]
+        with local.cwd(self._determine_directory(directory)):
+            return self.git[args]().strip()
+
+    def current_branch_exist_on_remote(self, branch: str, directory: Optional[Path] = None) -> str:
+        """
+        Check if current branch exist on remote.
+
+        :param branch: Name of current branch.
+        :param directory: Directory to execute command at.
+        :return: Branch in remote.
+        """
+        args = ["branch", "--remotes", "--contains", branch]
+        with local.cwd(self._determine_directory(directory)):
+            return self.git[args]().strip()
+
+    def push_branch_to_remote(self, directory: Optional[Path] = None) -> str:
+        """
+        Push current branch to remote.
+
+        :param directory: Directory to execute command at.
+        :return: Errors that occur during push branch to remote.
+        """
+        args = ["push", "origin", "HEAD"]
+        with local.cwd(self._determine_directory(directory)):
+            return self.git[args]().strip()
 
     @staticmethod
     def _determine_directory(directory: Optional[Path] = None) -> Path:

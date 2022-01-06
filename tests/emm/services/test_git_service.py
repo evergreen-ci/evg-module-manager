@@ -224,6 +224,47 @@ class TestMergeBase:
         local_mock.cwd.assert_called_with(path)
 
 
+class TestGetBaseName:
+    @patch(ns("local"))
+    def test_get_base_name_should_return_default_basename(self, local_mock, git_service, mock_git):
+        mock_git.__getitem__.return_value.return_value = "origin/master"
+
+        basename = git_service.get_mergebase_branch_name()
+        mock_git.assert_git_call(["symbolic-ref", "refs/remotes/origin/HEAD"])
+        assert basename == "master"
+
+
+class TestPushBranchToRemote:
+    @patch(ns("local"))
+    def test_check_changes_should_return_changes(self, local_mock, git_service, mock_git):
+        mock_git.__getitem__.return_value.return_value = "diff --git aaa bbb\n"
+
+        diff = git_service.check_changes("master")
+
+        mock_git.assert_git_call(["diff", "master..HEAD"])
+        assert diff is True
+
+    @patch(ns("local"))
+    def test_current_branch_should_return_branch_name(self, local_mock, git_service, mock_git):
+        mock_git.__getitem__.return_value.return_value = "branch\n"
+
+        diff = git_service.current_branch()
+
+        mock_git.assert_git_call(["branch", "--show-current"])
+        assert diff == "branch"
+
+    @patch(ns("local"))
+    def test_branch_exist_on_remote_should_return_remote_branch(
+        self, local_mock, git_service, mock_git
+    ):
+        mock_git.__getitem__.return_value.return_value = "origin/branch\n"
+
+        remote_branch = git_service.current_branch_exist_on_remote("branch")
+
+        mock_git.assert_git_call(["branch", "--remotes", "--contains", "branch"])
+        assert remote_branch == "origin/branch"
+
+
 class TestDetermineDirectory:
     @patch(ns("local"))
     def test_directory_of_none_should_return_cwd(self, local_mock, git_service):
