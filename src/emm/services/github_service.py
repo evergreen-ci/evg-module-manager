@@ -21,7 +21,7 @@ class GithubService:
     def create(cls) -> local:
         """Initialize the github cli in command line."""
         if not shutil.which("gh"):
-            raise EnvironmentError(
+            raise SystemExit(
                 "Please make sure you've installed github CLI. https://cli.github.com/"
             )
         return cls(local.cmd.gh)
