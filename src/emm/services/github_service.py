@@ -1,4 +1,5 @@
 """Service for working with github CLI."""
+import shutil
 from pathlib import Path
 from typing import List, Optional
 
@@ -19,6 +20,10 @@ class GithubService:
     @classmethod
     def create(cls) -> local:
         """Initialize the github cli in command line."""
+        if not shutil.which("gh"):
+            raise EnvironmentError(
+                "Please make sure you've installed github CLI. https://cli.github.com/"
+            )
         return cls(local.cmd.gh)
 
     def pull_request(self, extra_args: List[str], directory: Optional[Path] = None) -> str:

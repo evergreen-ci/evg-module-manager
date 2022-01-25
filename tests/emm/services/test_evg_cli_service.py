@@ -70,9 +70,7 @@ class TestCreatePatch:
 
         evg_cli_service.create_patch([])
 
-        evg_cli.__getitem__.assert_called_with(
-            ["patch", "--project", emm_options.evg_project, "--skip_confirm"]
-        )
+        evg_cli.__getitem__.assert_called_with(["patch", "--project", emm_options.evg_project])
 
     def test_create_patch_should_include_extra_args(self, evg_cli_service, evg_cli, emm_options):
         patch_id = "my_patch_id"
@@ -93,7 +91,6 @@ class TestCreatePatch:
                 "patch",
                 "--project",
                 emm_options.evg_project,
-                "--skip_confirm",
                 "-u",
                 "-d",
                 "hello world",
@@ -111,7 +108,7 @@ class TestAddModuleToPatch:
         evg_cli_service.add_module_to_patch(patch_id, module, directory, [])
 
         evg_cli.__getitem__.assert_called_with(
-            ["patch-set-module", "--module", module, "--patch", patch_id, "--skip_confirm"]
+            ["patch-set-module", "--module", module, "--patch", patch_id]
         )
         cwd_patch.assert_called_with(directory)
 
@@ -131,7 +128,6 @@ class TestAddModuleToPatch:
                 module,
                 "--patch",
                 patch_id,
-                "--skip_confirm",
                 "--uncommitted",
                 "--large",
                 "--preserve-commits",

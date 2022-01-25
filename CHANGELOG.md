@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.1.9 - 2022-01-25
+- Add check for github CLI installation and fix patch option
+
 ## 0.1.8 - 2021-12-29
 - Add support for github pull request
 
