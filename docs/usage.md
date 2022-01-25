@@ -140,7 +140,7 @@ evg-module-manager pull-request --title "my pull request title" --body "my pull 
 
 Use the `patch` command to create a patch build with changes to your base repository and any
 modules that are currently enabled. You can pass along any options that the `evergreen patch`
-command supports, however, the `--project` options are already specified
+command supports, however, the `--skip_confirm` and `--project` options are already specified
 by the tools are should not be included.
 
 ```bash

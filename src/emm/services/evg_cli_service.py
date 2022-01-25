@@ -44,7 +44,7 @@ class EvgCliService:
         :param extra_args: Extra arguments to add to the patch command.
         :return: Details about the created patch.
         """
-        args = ["patch", "--project", self.emm_options.evg_project]
+        args = ["patch", "--project", self.emm_options.evg_project, "--skip_confirm"]
         args.extend(extra_args)
         cmd_output = self.evg_cli[args]()
         patch_match = PATCH_ID_RE.search(cmd_output)
@@ -68,7 +68,7 @@ class EvgCliService:
         :param directory: Directory with the module changes.
         :param extra_args: Extra arguments that were passed to the patch command.
         """
-        args = ["patch-set-module", "--module", module, "--patch", patch_id]
+        args = ["patch-set-module", "--module", module, "--patch", patch_id, "--skip_confirm"]
         if "-u" in extra_args or "--uncommitted" in extra_args:
             args.append("--uncommitted")
         if "--large" in extra_args:
