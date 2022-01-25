@@ -213,7 +213,7 @@ def patch(ctx: click.Context) -> None:
     Any options passed to this command was be forwarded to the `evergreen patch` command. However,
     the following options are already included and should not be added:
 
-    * --yes, -y
+    * --skip_confirm, --yes, -y
     * --project, -p
     """
     orchestrator = EmmOrchestrator()
