@@ -22,7 +22,8 @@ class GithubService:
         """Initialize the github cli in command line."""
         if not shutil.which("gh"):
             raise SystemExit(
-                "Please make sure you've installed github CLI. https://cli.github.com/"
+                "Please make sure you've installed the Github CLI. "
+                "Instructions on how to do so can be found at https://cli.github.com/."
             )
         return cls(local.cmd.gh)
 
