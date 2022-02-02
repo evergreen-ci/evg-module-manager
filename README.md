@@ -43,6 +43,9 @@ It supports the following functionality:
 * [Evergreen config file](https://github.com/evergreen-ci/evergreen/wiki/Using-the-Command-Line-Tool#downloading-the-command-line-tool)
 * [github CLI](https://cli.github.com/)
 
+See [Usage Prerequisites](https://github.com/evergreen-ci/evg-module-manager/blob/main/docs/usage.md#prerequities)
+for more details.
+
 ## Installation
 
 We strongly recommend using a tool like [pipx](https://pypa.github.io/pipx/) to install

@@ -256,10 +256,6 @@ class ModulesService:
             module_location = Path(module_data.prefix) / module
             self.git_service.commit_all(commit, module_location)
 
-    def validate_github_authentication(self) -> bool:
-        """Check if github CLI already authenticated."""
-        return self.github_service.validate_github_authentication()
-
     def combine_pr_comments(self, comments: Dict[str, str]) -> List[PullRequestInfo]:
         """
         Combine the pull request comment string for each module.

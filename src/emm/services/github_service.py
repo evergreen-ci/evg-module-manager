@@ -1,15 +1,18 @@
 """Service for working with github CLI."""
+from __future__ import annotations
+
 import shutil
 from pathlib import Path
 from typing import List, Optional
 
 from plumbum import TF, local
+from plumbum.machines.local import LocalCommand
 
 
 class GithubService:
     """A service for interacting with github CLI."""
 
-    def __init__(self, gh_cli: local) -> None:
+    def __init__(self, gh_cli: LocalCommand) -> None:
         """
         Initialize the service.
 
@@ -18,7 +21,7 @@ class GithubService:
         self.gh_cli = gh_cli
 
     @classmethod
-    def create(cls) -> local:
+    def create(cls) -> GithubService:
         """Initialize the github cli in command line."""
         if not shutil.which("gh"):
             raise SystemExit(
