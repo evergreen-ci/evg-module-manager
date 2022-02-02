@@ -58,5 +58,6 @@ class ValidationService:
 
 
 def _check_github_auth_status() -> bool:
+    """Check the authentication status of the gh CLI."""
     args = ["auth", "status"]
     return local.cmd.gh_cli[args] & TF(FG=True)
