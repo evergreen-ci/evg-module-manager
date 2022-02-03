@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0 - 2022-02-04
+- 'pull-request' subcommand will now default to '--fill' and validate arguments.
+- 'pull-request' will only add comments if there are multiple PRs being created.
+
 ## 0.1.10 - 2022-02-02
 - Support git version 2.17
 - Update Usage documentation.

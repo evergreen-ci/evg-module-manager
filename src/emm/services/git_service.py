@@ -6,8 +6,13 @@ from os import path
 from pathlib import Path
 from typing import Optional
 
+import structlog
+from click import UsageError
 from plumbum import local
 from plumbum.machines.local import LocalCommand
+
+LOGGER = structlog.get_logger(__name__)
+PROTECTED_BRANCHES = {"main", "master"}
 
 
 class GitAction(str, Enum):
@@ -208,6 +213,16 @@ class GitService:
         :param directory: Directory to execute command at.
         :return: Errors that occur during push branch to remote.
         """
+        current_branch = self.current_branch(directory)
+        if current_branch in PROTECTED_BRANCHES:
+            LOGGER.warning(
+                "Attempting to push protected branch", branch=current_branch, directory=directory
+            )
+            raise UsageError(
+                f"Refusing to push changes to protected branch '{current_branch}' "
+                f"in directory '{self._determine_directory(directory)}'"
+            )
+
         args = ["push", "origin", "HEAD"]
         with local.cwd(self._determine_directory(directory)):
             return self.git[args]().strip()
