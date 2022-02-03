@@ -130,7 +130,7 @@ $ evg-module-manager disable --module wiredtiger
 
 ### Creating a branch
 
-Use `create-branch` command to create a new branch on base repo and any enabled modules. Use the
+Use `create-branch` command to create a new branch on the base repo and any enabled modules. Use the
 `--branch` option to specify the name of the branch to create.
 
 To create a branch named `my-branch`, use the following:
@@ -166,9 +166,9 @@ $ evg-module-manager update-branch --operation rebase --revision master
 ```
 
 If any merge conflicts occur during the operation, they will be reported and the repository will 
-be left in the unmerged state for manually resolution.
+be left in the unmerged state for manual resolution.
 
-## Committing changes to git
+### Committing changes to git
 
 Use the `git-commit` command to commit all your git tracked changes to your base repository and any
 modules that are currently enabled. The tool has already specified `--all` and `--message` option to git, which means
@@ -179,7 +179,7 @@ To commit all the tracked changes in base repo and any enabled modules:
 $ evg-module-manager git-commit --commit-message "my commit message"
 ```
 
-## Creating github pull request
+### Creating github pull request
 
 **Note**: In order to create pull requests in github, you need to sure the `gh` command line tool
 is available and authentication to github is configured. See [Github authentication](#github-authentication)
@@ -197,7 +197,7 @@ To create pull requests in base repo and all enabled modules:
 $ evg-module-manager pull-request --title "my pull request title" --body "my pull request body"
 ```
 
-## Creating an Evergreen patch build
+### Creating an Evergreen patch build
 
 **Note**: In order to create a patch build in Evergreen, you need to ensure the `evergreen` 
 command line tool is available and configured. See [Evergreen authentication](#evergreen-authentication)
@@ -212,7 +212,7 @@ already specified by the tools are should not be included.
 $ evg-module-manager patch -d "my patch description" -u
 ```
 
-## Submitting to the commit-queue
+### Submitting to the commit-queue
 
 **Note**: In order to submit changes to the commit queue in Evergreen, you need to ensure the 
 `evergreen` command line tool is available and configured. See 
