@@ -27,8 +27,7 @@ def evg_cli():
 
 @pytest.fixture()
 def evg_cli_service(emm_options, evg_cli):
-    evg_cli_service = under_test.EvgCliService(emm_options)
-    evg_cli_service.evg_cli = evg_cli
+    evg_cli_service = under_test.EvgCliService(emm_options, evg_cli)
     return evg_cli_service
 
 

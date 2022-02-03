@@ -2,6 +2,7 @@
 import logging
 import os.path
 import sys
+from functools import partial
 from pathlib import Path
 from typing import List
 
@@ -12,10 +13,12 @@ from evergreen import EvergreenApi, RetryingEvergreenApi
 from structlog.stdlib import LoggerFactory
 
 from emm.options import DEFAULT_EVG_CONFIG, DEFAULT_EVG_PROJECT, DEFAULT_MODULES_PATH, EmmOptions
-from emm.services.git_service import GitAction
+from emm.services.evg_cli_service import EvgCliService
+from emm.services.git_service import GitAction, GitService
 from emm.services.github_service import GithubService
 from emm.services.modules_service import ModulesService
 from emm.services.patch_service import PatchService
+from emm.services.validation_service import ValidationService
 
 LOGGER = structlog.get_logger(__name__)
 
@@ -30,8 +33,17 @@ class EmmOrchestrator:
     """An orchestrator for evg-module-manager."""
 
     @inject.autoparams()
-    def __init__(self, modules_service: ModulesService, patch_service: PatchService) -> None:
-        """Initialize the orchestrator."""
+    def __init__(
+        self,
+        modules_service: ModulesService,
+        patch_service: PatchService,
+    ) -> None:
+        """
+        Initialize the orchestrator.
+
+        :param modules_service: Service for working with modules.
+        :param patch_service: Service for creating patches.
+        """
         self.modules_service = modules_service
         self.patch_service = patch_service
 
@@ -105,18 +117,8 @@ class EmmOrchestrator:
 
         :param args: Arguments pass to the github CLI.
         """
-        authenticated = self.modules_service.validate_github_authentication()
-        if not authenticated:
-            # Note: github CLI is running on Front Process, it would display:
-            # You are not logged into any GitHub hosts. Run **gh auth login** to authenticate.
-            # Also github CLI would exit with a non-zero code if authenticated is true.
-            raise click.ClickException("Please authenticate github CLI.")
-        else:
-            # Note: we would pass args to github CLI to handle cases when option title&body or fill
-            # are not provided. Github CLI would error out and prompt error message that require user
-            # to fill those fields.
-            all_pull_requests = self.modules_service.git_pull_request(args)
-            print(all_pull_requests)
+        all_pull_requests = self.modules_service.git_pull_request(args)
+        print(all_pull_requests)
 
 
 def configure_logging(verbose: bool) -> None:
@@ -170,7 +172,9 @@ def cli(ctx: click.Context, modules_dir: str, evg_config_file: str, evg_project:
     def dependencies(binder: inject.Binder) -> None:
         binder.bind(EvergreenApi, evg_api)
         binder.bind(EmmOptions, ctx.obj)
-        binder.bind(GithubService, GithubService.create())
+        binder.bind_to_constructor(GithubService, GithubService.create)
+        binder.bind_to_constructor(GitService, GitService.create)
+        binder.bind_to_constructor(EvgCliService, partial(EvgCliService.create, ctx.obj))
 
     inject.configure(dependencies)
 
@@ -189,7 +193,7 @@ def enable(ctx: click.Context, module: str, sync_commit: bool) -> None:
 
     If the module does not exist locally, it will be cloned.
     """
-    orchestrator = EmmOrchestrator()
+    orchestrator = inject.instance(EmmOrchestrator)
     orchestrator.enable(module, sync_commit)
 
 
@@ -198,7 +202,7 @@ def enable(ctx: click.Context, module: str, sync_commit: bool) -> None:
 @click.option("-m", "--module", required=True, help="Name of module to enable.")
 def disable(ctx: click.Context, module: str) -> None:
     """Disable the specified module in the current repo."""
-    orchestrator = EmmOrchestrator()
+    orchestrator = inject.instance(EmmOrchestrator)
     orchestrator.disable(module)
 
 
@@ -213,10 +217,13 @@ def patch(ctx: click.Context) -> None:
     Any options passed to this command was be forwarded to the `evergreen patch` command. However,
     the following options are already included and should not be added:
 
+    \b
     * --skip_confirm, --yes, -y
     * --project, -p
     """
-    orchestrator = EmmOrchestrator()
+    validation_service = inject.instance(ValidationService)
+    validation_service.validate_evergreen_command()
+    orchestrator = inject.instance(EmmOrchestrator)
     orchestrator.submit_patch(ctx.args)
 
 
@@ -234,10 +241,13 @@ def commit_queue(ctx: click.Context) -> None:
     Any options passed to this command was be forwarded to the `evergreen patch` command. However,
     the following options are already included and should not be added:
 
+    \b
     * --skip_confirm, --yes, -y
     * --project, -p
     """
-    orchestrator = EmmOrchestrator()
+    validation_service = inject.instance(ValidationService)
+    validation_service.validate_evergreen_command()
+    orchestrator = inject.instance(EmmOrchestrator)
     orchestrator.submit_cq_patch(ctx.args)
 
 
@@ -247,17 +257,19 @@ def commit_queue(ctx: click.Context) -> None:
 @click.pass_context
 def list_modules(ctx: click.Context, enabled: bool, show_details: bool) -> None:
     """List the modules available for the current repo."""
-    orchestrator = EmmOrchestrator()
+    orchestrator = inject.instance(EmmOrchestrator)
     orchestrator.display_modules(enabled, show_details)
 
 
 @cli.command(context_settings=dict(max_content_width=100))
-@click.option("-b", "--branch", default=None, help="Name of branch for git checkout.")
+@click.option("-b", "--branch", required=True, help="Name of branch to create.")
 @click.option("-r", "--revision", default="HEAD", help="Revision to be checked out.")
 @click.pass_context
 def create_branch(ctx: click.Context, revision: str, branch: str) -> None:
     """Perform git checkout operation to create the branch."""
-    orchestrator = EmmOrchestrator()
+    validation_service = inject.instance(ValidationService)
+    validation_service.validate_git_command()
+    orchestrator = inject.instance(EmmOrchestrator)
     orchestrator.git_operate_base(revision, GitAction.CHECKOUT, branch)
 
 
@@ -273,7 +285,9 @@ def create_branch(ctx: click.Context, revision: str, branch: str) -> None:
 @click.pass_context
 def update_branch(ctx: click.Context, revision: str, operation: GitAction) -> None:
     """Perform git merge|rebase operation to update the branch."""
-    orchestrator = EmmOrchestrator()
+    validation_service = inject.instance(ValidationService)
+    validation_service.validate_git_command()
+    orchestrator = inject.instance(EmmOrchestrator)
     orchestrator.git_operate_base(revision, operation, None)
 
 
@@ -287,11 +301,14 @@ def git_commit(ctx: click.Context, commit_message: str) -> None:
     Any enabled modules with git tracked changes will be committed with the commit message
     along with changes to the base repository.
 
+    \b
     The following options are already included in the git commit command:
     * --all, -a
     * --message, -m
     """
-    orchestrator = EmmOrchestrator()
+    validation_service = inject.instance(ValidationService)
+    validation_service.validate_git_command()
+    orchestrator = inject.instance(EmmOrchestrator)
     orchestrator.git_commit_modules(commit_message)
 
 
@@ -308,7 +325,9 @@ def pull_request(ctx: click.Context) -> None:
     Any enabled modules with committed changes would create a pull request,
     each pull request would contain links of other modules' pull request as comment.
 
-    Use --title and --body to create a pull request or use --fill autofill these values from git commits.:
+    \b
+    Use --title and --body to create a pull request or use --fill autofill these values from git
+    commits:
     * -t, --title <string> Title for the pull request
     * -b, --body <string> Body for the pull request
     * -f, --fill Do not prompt for title/body and just use commit info
@@ -318,7 +337,9 @@ def pull_request(ctx: click.Context) -> None:
     in following link:
        https://cli.github.com/manual/gh_pr_create
     """
-    orchestrator = EmmOrchestrator()
+    validation_service = inject.instance(ValidationService)
+    validation_service.validate_github()
+    orchestrator = inject.instance(EmmOrchestrator)
     orchestrator.git_pull_request(ctx.args)
 
 

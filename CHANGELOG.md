@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.10 - 2022-02-02
+- Support git version 2.17
+- Update Usage documentation.
+
 ## 0.1.9 - 2022-01-25
 - Add check for github CLI installation
 

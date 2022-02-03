@@ -1,10 +1,12 @@
 """Service for working with the evergreen CLI."""
+from __future__ import annotations
+
 import re
 from pathlib import Path
 from typing import List, NamedTuple
 
-import inject
 from plumbum import local
+from plumbum.machines.local import LocalCommand
 
 from emm.options import EmmOptions
 
@@ -27,15 +29,19 @@ class PatchInfo(NamedTuple):
 class EvgCliService:
     """A service for interacting with the Evergreen CLI."""
 
-    @inject.autoparams()
-    def __init__(self, emm_options: EmmOptions) -> None:
+    def __init__(self, emm_options: EmmOptions, evg_cli: LocalCommand) -> None:
         """
         Initialize the service.
 
         :param emm_options: Options about the command.
         """
         self.emm_options = emm_options
-        self.evg_cli = local.cmd.evergreen
+        self.evg_cli = evg_cli
+
+    @classmethod
+    def create(cls, emm_options: EmmOptions) -> EvgCliService:
+        """Create evergreen CLI service instance."""
+        return cls(emm_options, local.cmd.evergreen)
 
     def create_patch(self, extra_args: List[str]) -> PatchInfo:
         """

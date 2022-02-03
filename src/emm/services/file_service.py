@@ -1,6 +1,7 @@
 """A service for working with files."""
 from pathlib import Path
-from typing import Any, Dict
+from shutil import which
+from typing import Any, Dict, Optional
 
 import yaml
 
@@ -47,3 +48,8 @@ class FileService:
     def mkdirs(target: Path) -> None:
         """Create directories for path if they don't exist."""
         target.mkdir(parents=True)
+
+    @staticmethod
+    def which(cmd: str) -> Optional[str]:
+        """Find the path to the given command, if it exists."""
+        return which(cmd)

@@ -1,10 +1,13 @@
 """Service for working with git."""
+from __future__ import annotations
+
 from enum import Enum
 from os import path
 from pathlib import Path
 from typing import Optional
 
 from plumbum import local
+from plumbum.machines.local import LocalCommand
 
 
 class GitAction(str, Enum):
@@ -18,9 +21,14 @@ class GitAction(str, Enum):
 class GitService:
     """A service for interacting with git."""
 
-    def __init__(self) -> None:
+    def __init__(self, git: LocalCommand) -> None:
         """Initialize the service."""
-        self.git = local.cmd.git
+        self.git = git
+
+    @classmethod
+    def create(cls) -> GitService:
+        """Create evergreen CLI service instance."""
+        return cls(local.cmd.git)
 
     def perform_git_action(
         self,
@@ -177,7 +185,7 @@ class GitService:
 
         :param directory: Directory to execute command at.
         """
-        args = ["branch", "--show-current"]
+        args = ["rev-parse", "--abbrev-ref", "HEAD"]
         with local.cwd(self._determine_directory(directory)):
             return self.git[args]().strip()
 

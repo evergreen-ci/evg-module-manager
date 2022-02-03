@@ -22,8 +22,7 @@ def mock_git():
 
 @pytest.fixture()
 def git_service(mock_git) -> under_test.GitService:
-    git_service = under_test.GitService()
-    git_service.git = mock_git
+    git_service = under_test.GitService(mock_git)
     return git_service
 
 
@@ -250,7 +249,7 @@ class TestPushBranchToRemote:
 
         diff = git_service.current_branch()
 
-        mock_git.assert_git_call(["branch", "--show-current"])
+        mock_git.assert_git_call(["rev-parse", "--abbrev-ref", "HEAD"])
         assert diff == "branch"
 
     @patch(ns("local"))
