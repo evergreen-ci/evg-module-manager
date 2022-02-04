@@ -52,7 +52,7 @@ def pull_request_service(git_service, github_service, modules_service, evg_servi
 
 def build_mock_repository(i: int) -> under_test.Repository:
     return under_test.Repository(
-        name=f"module {i}", directory=Path(f"prefix/{i}"), target_branch=f"branch_{i}"
+        name=f"module {i}", directory=Path(f"prefix/{i}/module {i}"), target_branch=f"branch_{i}"
     )
 
 

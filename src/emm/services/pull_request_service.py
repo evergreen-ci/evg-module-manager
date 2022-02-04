@@ -1,6 +1,4 @@
 """Service for creating pull requests."""
-
-
 from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional
 
@@ -87,7 +85,7 @@ class PullRequestService:
         repository_list = [
             Repository(
                 name=module.name,
-                directory=Path(module.prefix),
+                directory=Path(module.prefix) / module.name,
                 target_branch=module.branch,
             )
             for module in enabled_modules.values()
