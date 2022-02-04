@@ -188,9 +188,9 @@ for details.
 The `pull-request` subcommand will create pull requests across the base repo and all enabled 
 modules.  
 
-After local changes have committed in all repos, you can create the pull request from the base 
-repo, and all enabled modules with changes would create a separate pull request. Each pull 
-request would have comments that contain links for all other modules' pull requests.
+After local changes have been committed in all repos, you can create the pull request from the base 
+repo, and all enabled modules with changes will create a separate pull request. Each pull 
+request will have comments that contain links for all other modules' pull requests.
 
 To create pull requests in base repo and all enabled modules:
 

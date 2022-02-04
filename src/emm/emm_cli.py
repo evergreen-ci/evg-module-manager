@@ -327,7 +327,7 @@ def pull_request(ctx: click.Context, title: Optional[str], body: Optional[str]) 
     """
     Create a Github pull request for changes in the base repository and any enabled modules.
 
-    NOTE: Before use this command, you have to authenticate to github by 'gh auth login'.
+    NOTE: Before using this command, you have to authenticate to github by 'gh auth login'.
 
     A pull request will be created for the base repository and any enabled modules that contain
     changes. Additionally, a comment will be added to each pull request with links to the other
