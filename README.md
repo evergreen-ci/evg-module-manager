@@ -2,15 +2,15 @@
 
 Manage Evergreen modules in your local environment.
 
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/evg-module-manager) [![PyPI](https://img.shields.io/pypi/v/evg-module-manager.svg)](https://pypi.org/project/evg-module-manager/)
-
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/evg-module-manager) [![PyPI](https://img.shields.io/pypi/v/evg-module-manager.svg)](https://pypi.org/project/evg-module-manager/) [![Documentation](https://img.shields.io/badge/Docs-Available-green)](https://evergreen-ci.github.io/evg-module-manager/)
 ## Table of contents
 
 1. [Description](#description)
-2. [Dependencies](#dependencies)
-3. [Installation](#installation)
-4. [Usage](#usage)
-5. [Contributor's Guide](#contributors-guide)
+2. [Documentation](#documentation)
+3. [Dependencies](#dependencies)
+4. [Installation](#installation)
+5. [Usage](#usage)
+6. [Contributor's Guide](#contributors-guide)
     - [Setting up a local development environment](#setting-up-a-local-development-environment)
     - [linting/formatting](#lintingformatting)
     - [Running tests](#running-tests)
@@ -18,7 +18,7 @@ Manage Evergreen modules in your local environment.
     - [Versioning](#versioning)
     - [Code Review](#code-review)
     - [Deployment](#deployment)
-6. [Resources](#resources)
+7. [Resources](#resources)
 
 ## Description
 
@@ -34,6 +34,10 @@ It supports the following functionality:
   modules.
 * Submit a changes to the commit-queue that includes changes from the local patch build and all
   enabled modules.
+
+## Documentation
+
+Read the documentation [here](https://evergreen-ci.github.io/evg-module-manager/).
 
 ## Dependencies
 

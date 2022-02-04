@@ -489,3 +489,11 @@ fabric.properties
 .DS_STORE
 
 .mypy_cache
+
+gh-pages-publish-linux
+hugo
+hugo_*.tar.gz
+emm-docs/public
+emm-docs/LICENSE
+emm-docs/README.md
+emm-docs/content/project-history/CHANGELOG.md
