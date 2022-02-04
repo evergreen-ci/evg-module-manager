@@ -4,7 +4,7 @@ import os.path
 import sys
 from functools import partial
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 import click
 import inject
@@ -18,6 +18,7 @@ from emm.services.git_service import GitAction, GitService
 from emm.services.github_service import GithubService
 from emm.services.modules_service import ModulesService
 from emm.services.patch_service import PatchService
+from emm.services.pull_request_service import PullRequestService
 from emm.services.validation_service import ValidationService
 
 LOGGER = structlog.get_logger(__name__)
@@ -37,15 +38,18 @@ class EmmOrchestrator:
         self,
         modules_service: ModulesService,
         patch_service: PatchService,
+        pull_request_service: PullRequestService,
     ) -> None:
         """
         Initialize the orchestrator.
 
         :param modules_service: Service for working with modules.
         :param patch_service: Service for creating patches.
+        :param pull_request_service: Service for creating pull requests.
         """
         self.modules_service = modules_service
         self.patch_service = patch_service
+        self.pull_request_service = pull_request_service
 
     def enable(self, module_name: str, sync_commit: bool) -> None:
         """
@@ -111,14 +115,17 @@ class EmmOrchestrator:
         """
         self.modules_service.git_commit_modules(commit_message)
 
-    def git_pull_request(self, args: List[str]) -> None:
+    def create_pull_request(self, title: Optional[str], body: Optional[str]) -> None:
         """
-        Create pull request to all modules.
+        Create pull requests in any repositories that contain changes.
 
-        :param args: Arguments pass to the github CLI.
+        :param title: Title for the pull request.
+        :param body: Body for the pull request.
         """
-        all_pull_requests = self.modules_service.git_pull_request(args)
-        print(all_pull_requests)
+        created_pull_requests = self.pull_request_service.create_pull_request(title, body)
+        print("Created the following pull requests:")
+        for pr in created_pull_requests:
+            print(f"- {pr.name}: {pr.link}")
 
 
 def configure_logging(verbose: bool) -> None:
@@ -312,35 +319,34 @@ def git_commit(ctx: click.Context, commit_message: str) -> None:
     orchestrator.git_commit_modules(commit_message)
 
 
-@cli.command(
-    context_settings=dict(max_content_width=100, ignore_unknown_options=True, allow_extra_args=True)
-)
+@cli.command(context_settings=dict(max_content_width=100))
+@click.option("--title", help="Title for the pull request.")
+@click.option("--body", help="Body for the pull request")
 @click.pass_context
-def pull_request(ctx: click.Context) -> None:
+def pull_request(ctx: click.Context, title: Optional[str], body: Optional[str]) -> None:
     """
-    Create pull request for the changes in each module.
+    Create a Github pull request for changes in the base repository and any enabled modules.
 
-    Before use this command, you have to authenticate to github by 'gh auth login'.
+    NOTE: Before using this command, you have to authenticate to github by 'gh auth login'.
 
-    Any enabled modules with committed changes would create a pull request,
-    each pull request would contain links of other modules' pull request as comment.
+    A pull request will be created for the base repository and any enabled modules that contain
+    changes. Additionally, a comment will be added to each pull request with links to the other
+    pull requests.
 
-    \b
-    Use --title and --body to create a pull request or use --fill autofill these values from git
-    commits:
-    * -t, --title <string> Title for the pull request
-    * -b, --body <string> Body for the pull request
-    * -f, --fill Do not prompt for title/body and just use commit info
-
-
-    Other options will be passed to github CLI and processed, the documentation is
-    in following link:
-       https://cli.github.com/manual/gh_pr_create
+    By default, the commit info will be used to fill out the title and body of the pull request,
+    however, the `--title` and `--body` options can be used to customize these.
     """
     validation_service = inject.instance(ValidationService)
     validation_service.validate_github()
+
+    if title is None and body is not None:
+        raise click.UsageError(
+            "Cannot create a PR with an empty title, "
+            "please provide a title with the `--title` option."
+        )
+
     orchestrator = inject.instance(EmmOrchestrator)
-    orchestrator.git_pull_request(ctx.args)
+    orchestrator.create_pull_request(title, body)
 
 
 if __name__ == "__main__":
