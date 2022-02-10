@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.1 - 2022-02-10
+- Add support for Python 3.7
+
 ## 0.2.0 - 2022-02-04
 - 'pull-request' subcommand will now default to '--fill' and validate arguments.
 - 'pull-request' will only add comments if there are multiple PRs being created.

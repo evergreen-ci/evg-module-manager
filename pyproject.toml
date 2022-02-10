@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "evg-module-manager"
-version = "0.2.0"
+version = "0.2.1"
 description = "Manage Evergreen modules locally."
 authors = ["Dev Prod DAG <dev-prod-dag@mongodb.com>"]
 license = "Apache-2.0"
@@ -24,7 +24,7 @@ PyYAML = "^5.4.1"
 xdg = "^5.1.1"
 pydantic = "^1.8.2"
 rich = "^10.9.0"
-"shrub.py" = "^3.0.0"
+"shrub.py" = "^3.0.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
