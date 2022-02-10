@@ -1,10 +1,9 @@
 """Service for working with git."""
 from __future__ import annotations
 
-from enum import Enum
 from os import path
 from pathlib import Path
-from typing import Optional
+from typing import List, Optional
 
 import structlog
 from click import UsageError
@@ -15,15 +14,7 @@ LOGGER = structlog.get_logger(__name__)
 PROTECTED_BRANCHES = {"main", "master"}
 
 
-class GitAction(str, Enum):
-    """Actions to perform on a git repository."""
-
-    CHECKOUT = "checkout"
-    REBASE = "rebase"
-    MERGE = "merge"
-
-
-class GitService:
+class GitProxy:
     """A service for interacting with git."""
 
     def __init__(self, git: LocalCommand) -> None:
@@ -31,33 +22,9 @@ class GitService:
         self.git = git
 
     @classmethod
-    def create(cls) -> GitService:
+    def create(cls) -> GitProxy:
         """Create evergreen CLI service instance."""
         return cls(local.cmd.git)
-
-    def perform_git_action(
-        self,
-        git_action: GitAction,
-        revision: str,
-        branch_name: Optional[str] = None,
-        directory: Optional[Path] = None,
-    ) -> None:
-        """
-        Perform the given git action on a repository.
-
-        :param git_action: Git action to perform.
-        :param revision: Git revision to perform action against.
-        :param branch_name: Branch name to create if running checkout.
-        :param directory: Path to root of repo to operate on.
-        """
-        if git_action == GitAction.CHECKOUT:
-            self.checkout(revision, directory, branch_name)
-        elif git_action == GitAction.REBASE:
-            self.rebase(revision, directory)
-        elif git_action == GitAction.MERGE:
-            self.merge(revision, directory)
-        else:
-            raise ValueError(f"Unknown git action: {git_action.value}")
 
     def clone(self, name: str, remote_repo: str, directory: Path, branch: Optional[str]) -> None:
         """
@@ -86,8 +53,24 @@ class GitService:
         with local.cwd(self._determine_directory(directory)):
             self.git[args]()
 
+    def pull(self, rebase: bool = False, directory: Optional[Path] = None) -> None:
+        """
+        Pull latest changes to branch.
+
+        :param rebase: If True, rebase on top of changes, else merge changes in.
+        :param directory: Path to root of repo to operate on.
+        """
+        args = ["pull"]
+        if rebase:
+            args.append("--rebase")
+        with local.cwd(self._determine_directory(directory)):
+            self.git[args]()
+
     def checkout(
-        self, revision: str, directory: Optional[Path] = None, branch_name: Optional[str] = None
+        self,
+        revision: Optional[str] = None,
+        directory: Optional[Path] = None,
+        branch_name: Optional[str] = None,
     ) -> None:
         """
         Checkout the given revision.
@@ -99,18 +82,103 @@ class GitService:
         args = ["checkout"]
         if branch_name is not None:
             args += ["-b", branch_name]
-        args.append(revision)
+        if revision is not None:
+            args.append(revision)
         with local.cwd(self._determine_directory(directory)):
             self.git[args]()
 
-    def rebase(self, revision: str, directory: Optional[Path] = None) -> None:
+    def branch(self, delete: Optional[str] = None, directory: Optional[Path] = None) -> str:
+        """
+        Run the branch command against the specified repository.
+
+        :param delete: Execute the delete version of branch against the provided branch.
+        :param directory: Directory where the repository lives.
+        """
+        args = ["branch"]
+        if delete is not None:
+            args.extend(["-D", delete])
+        with local.cwd(self._determine_directory(directory)):
+            return self.git[args]()
+
+    def status(self, short: bool = False, directory: Optional[Path] = None) -> str:
+        """
+        Run the status command against the specified repository.
+
+        :param directory: Directory where the repository lives.
+        """
+        args = ["status"]
+        if short:
+            args.append("--short")
+        with local.cwd(self._determine_directory(directory)):
+            return self.git[args]()
+
+    def ls_files(
+        self,
+        pathspecs: List[str],
+        cached: bool = False,
+        others: bool = False,
+        ignore_file: Optional[str] = None,
+        directory: Optional[Path] = None,
+    ) -> List[str]:
+        """
+        Run the ls-files command against the specified repository.
+
+        :param pathspecs: List of path specs to search.
+        :param cached: If True, report on cached files.
+        :param others: If True, report on untracked files.
+        :param ignore_file: File describing which files to ignore.
+        :param directory: Directory to execute command at.
+        :return: List of files that match the given path specs.
+        """
+        args = ["ls-files"]
+        if cached:
+            args.append("--cached")
+        if others:
+            args.append("--others")
+        if ignore_file is not None:
+            args.append(f"--exclude-from={ignore_file}")
+        args.extend(pathspecs)
+        with local.cwd(self._determine_directory(directory)):
+            return self.git[args]().strip().splitlines()
+
+    def add(self, files: List[str], directory: Optional[Path] = None) -> None:
+        """
+        Run the add command against the specified repository.
+
+        :param files: List of files to add.
+        :param directory: Directory to execute command at.
+        """
+        args = ["add"]
+        args.extend(files)
+        with local.cwd(self._determine_directory(directory)):
+            self.git[args]()
+
+    def restore(
+        self, files: List[str], staged: bool = False, directory: Optional[Path] = None
+    ) -> None:
+        """
+        Run the add restore command against the specified repository.
+
+        :param files: List of files to restore.
+        :param staged: If true, the given files should be unstaged.
+        :param directory: Directory to execute command at.
+        """
+        args = ["restore"]
+        if staged:
+            args.append("--staged")
+
+        args.extend(files)
+        with local.cwd(self._determine_directory(directory)):
+            self.git[args]()
+
+    def rebase(self, onto: str, directory: Optional[Path] = None) -> None:
         """
         Rebase on the given revision.
 
-        :param revision: Revision to rebase on.
+        :param onto: Revision to rebase on.
         :param directory: Directory to execute command at.
         """
-        args = ["rebase", revision]
+        args = ["rebase", "--onto", onto]
         with local.cwd(self._determine_directory(directory)):
             self.git[args]()
 
@@ -149,14 +217,31 @@ class GitService:
         with local.cwd(self._determine_directory(directory)):
             return self.git[args]().strip()
 
-    def commit_all(self, commit_message: str, directory: Optional[Path] = None) -> None:
+    def commit(
+        self,
+        commit_message: Optional[str] = None,
+        amend: bool = False,
+        add: bool = False,
+        directory: Optional[Path] = None,
+    ) -> None:
         """
         Get the commit hash of the current HEAD of a repository.
 
         :param commit_message: Commit message for all the changes.
+        :param amend: Amend the commit to previous commit instead of creating a new one.
+        :param add: Make changes to tracked files part of commit.
         :param directory: Directory to execute command at.
         """
-        args = ["commit", "--all", "--message", commit_message]
+        args = ["commit"]
+        if commit_message is not None:
+            args.extend(["--message", commit_message])
+
+        if amend:
+            args.extend(["--amend", "--reuse-message=HEAD"])
+
+        if add:
+            args.append("--all")
+
         with local.cwd(self._determine_directory(directory)):
             self.git[args]()
 

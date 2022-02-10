@@ -4,7 +4,7 @@ import os.path
 import sys
 from functools import partial
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
 import click
 import inject
@@ -12,10 +12,23 @@ import structlog
 from evergreen import EvergreenApi, RetryingEvergreenApi
 from structlog.stdlib import LoggerFactory
 
+from emm.cli.evg_cli import evg_commit_queue, evg_patch
+from emm.cli.git_cli import (
+    git_add,
+    git_branch_create,
+    git_branch_delete,
+    git_branch_pull,
+    git_branch_show,
+    git_branch_switch,
+    git_branch_update,
+    git_commit,
+    git_restore,
+    git_status,
+)
+from emm.clients.evg_cli_service import EvgCliService
+from emm.clients.git_proxy import GitProxy
+from emm.clients.github_service import GithubService
 from emm.options import DEFAULT_EVG_CONFIG, DEFAULT_EVG_PROJECT, DEFAULT_MODULES_PATH, EmmOptions
-from emm.services.evg_cli_service import EvgCliService
-from emm.services.git_service import GitAction, GitService
-from emm.services.github_service import GithubService
 from emm.services.modules_service import ModulesService
 from emm.services.patch_service import PatchService
 from emm.services.pull_request_service import PullRequestService
@@ -64,24 +77,6 @@ class EmmOrchestrator:
         """Disable the specified module."""
         self.modules_service.disable(module_name)
 
-    def submit_patch(self, extra_args: List[str]) -> None:
-        """
-        Submit a patch with all the enabled modules.
-
-        :param extra_args: Extra arguments to pass to the patch command.
-        """
-        patch_info = self.patch_service.create_patch(extra_args)
-        print(f"Patch Submitted: {patch_info.patch_url}")
-
-    def submit_cq_patch(self, extra_args: List[str]) -> None:
-        """
-        Submit a patch to the commit-queue with all the enabled modules.
-
-        :param extra_args: Extra arguments to pass to the patch command.
-        """
-        patch_info = self.patch_service.create_cq_patch(extra_args)
-        print(f"Patch Submitted: {patch_info.patch_url}")
-
     def display_modules(self, enabled: bool, details: bool) -> None:
         """
         Display the available modules.
@@ -96,24 +91,6 @@ class EmmOrchestrator:
                 print(f"\tprefix: {module_data.prefix}")
                 print(f"\trepo: {module_data.repo}")
                 print(f"\tbranch: {module_data.branch}")
-
-    def git_operate_base(self, revision: str, operation: GitAction, branch: str) -> None:
-        """
-        Git checkout|rebase|merge modules to the specific revision.
-
-        :param revision: Dictionary of module names and git revision to check out.
-        :param operation: Git operation to perform.
-        :param branch: Name of branch for git checkout.
-        """
-        self.modules_service.git_operate_base(operation, revision, branch)
-
-    def git_commit_modules(self, commit_message: str) -> None:
-        """
-        Git commit all changes to all modules.
-
-        :param commit_message: Commit content for all changes.
-        """
-        self.modules_service.git_commit_modules(commit_message)
 
     def create_pull_request(self, title: Optional[str], body: Optional[str]) -> None:
         """
@@ -180,7 +157,7 @@ def cli(ctx: click.Context, modules_dir: str, evg_config_file: str, evg_project:
         binder.bind(EvergreenApi, evg_api)
         binder.bind(EmmOptions, ctx.obj)
         binder.bind_to_constructor(GithubService, GithubService.create)
-        binder.bind_to_constructor(GitService, GitService.create)
+        binder.bind_to_constructor(GitProxy, GitProxy.create)
         binder.bind_to_constructor(EvgCliService, partial(EvgCliService.create, ctx.obj))
 
     inject.configure(dependencies)
@@ -213,51 +190,6 @@ def disable(ctx: click.Context, module: str) -> None:
     orchestrator.disable(module)
 
 
-@cli.command(
-    context_settings=dict(max_content_width=100, ignore_unknown_options=True, allow_extra_args=True)
-)
-@click.pass_context
-def patch(ctx: click.Context) -> None:
-    """
-    Create an Evergreen patch with changes from the base repo and any enabled modules.
-
-    Any options passed to this command was be forwarded to the `evergreen patch` command. However,
-    the following options are already included and should not be added:
-
-    \b
-    * --skip_confirm, --yes, -y
-    * --project, -p
-    """
-    validation_service = inject.instance(ValidationService)
-    validation_service.validate_evergreen_command()
-    orchestrator = inject.instance(EmmOrchestrator)
-    orchestrator.submit_patch(ctx.args)
-
-
-@cli.command(
-    context_settings=dict(max_content_width=100, ignore_unknown_options=True, allow_extra_args=True)
-)
-@click.pass_context
-def commit_queue(ctx: click.Context) -> None:
-    """
-    Submit changes from the base repository and any enabled modules to the Evergreen commit queue.
-
-    Any enabled modules with changes with be submitted to the commit queue along with changes
-    to the base repository.
-
-    Any options passed to this command was be forwarded to the `evergreen patch` command. However,
-    the following options are already included and should not be added:
-
-    \b
-    * --skip_confirm, --yes, -y
-    * --project, -p
-    """
-    validation_service = inject.instance(ValidationService)
-    validation_service.validate_evergreen_command()
-    orchestrator = inject.instance(EmmOrchestrator)
-    orchestrator.submit_cq_patch(ctx.args)
-
-
 @cli.command(context_settings=dict(max_content_width=100))
 @click.option("--enabled", is_flag=True, default=False, help="Only list enabled modules.")
 @click.option("--show-details", is_flag=True, default=False, help="Show details about modules.")
@@ -266,57 +198,6 @@ def list_modules(ctx: click.Context, enabled: bool, show_details: bool) -> None:
     """List the modules available for the current repo."""
     orchestrator = inject.instance(EmmOrchestrator)
     orchestrator.display_modules(enabled, show_details)
-
-
-@cli.command(context_settings=dict(max_content_width=100))
-@click.option("-b", "--branch", required=True, help="Name of branch to create.")
-@click.option("-r", "--revision", default="HEAD", help="Revision to be checked out.")
-@click.pass_context
-def create_branch(ctx: click.Context, revision: str, branch: str) -> None:
-    """Perform git checkout operation to create the branch."""
-    validation_service = inject.instance(ValidationService)
-    validation_service.validate_git_command()
-    orchestrator = inject.instance(EmmOrchestrator)
-    orchestrator.git_operate_base(revision, GitAction.CHECKOUT, branch)
-
-
-@cli.command(context_settings=dict(max_content_width=100))
-@click.option(
-    "-o",
-    "--operation",
-    type=click.Choice([GitAction.MERGE, GitAction.REBASE]),
-    default=GitAction.MERGE,
-    help="Git operations to perform with the given revision[default=merge].",
-)
-@click.option("-r", "--revision", required=True, help="Revision to be updated the branch from.")
-@click.pass_context
-def update_branch(ctx: click.Context, revision: str, operation: GitAction) -> None:
-    """Perform git merge|rebase operation to update the branch."""
-    validation_service = inject.instance(ValidationService)
-    validation_service.validate_git_command()
-    orchestrator = inject.instance(EmmOrchestrator)
-    orchestrator.git_operate_base(revision, operation, None)
-
-
-@cli.command(context_settings=dict(max_content_width=100))
-@click.option("-m", "--commit-message", required=True, help="Commit message to apply.")
-@click.pass_context
-def git_commit(ctx: click.Context, commit_message: str) -> None:
-    """
-    Create a git commit of changes in each module.
-
-    Any enabled modules with git tracked changes will be committed with the commit message
-    along with changes to the base repository.
-
-    \b
-    The following options are already included in the git commit command:
-    * --all, -a
-    * --message, -m
-    """
-    validation_service = inject.instance(ValidationService)
-    validation_service.validate_git_command()
-    orchestrator = inject.instance(EmmOrchestrator)
-    orchestrator.git_commit_modules(commit_message)
 
 
 @cli.command(context_settings=dict(max_content_width=100))
@@ -347,6 +228,23 @@ def pull_request(ctx: click.Context, title: Optional[str], body: Optional[str]) 
 
     orchestrator = inject.instance(EmmOrchestrator)
     orchestrator.create_pull_request(title, body)
+
+
+# Evergreen subcommands.
+cli.add_command(evg_patch)
+cli.add_command(evg_commit_queue)
+
+# Git subcommands.
+cli.add_command(git_branch_create)
+cli.add_command(git_branch_show)
+cli.add_command(git_branch_switch)
+cli.add_command(git_branch_delete)
+cli.add_command(git_branch_pull)
+cli.add_command(git_branch_update)
+cli.add_command(git_status)
+cli.add_command(git_commit)
+cli.add_command(git_add)
+cli.add_command(git_restore)
 
 
 if __name__ == "__main__":

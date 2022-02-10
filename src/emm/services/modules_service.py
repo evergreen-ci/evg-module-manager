@@ -1,19 +1,33 @@
 """Service for working with evergreen modules."""
+from enum import Enum
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Dict, List
 
 import inject
 import structlog
-from plumbum import ProcessExecutionError
 from shrub.v3.evg_project import EvgModule
 
+from emm.clients.evg_service import EvgService, Manifest
+from emm.clients.git_proxy import GitProxy
+from emm.models.repository import Repository
 from emm.options import EmmOptions
-from emm.services.evg_service import EvgService, Manifest
 from emm.services.file_service import FileService
-from emm.services.git_service import GitAction, GitService
-from emm.services.github_service import GithubService
 
 LOGGER = structlog.get_logger(__name__)
+
+
+class UpdateStrategy(str, Enum):
+    """
+    How branch updates should be resolved.
+
+    * merge: Create a merge commit with the changes.
+    * rebase: Rebase changes on top of specified commit.
+    * checkout: Checkout the specified commit.
+    """
+
+    MERGE = "merge"
+    REBASE = "rebase"
+    CHECKOUT = "checkout"
 
 
 class ModulesService:
@@ -24,8 +38,7 @@ class ModulesService:
         self,
         emm_options: EmmOptions,
         evg_service: EvgService,
-        git_service: GitService,
-        github_service: GithubService,
+        git_service: GitProxy,
         file_service: FileService,
     ) -> None:
         """
@@ -39,7 +52,6 @@ class ModulesService:
         self.emm_options = emm_options
         self.evg_service = evg_service
         self.git_service = git_service
-        self.github_service = github_service
         self.file_service = file_service
 
     def enable(self, module_name: str, sync_commit: bool = True) -> None:
@@ -108,6 +120,21 @@ class ModulesService:
         pred = self.is_module_enabled if enabled else lambda _name, _: True
         return {k: v for k, v in all_modules.items() if pred(k, v)}
 
+    def collect_repositories(self) -> List[Repository]:
+        """
+        Create a list of potential repositories for the base and all enabled modules.
+
+        :param project_id: Evergreen Project ID of base repository.
+        :return: List of repositories associated the base repository.
+        """
+        enabled_modules = self.get_all_modules(enabled=True)
+        repository_list = [Repository.from_module(module) for module in enabled_modules.values()]
+        evg_project_id = self.emm_options.evg_project
+        repository_list.append(
+            Repository.base_repo(self.evg_service.get_project_branch(evg_project_id))
+        )
+        return repository_list
+
     def is_module_enabled(self, module_name: str, module_data: EvgModule) -> bool:
         """
         Determine if the given module is enabled locally.
@@ -124,18 +151,25 @@ class ModulesService:
         Get the evergreen manifest base on evergreen project.
 
         :param evg_project: The project to retrieve manifest.
-        :return: The manifest modules in evergreen associate with the latest commit in evergreen history.
+        :return: The manifest modules in evergreen associate with the latest commit.
         """
         project_branch = self.evg_service.get_project_branch(evg_project)
         base_revision = self.git_service.merge_base(project_branch, "HEAD")
         return self.evg_service.get_manifest(evg_project, base_revision)
 
-    def sync_module(self, module_name: str, module_data: EvgModule) -> None:
+    def sync_module(
+        self,
+        module_name: str,
+        module_data: EvgModule,
+        update_strategy: UpdateStrategy = UpdateStrategy.CHECKOUT,
+    ) -> str:
         """
         Sync the given module to the commit associated with the base repo in evergreen.
 
         :param module_name: Name of module being synced.
         :param module_data: Data about the module.
+        :param update_strategy: How module should be synced to target commit.
+        :return: Git hash that module was synced to.
         """
         manifest = self.get_evg_manifest(self.emm_options.evg_project)
         manifest_modules = manifest.modules
@@ -150,87 +184,28 @@ class ModulesService:
         module_location = Path(module_data.prefix) / module_name
 
         self.git_service.fetch(module_location)
-        self.git_service.checkout(module_revision, directory=module_location)
+        if update_strategy == UpdateStrategy.REBASE:
+            self.git_service.rebase(module_revision, directory=module_location)
+        elif update_strategy == UpdateStrategy.CHECKOUT:
+            self.git_service.checkout(module_revision, directory=module_location)
+        elif update_strategy == UpdateStrategy.MERGE:
+            self.git_service.merge(module_revision, directory=module_location)
+        else:
+            raise NotImplementedError(f"Update strategy '{update_strategy}' not supported.")
+        return module_revision
 
-    def attempt_git_operation(
-        self,
-        operation: GitAction,
-        revision: str,
-        branch_name: Optional[str] = None,
-        directory: Optional[Path] = None,
-    ) -> Optional[str]:
-        """
-        Attempt to perform the specified git operation.
-
-        :param operation: Git operation to perform.
-        :param revision: Git revision to perform operation on.
-        :param branch_name: Name of branch for git checkout.
-        :param directory: Directory of git repository.
-        :return: Error message if an error was encountered.
-        """
-        try:
-            self.git_service.perform_git_action(operation, revision, branch_name, directory)
-        except ProcessExecutionError:
-            LOGGER.warning(
-                f"Error encountered during git operation {operation} on {revision}", exc_info=True
-            )
-            return f"Encountered error performing '{operation}' on '{revision}'"
-        return None
-
-    def git_operate_modules(
-        self, operation: GitAction, branch: str, enabled_modules: Dict[str, EvgModule]
+    def sync_all_modules(
+        self, enabled: bool, update_strategy: UpdateStrategy = UpdateStrategy.CHECKOUT
     ) -> Dict[str, str]:
         """
-        Git operate modules to the specific revisions.
+        Sync all modules with the current commit of the base module.
 
-        :param operation: Git operation to perform.
-        :param branch: Name of branch for git checkout.
-        :param enabled_modules: Dictionary of enabled modules.
-        :return: Dictionary of error encountered.
+        :param active: Only sync enabled modules.
+        :param update_strategy: How module should be synced to target commit.
+        :return: Dictionary of modules synced and git hash modules were synced to.
         """
-        error_encountered = {}
-        manifest = self.get_evg_manifest(self.emm_options.evg_project)
-        manifest_modules = manifest.modules
-        if manifest_modules is None:
-            raise ValueError("Modules not found in manifest")
-
-        for module, module_data in enabled_modules.items():
-            module_manifest = manifest_modules.get(module)
-            if module_manifest is None:
-                raise ValueError(f"Module not found in manifest: {module}")
-
-            module_rev = module_manifest.revision
-            module_location = Path(module_data.prefix) / module
-            errmsg = self.attempt_git_operation(operation, module_rev, branch, module_location)
-            if errmsg:
-                error_encountered[module] = errmsg
-        return error_encountered
-
-    def git_operate_base(self, operation: GitAction, revision: str, branch: str) -> Dict[str, str]:
-        """
-        Git operate base to the specific revisions.
-
-        :param operation: Git operation to perform.
-        :param revision: Dictionary of module names and git revision to check out.
-        :param branch: Name of branch for git checkout.
-        :return: Dictionary of error encountered.
-        """
-        errmsg = self.attempt_git_operation(operation, revision, branch)
-        enabled_modules = self.get_all_modules(True)
-        error_encountered = self.git_operate_modules(operation, branch, enabled_modules)
-        if errmsg:
-            error_encountered["BASE"] = errmsg
-        return error_encountered
-
-    def git_commit_modules(self, commit: str) -> None:
-        """
-        Git commit all changes to all modules.
-
-        :param commit: Commit content for all changes.
-        """
-        self.git_service.commit_all(commit)
-        enabled_modules = self.get_all_modules(True)
-        for module in enabled_modules:
-            module_data = self.get_module_data(module)
-            module_location = Path(module_data.prefix) / module
-            self.git_service.commit_all(commit, module_location)
+        modules = self.get_all_modules(enabled)
+        return {
+            module_name: self.sync_module(module_name, module_data, update_strategy)
+            for module_name, module_data in modules.items()
+        }

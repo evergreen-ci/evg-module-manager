@@ -4,9 +4,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-import emm.services.evg_cli_service as under_test
+import emm.clients.evg_cli_service as under_test
 
-NAMESPACE = "emm.services.evg_cli_service"
+NAMESPACE = "emm.clients.evg_cli_service"
 
 
 def ns(local_path: str) -> str:

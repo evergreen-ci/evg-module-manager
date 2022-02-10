@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 from evergreen import EvergreenApi, Project
 
-import emm.services.evg_service as under_test
+import emm.clients.evg_service as under_test
 from emm.services.file_service import FileService
 
 

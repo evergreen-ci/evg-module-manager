@@ -4,9 +4,9 @@ from typing import List
 
 import inject
 
+from emm.clients.evg_cli_service import EvgCliService, PatchInfo
+from emm.clients.evg_service import EvgService
 from emm.options import EmmOptions
-from emm.services.evg_cli_service import EvgCliService, PatchInfo
-from emm.services.evg_service import EvgService
 from emm.services.file_service import FileService
 
 

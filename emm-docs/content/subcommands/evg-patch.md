@@ -1,5 +1,5 @@
 ---
-weight: 5
+weight: 14 
 ---
 ### Creating an Evergreen patch build
 
@@ -10,11 +10,11 @@ command line tool is available and configured. See [Evergreen authentication](/g
 for details.
 {{< /hint >}}
 
-The `patch` subcommand will create an evergreen patch build with changes to your base repository 
+The `evg-patch` subcommand will create an evergreen patch build with changes to your base repository 
 and any modules that are currently enabled. You can pass along any options that the 
 `evergreen patch` command supports, however, the `--skip_confirm` and `--project` options are 
 already specified by the tools and should not be included.
 
 ```bash
-$ evg-module-manager patch -d "my patch description" -u
+$ evg-module-manager evg-patch -d "my patch description" -u
 ```
