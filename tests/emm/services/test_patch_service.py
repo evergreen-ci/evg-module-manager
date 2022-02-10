@@ -55,7 +55,6 @@ class TestCreatePatch:
         patch_info = patch_service.create_patch([])
 
         assert patch_info == evg_cli_service.create_patch.return_value
-        evg_cli_service.finalize_patch.assert_called_with(patch_info.patch_id)
         evg_cli_service.add_module_to_patch.assert_not_called()
 
     def test_a_patch_with_no_enabled_modules_should_be_created_and_finalized(
@@ -69,7 +68,6 @@ class TestCreatePatch:
         patch_info = patch_service.create_patch([])
 
         assert patch_info == evg_cli_service.create_patch.return_value
-        evg_cli_service.finalize_patch.assert_called_with(patch_info.patch_id)
         evg_cli_service.add_module_to_patch.assert_not_called()
 
     def test_a_patch_with_enabled_modules_should_be_created_and_finalized(
@@ -83,7 +81,6 @@ class TestCreatePatch:
         patch_info = patch_service.create_patch([])
 
         assert patch_info == evg_cli_service.create_patch.return_value
-        evg_cli_service.finalize_patch.assert_called_with(patch_info.patch_id)
         assert 3 == evg_cli_service.add_module_to_patch.call_count
 
     def test_patches_should_pass_along_extra_args(
@@ -99,7 +96,6 @@ class TestCreatePatch:
 
         assert patch_info == evg_cli_service.create_patch.return_value
         evg_cli_service.create_patch.assert_called_with(extra_args)
-        evg_cli_service.finalize_patch.assert_called_with(patch_info.patch_id)
         assert 3 == evg_cli_service.add_module_to_patch.call_count
 
 
