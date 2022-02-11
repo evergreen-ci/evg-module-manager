@@ -49,7 +49,6 @@ class PatchService:
                     base_patch.patch_id, module, module_location, extra_args
                 )
 
-        self.evg_cli_service.finalize_patch(base_patch.patch_id)
         return base_patch
 
     def create_cq_patch(self, extra_args: List[str]) -> PatchInfo:

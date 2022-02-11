@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.1 - 2022-02-11
+- Fix create patch not configurable in Linux
+
 ## 0.2.0 - 2022-02-04
 - 'pull-request' subcommand will now default to '--fill' and validate arguments.
 - 'pull-request' will only add comments if there are multiple PRs being created.
