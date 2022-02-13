@@ -2,51 +2,51 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://evg-module-manager.github.io/getting-started/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/getting-started/</loc>
     <lastmod>2022-02-04T16:36:33-05:00</lastmod>
   </url><url>
-    <loc>https://evg-module-manager.github.io/getting-started/installation/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/getting-started/installation/</loc>
     <lastmod>2022-02-04T16:36:33-05:00</lastmod>
   </url><url>
-    <loc>https://evg-module-manager.github.io/subcommands/enable/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/enable/</loc>
     <lastmod>2022-02-04T16:36:33-05:00</lastmod>
   </url><url>
-    <loc>https://evg-module-manager.github.io/getting-started/global-options/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/getting-started/global-options/</loc>
     <lastmod>2022-02-04T16:36:33-05:00</lastmod>
   </url><url>
-    <loc>https://evg-module-manager.github.io/subcommands/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/</loc>
     <lastmod>2022-02-04T16:36:33-05:00</lastmod>
   </url><url>
-    <loc>https://evg-module-manager.github.io/subcommands/disable/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/disable/</loc>
     <lastmod>2022-02-04T16:36:33-05:00</lastmod>
   </url><url>
-    <loc>https://evg-module-manager.github.io/project-history/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/project-history/</loc>
     <lastmod>2022-02-04T16:36:33-05:00</lastmod>
   </url><url>
-    <loc>https://evg-module-manager.github.io/subcommands/create-branch/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/create-branch/</loc>
     <lastmod>2022-02-04T16:36:33-05:00</lastmod>
   </url><url>
-    <loc>https://evg-module-manager.github.io/subcommands/patch/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/patch/</loc>
     <lastmod>2022-02-04T16:36:33-05:00</lastmod>
   </url><url>
-    <loc>https://evg-module-manager.github.io/subcommands/pull-request/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/pull-request/</loc>
     <lastmod>2022-02-04T16:36:33-05:00</lastmod>
   </url><url>
-    <loc>https://evg-module-manager.github.io/subcommands/commit-queue/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/commit-queue/</loc>
     <lastmod>2022-02-04T16:36:33-05:00</lastmod>
   </url><url>
-    <loc>https://evg-module-manager.github.io/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/</loc>
     <lastmod>2022-02-04T16:36:33-05:00</lastmod>
     <priority>0</priority>
   </url><url>
-    <loc>https://evg-module-manager.github.io/project-history/CHANGELOG/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/project-history/CHANGELOG/</loc>
     <lastmod>2022-02-04T16:36:33-05:00</lastmod>
   </url><url>
-    <loc>https://evg-module-manager.github.io/subcommands/list-modules/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/list-modules/</loc>
     <lastmod>2022-02-04T16:36:33-05:00</lastmod>
   </url><url>
-    <loc>https://evg-module-manager.github.io/categories/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/categories/</loc>
   </url><url>
-    <loc>https://evg-module-manager.github.io/tags/</loc>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/tags/</loc>
   </url>
 </urlset>
