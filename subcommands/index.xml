@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Evergreen Module Manager Documentation</title>
+    <link>https://evg-module-manager.github.io/subcommands/</link>
+    <description>Recent content on Evergreen Module Manager Documentation</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://evg-module-manager.github.io/subcommands/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title></title>
+      <link>https://evg-module-manager.github.io/subcommands/enable/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evg-module-manager.github.io/subcommands/enable/</guid>
+      <description>To enable a modules in your local repo, use the enable command. If the module code is not available locally, it will be cloned into the directory specified by the modules-dir option. Modules are enabled by adding a symlink to the cloned repository at the modules &amp;ldquo;prefix&amp;rdquo;.
+$ evg-module-manager enable --module wiredtiger </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evg-module-manager.github.io/subcommands/disable/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evg-module-manager.github.io/subcommands/disable/</guid>
+      <description>You can disable a module with the disable command. This will remove the symlink, but leave the cloned repository.
+$ evg-module-manager disable --module wiredtiger </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evg-module-manager.github.io/subcommands/create-branch/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evg-module-manager.github.io/subcommands/create-branch/</guid>
+      <description>Use create-branch command to create a new branch on the base repo and any enabled modules. Use the --branch option to specify the name of the branch to create.
+To create a branch named my-branch, use the following:
+$ evg-module-manager create-branch --branch my-branch By default, the branch will be created based on the currently checked out commit. You can use the --revision option to base the commit off a different revision.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evg-module-manager.github.io/subcommands/patch/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evg-module-manager.github.io/subcommands/patch/</guid>
+      <description>Creating an Evergreen patch build     Note
+In order to create a patch build in Evergreen, you need to ensure the evergreen command line tool is available and configured. See Evergreen authenticationfor details.  The patch subcommand will create an evergreen patch build with changes to your base repository and any modules that are currently enabled. You can pass along any options that the evergreen patch command supports, however, the --skip_confirm and --project options are already specified by the tools are should not be included.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evg-module-manager.github.io/subcommands/pull-request/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evg-module-manager.github.io/subcommands/pull-request/</guid>
+      <description>Creating github pull request     Note
+In order to create pull requests in github, you need to sure the gh command line tool is available and authentication to github is configured. See Github authenticationfor details.  The pull-request subcommand will create pull requests across the base repo and all enabled modules.
+After local changes have been committed in all repos, you can create the pull request from the base repo, and all enabled modules with changes will create a separate pull request.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evg-module-manager.github.io/subcommands/commit-queue/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evg-module-manager.github.io/subcommands/commit-queue/</guid>
+      <description>Submitting to the commit-queue     Note
+In order to submit changes to the commit queue in Evergreen, you need to ensure the evergreen command line tool is available and configured. See Evergreen authenticationfor details.  The commit-queue subcommand will submit changes to the evergreen commit-queue that include changes to your base repository and any modules that are currently enabled. You can pass along any options that the evergreen commit-queue merge command supports, however, the --skip_confirm and --project options are already specified by the tools are should not be included.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evg-module-manager.github.io/subcommands/list-modules/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evg-module-manager.github.io/subcommands/list-modules/</guid>
+      <description>To see what modules are available for the current project, use the list-modules command:
+$ evg-modules-manager --evg-project sys-perf list-modules - enterprise - wtdevelop You can use the --show-details option to get more details about each module.
+$ evg-module-manager --evg-project mongodb-mongo-master list-modules --show-details - enterprise prefix: src/mongo/db/modules repo: git@github.com:10gen/mongo-enterprise-modules.git branch: master - wtdevelop prefix: src/third_party repo: git@github.com:wiredtiger/wiredtiger.git branch: develop You can also pass the --enabled option to only list modules which are currently active in your local repository.</description>
+    </item>
+    
+  </channel>
+</rss>
