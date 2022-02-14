@@ -29,5 +29,3 @@ local repository.
 $ evg-module-manager --evg-project mongodb-mongo-master list-modules --enabled
 - wtdevelop
 ```
-
-![Demo](/images/emm-list-modules.gif)

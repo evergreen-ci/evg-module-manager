@@ -13,7 +13,7 @@ for details.
 The `patch` subcommand will create an evergreen patch build with changes to your base repository 
 and any modules that are currently enabled. You can pass along any options that the 
 `evergreen patch` command supports, however, the `--skip_confirm` and `--project` options are 
-already specified by the tools are should not be included.
+already specified by the tools and should not be included.
 
 ```bash
 $ evg-module-manager patch -d "my patch description" -u

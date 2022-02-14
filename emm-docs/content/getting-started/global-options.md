@@ -10,7 +10,7 @@ evergreen project you are working with.
 {{< /hint >}}
 
 Most actions need to know 2 pieces of information: what evergreen project is being used and where
-to store module repos. There can be provided via command line options or via environment variables.
+to store module repos. These can be provided via command line options or via environment variables.
 
 By default, modules will be stored in the parent directory (`..`) from where you are running the command
 and the '`mongodb-mongo-master`' project will be used.
