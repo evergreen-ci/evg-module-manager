@@ -33,7 +33,7 @@ $ evg-module-manager enable --module wiredtiger </description>
       
       <guid>https://evergreen-ci.github.io/evg-module-manager/getting-started/global-options/</guid>
       <description>Defining your evergreen project and module repository location     Note
-evg-module-manager expects to be run from the base directory of the repository for the evergreen project you are working with.  Most actions need to know 2 pieces of information: what evergreen project is being used and where to store module repos. There can be provided via command line options or via environment variables.
+evg-module-manager expects to be run from the base directory of the repository for the evergreen project you are working with.  Most actions need to know 2 pieces of information: what evergreen project is being used and where to store module repos. These can be provided via command line options or via environment variables.
 By default, modules will be stored in the parent directory (.</description>
     </item>
     
@@ -65,7 +65,7 @@ $ evg-module-manager create-branch --branch my-branch By default, the branch wil
       
       <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/patch/</guid>
       <description>Creating an Evergreen patch build     Note
-In order to create a patch build in Evergreen, you need to ensure the evergreen command line tool is available and configured. See Evergreen authenticationfor details.  The patch subcommand will create an evergreen patch build with changes to your base repository and any modules that are currently enabled. You can pass along any options that the evergreen patch command supports, however, the --skip_confirm and --project options are already specified by the tools are should not be included.</description>
+In order to create a patch build in Evergreen, you need to ensure the evergreen command line tool is available and configured. See Evergreen authenticationfor details.  The patch subcommand will create an evergreen patch build with changes to your base repository and any modules that are currently enabled. You can pass along any options that the evergreen patch command supports, however, the --skip_confirm and --project options are already specified by the tools and should not be included.</description>
     </item>
     
     <item>
@@ -86,7 +86,7 @@ After local changes have been committed in all repos, you can create the pull re
       
       <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/commit-queue/</guid>
       <description>Submitting to the commit-queue     Note
-In order to submit changes to the commit queue in Evergreen, you need to ensure the evergreen command line tool is available and configured. See Evergreen authenticationfor details.  The commit-queue subcommand will submit changes to the evergreen commit-queue that include changes to your base repository and any modules that are currently enabled. You can pass along any options that the evergreen commit-queue merge command supports, however, the --skip_confirm and --project options are already specified by the tools are should not be included.</description>
+In order to submit changes to the commit queue in Evergreen, you need to ensure the evergreen command line tool is available and configured. See Evergreen authenticationfor details.  The commit-queue subcommand will submit changes to the evergreen commit-queue that include changes to your base repository and any modules that are currently enabled. You can pass along any options that the evergreen commit-queue merge command supports, however, the --skip_confirm and --project options are already specified by the tools and should not be included.</description>
     </item>
     
     <item>
@@ -95,7 +95,7 @@ In order to submit changes to the commit queue in Evergreen, you need to ensure 
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://evergreen-ci.github.io/evg-module-manager/project-history/CHANGELOG/</guid>
-      <description>Changelog     0.2.0 - 2022-02-04      &amp;lsquo;pull-request&amp;rsquo; subcommand will now default to &amp;lsquo;&amp;ndash;fill&amp;rsquo; and validate arguments. &amp;lsquo;pull-request&amp;rsquo; will only add comments if there are multiple PRs being created.  0.1.10 - 2022-02-02      Support git version 2.17 Update Usage documentation.  0.1.9 - 2022-01-25      Add check for github CLI installation  0.1.8 - 2021-12-29      Add support for github pull request  0.</description>
+      <description>Changelog     0.2.2 - 2022-02-14      Add documentation site.  0.2.1 - 2022-02-11      Fix create patch not configurable in Linux  0.2.0 - 2022-02-04      &amp;lsquo;pull-request&amp;rsquo; subcommand will now default to &amp;lsquo;&amp;ndash;fill&amp;rsquo; and validate arguments. &amp;lsquo;pull-request&amp;rsquo; will only add comments if there are multiple PRs being created.  0.1.10 - 2022-02-02      Support git version 2.</description>
     </item>
     
     <item>

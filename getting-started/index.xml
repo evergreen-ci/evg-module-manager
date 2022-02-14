@@ -23,7 +23,7 @@
       
       <guid>https://evergreen-ci.github.io/evg-module-manager/getting-started/global-options/</guid>
       <description>Defining your evergreen project and module repository location     Note
-evg-module-manager expects to be run from the base directory of the repository for the evergreen project you are working with.  Most actions need to know 2 pieces of information: what evergreen project is being used and where to store module repos. There can be provided via command line options or via environment variables.
+evg-module-manager expects to be run from the base directory of the repository for the evergreen project you are working with.  Most actions need to know 2 pieces of information: what evergreen project is being used and where to store module repos. These can be provided via command line options or via environment variables.
 By default, modules will be stored in the parent directory (.</description>
     </item>
     
