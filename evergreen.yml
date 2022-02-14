@@ -6,6 +6,7 @@ buildvariants:
     tasks:
       - name: unit_tests
       - name: check_pypi_version
+      - name: build_docs
 
   - display_name: Windows
     name: windows
@@ -66,6 +67,18 @@ functions:
             ./pypi-version-check --check-changelog
           fi
 
+  build_docs:
+    - command: shell.exec
+      params:
+        working_dir: src/emm-docs
+        script: |
+          set -o errexit
+          set -o verbose
+
+          wget -q https://github.com/gohugoio/hugo/releases/download/v0.92.1/hugo_0.92.1_Linux-64bit.tar.gz
+          tar xf hugo_0.92.1_Linux-64bit.tar.gz 
+          ./hugo
+
 pre:
 - command: git.get_project
   params:
@@ -103,3 +116,6 @@ tasks:
   commands:
   - func: check_version_update
 
+- name: build_docs
+  commands:
+  - func: build_docs

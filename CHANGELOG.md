@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.2 - 2022-02-14
+- Add documentation site.
+
 ## 0.2.1 - 2022-02-11
 - Fix create patch not configurable in Linux
 
