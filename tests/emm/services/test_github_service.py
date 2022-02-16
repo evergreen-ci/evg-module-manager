@@ -28,8 +28,9 @@ def github_service(mock_github_cli) -> under_test.GithubService:
 
 class TestPullRequest:
     @patch(ns("local"))
+    @patch(ns("Path"))
     def test_pull_request_with_correct_args_should_return_pr_url(
-        self, local_mock, github_service, mock_github_cli
+        self, local_mock, path_mock, github_service, mock_github_cli
     ):
         mock_github_cli.__getitem__.return_value.return_value = "github.com/pull/123"
         pr_link = github_service.pull_request(["--title", "Test title", "--body", "Test Body"])
@@ -40,7 +41,10 @@ class TestPullRequest:
         assert pr_link == "github.com/pull/123"
 
     @patch(ns("local"))
-    def test_pr_comment_should_call_gh_commit(self, local_mock, github_service, mock_github_cli):
+    @patch(ns("Path"))
+    def test_pr_comment_should_call_gh_commit(
+        self, local_mock, path_mock, github_service, mock_github_cli
+    ):
         github_service.pr_comment("github.com/pull/123", "module_repo: github/pull/234")
 
         mock_github_cli.assert_gh_call(
