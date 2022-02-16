@@ -12,19 +12,8 @@ import structlog
 from evergreen import EvergreenApi, RetryingEvergreenApi
 from structlog.stdlib import LoggerFactory
 
-from emm.cli.evg_cli import evg_commit_queue, evg_patch
-from emm.cli.git_cli import (
-    git_add,
-    git_branch_create,
-    git_branch_delete,
-    git_branch_pull,
-    git_branch_show,
-    git_branch_switch,
-    git_branch_update,
-    git_commit,
-    git_restore,
-    git_status,
-)
+from emm.cli.evg_cli import evg_cli
+from emm.cli.git_cli import git_cli
 from emm.clients.evg_cli_service import EvgCliService
 from emm.clients.git_proxy import GitProxy
 from emm.clients.github_service import GithubService
@@ -230,21 +219,8 @@ def pull_request(ctx: click.Context, title: Optional[str], body: Optional[str]) 
     orchestrator.create_pull_request(title, body)
 
 
-# Evergreen subcommands.
-cli.add_command(evg_patch)
-cli.add_command(evg_commit_queue)
-
-# Git subcommands.
-cli.add_command(git_branch_create)
-cli.add_command(git_branch_show)
-cli.add_command(git_branch_switch)
-cli.add_command(git_branch_delete)
-cli.add_command(git_branch_pull)
-cli.add_command(git_branch_update)
-cli.add_command(git_status)
-cli.add_command(git_commit)
-cli.add_command(git_add)
-cli.add_command(git_restore)
+cli.add_command(evg_cli)
+cli.add_command(git_cli)
 
 
 if __name__ == "__main__":

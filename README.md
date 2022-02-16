@@ -71,27 +71,17 @@ Usage: evg-module-manager [OPTIONS] COMMAND [ARGS]...
 Options:
   --modules-dir PATH      Directory to store module repositories [default='..']
   --evg-config-file PATH  Path to file with evergreen auth configuration
-                          [default='/Users/username/.evergreen.yml']
+                          [default='/Users/dbradf/.evergreen.yml']
   --evg-project TEXT      Name of Evergreen project [default='mongodb-mongo-master']
   --help                  Show this message and exit.
 
 Commands:
-  disable            Disable the specified module in the current repo.
-  enable             Enable the specified module in the current repo.
-  evg-commit-queue   Submit changes from the base repository and any enabled modules to the...
-  evg-patch          Create an Evergreen patch with changes from the base repo and any...
-  git-add            Perform git add on all matching files in all modules.
-  git-branch-create  Create a new git branch on all enabled repositories.
-  git-branch-delete  Delete given branch in all enabled modules.
-  git-branch-pull    Pull the latest updates from remote repositories.
-  git-branch-show    Show existing branches on all enabled repositories.
-  git-branch-switch  Checkout the specified branch in all enabled modules.
-  git-branch-update  Get the latest changes from remote repositories and update the current...
-  git-commit         Get the git status of all modules.
-  git-restore        Perform git add on all matching files in all modules.
-  git-status         Get the git status of all modules.
-  list-modules       List the modules available for the current repo.
-  pull-request       Create a Github pull request for changes in the base repository and any...
+  disable       Disable the specified module in the current repo.
+  enable        Enable the specified module in the current repo.
+  evg           Perform evergreen actions against the base repo and enabled modules.
+  git           Perform git actions against the base repo and enabled modules.
+  list-modules  List the modules available for the current repo.
+  pull-request  Create a Github pull request for changes in the base repository and any...
 ```
 
 ## Contributor's Guide

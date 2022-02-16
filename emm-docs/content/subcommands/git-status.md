@@ -1,11 +1,11 @@
 ---
 weight: 10 
 ---
-The `git-status` subcommand will display the current status of the base repository and the 
+The `git status` subcommand will display the current status of the base repository and the 
 repository of all modules.
 
 ```bash
-$ evg-module-manager git-status
+$ evg-module-manager git status
 Status of enterprise:
   On branch dbradf/my-test-branch
   Changes to be committed:

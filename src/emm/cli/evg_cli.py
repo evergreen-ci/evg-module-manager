@@ -40,11 +40,17 @@ class EvgOrchestrator:
         print(f"Patch Submitted: {patch_info.patch_url}")
 
 
-@click.command(
+@click.group(name="evg")
+def evg_cli() -> None:
+    """Perform evergreen actions against the base repo and enabled modules."""
+    pass
+
+
+@evg_cli.command(
     context_settings=dict(max_content_width=100, ignore_unknown_options=True, allow_extra_args=True)
 )
 @click.pass_context
-def evg_patch(ctx: click.Context) -> None:
+def patch(ctx: click.Context) -> None:
     """
     Create an Evergreen patch with changes from the base repo and any enabled modules.
 
@@ -61,11 +67,11 @@ def evg_patch(ctx: click.Context) -> None:
     orchestrator.submit_patch(ctx.args)
 
 
-@click.command(
+@evg_cli.command(
     context_settings=dict(max_content_width=100, ignore_unknown_options=True, allow_extra_args=True)
 )
 @click.pass_context
-def evg_commit_queue(ctx: click.Context) -> None:
+def commit_queue(ctx: click.Context) -> None:
     """
     Submit changes from the base repository and any enabled modules to the Evergreen commit queue.
 

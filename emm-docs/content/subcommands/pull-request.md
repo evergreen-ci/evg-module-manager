@@ -7,7 +7,7 @@ weight: 16
 **Note**\
 In order to create pull requests in github, you need to sure the `gh` command line tool
 is available and authentication to github is configured. See 
-[Github authentication](/getting-started/installation#github-authentication)
+[Github authentication]({{< ref "/getting-started/installation#github-authentication" >}})
 for details.
 {{< /hint >}}
 

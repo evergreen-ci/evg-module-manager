@@ -1,7 +1,7 @@
 ---
 weight: 13
 ---
-Use the `git-commit` subcommand to create a new commit with your changes. The commit will be
+Use the `git commit` subcommand to create a new commit with your changes. The commit will be
 created on all modules that contain committable changes. By default, this means changes that have
 been staged. You can use the `--add` flag to automatically include any changes to tracked files as
 part of the commit.
@@ -12,7 +12,7 @@ would like to commit the changes to the previous commit, use the `--amend` flag 
 Creating a new commit:
 
 ```bash
-$ evg-module-manager git-commit --message "My commit message"
+$ evg-module-manager git commit --message "My commit message"
 Commit created in the following modules:
  - enterprise
  - base
@@ -21,8 +21,8 @@ Commit created in the following modules:
 Amending to a previous commit:
 
 ```bash
-$ evg-module-manager git-commit --amend
-Commit created in the following modules:
+$ evg-module-manager git commit --amend
+Commit amended in the following modules:
  - enterprise
  - base
 ```

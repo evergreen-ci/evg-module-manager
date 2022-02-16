@@ -6,7 +6,7 @@ to gather up changes to all your enabled modules and send them together.
 
 ## Creating Patch Builds
 
-The `evg-patch` subcommand will create a patch build with changes from your base repository and
+The `evg patch` subcommand will create a patch build with changes from your base repository and
 all enabled repositories.
 
 {{< hint info >}}
@@ -17,14 +17,14 @@ for more information
 {{< /hint >}}
 
 ```bash
-$ evg-module-manager evg-patch -d "description of my patch"
+$ evg-module-manager evg patch -d "description of my patch"
 Patch Submitted: https://evergreen.mongodb.com/patch/620aba4f3627e05537c2f52e?redirect_spruce_users=true
 ```
 
 ## Submitting changes to the commit-queue
 
 Once you are ready to merge you changes, you can send them all to the commit-queue with the
-`evg-commit-queue` subcommand.
+`evg commit-queue` subcommand.
 
 {{< hint info >}}
 **Note**\
@@ -34,7 +34,7 @@ for more information
 {{< /hint >}}
 
 ```bash
-$ evg-module-manager evg-commit-queue
+$ evg-module-manager evg commit-queue
 ```
 
 ## What's next

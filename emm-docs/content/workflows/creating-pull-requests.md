@@ -1,7 +1,7 @@
 ---
 weight: 5
 ---
-Once you have your changes ready to share with other you can use evg-module-manager to create
+Once you have your changes ready to share with others you can use evg-module-manager to create
 a Github Pull Request.
 
 ## Creating a Pull Request

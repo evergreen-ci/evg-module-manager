@@ -7,11 +7,11 @@ you will likely want to cleanup it up.
 ## Switching to a selected branch
 
 You cannot delete a branch you currently have checked out, so the first step to cleaning up 
-the branch is to switch to a different branch. You can use the `git-branch-switch` subcommand
+the branch is to switch to a different branch. You can use the `git branch-switch` subcommand
 to change branches.
 
 ```bash
-$ evg-module-manager git-branch-switch --branch master
+$ evg-module-manager git branch-switch --branch master
 Switched to 'master' in:
  - enterprise
  - base
@@ -20,10 +20,10 @@ Switched to 'master' in:
 ## Deleting old branches
 
 Once you no longer have the branch you wish to remove checked out, you can remove it. First, you can 
-use the `git-branch-show` subcommand to see the existing branches in each enabled repository.
+use the `git branch-show` subcommand to see the existing branches in each enabled repository.
 
 ```bash
-$ evg-module-manager git-branch-show
+$ evg-module-manager git branch-show
 Branches in 'enterprise':
   dbradf/my-test-branch
 * master
@@ -32,20 +32,20 @@ Branches in 'base':
 * master
 ```
 
-Next, you can use the `git-branch-delete` subcommand to remove the desired branch.
+Next, you can use the `git branch-delete` subcommand to remove the desired branch.
 
 ```bash
-$ evg-module-manager git-branch-delete --branch dbradf/my-test-branch
-Branch 'dbradf/my-test-branch' delete from:
+$ evg-module-manager git branch-delete --branch dbradf/my-test-branch
+Branch 'dbradf/my-test-branch' deleted from:
  - enterprise
  - base
 ```
 
-If you run the `git-branch-show` subcommand again, you will see that the branch no longer shows
+If you run the `git branch-show` subcommand again, you will see that the branch no longer shows
 up.
 
 ```bash
-$ evg-module-manager git-branch-show
+$ evg-module-manager git branch-show
 Branches in 'enterprise':
 * master
 Branches in 'base':

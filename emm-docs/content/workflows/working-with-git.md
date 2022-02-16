@@ -6,19 +6,19 @@ you want to work with, next you will want to create a branch to work on.
 
 ## Creating a branch to work on
 
-You may want to run pull to get the latest changes for your base repository in additional to pulling
+You may want to run pull to get the latest changes for your base repository. In additional to pulling
 the latest changes, each enabled module will be checked out to the commit that was run with the 
 latest commit in the base repo in evergreen.
 
 ```bash
-$ evg-module-manager git-branch-pull
+$ evg-module-manager git branch-pull
 Base: pulled to latest
 - enterprise: 07c4792479f85fb8af129a87ee6e116c4b7d7808
 ```
 
-You can use the `git-branch-create` subcommand to create a local branch across all the repositories:
+You can use the `git branch-create` subcommand to create a local branch across all the repositories:
 ```bash
-$ evg-module-manager git-branch-create --branch dbradf/my-test-branch
+$ evg-module-manager git branch-create --branch dbradf/my-test-branch
 Branch 'dbradf/my-test-branch' created on:
  - enterprise
  - base
@@ -32,7 +32,7 @@ Once you are ready to make a commit, the following subcommand will help you.
 First, you can see the status of all the modules with the `git-status` subcommand:
 
 ```bash
-$ evg-module-manager git-status
+$ evg-module-manager git status
 Status of enterprise:
   On branch dbradf/my-test-branch
   Changes not staged for commit:
@@ -53,21 +53,21 @@ Status of base:
 ```
 
 Once you have checked that the changes look as expected, you can add any changes you wish to
-the staging area with the `git-add` subcommand. Note that the add will be run against all 
+the staging area with the `git add` subcommand. Note that the add will be run against all 
 modules.  If you want to only add changes to a specific module, you will need to do that with 
-manually git commands.
+manual git commands.
 
 ```bash
-$ evg-module-manager git-add .
+$ evg-module-manager git add .
 Files added to enterprise.
 Files added to base.
 ```
 
-If we run the `git-status` subcommand again, we can see that the changes are now staged to be
+If we run the `git status` subcommand again, we can see that the changes are now staged to be
 committed:
 
 ```bash
-$ evg-module-manager git-status
+$ evg-module-manager git status
 Status of enterprise:
   On branch dbradf/my-test-branch
   Changes to be committed:
@@ -81,16 +81,16 @@ Status of base:
         modified:   README.md
 ```
 
-After your changes have been staged, you can use the `git-commit` subcommand to create a new
+After your changes have been staged, you can use the `git commit` subcommand to create a new
 commit. 
 {{< hint info >}}
 **NOTE**\
-You can skip manually adding files by passing the `--add` flag to the `git-commit` 
+You can skip manually adding files by passing the `--add` flag to the `git commit` 
 subcommand, this will use the same behavior as you get from `git commit -a`.
 {{< /hint >}}
 
 ```bash
-$ evg-module-manager git-commit --message "My commit message"
+$ evg-module-manager git commit --message "My commit message"
 Commit created in the following modules:
  - enterprise
  - base

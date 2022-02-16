@@ -125,7 +125,7 @@ class GitOrchestrator:
         :param branch_name: Name of branch to delete.
         """
         modules = self.git_branch_service.delete_branch(branch_name)
-        rprint(f"Branch [red]'{branch_name}'[/red] delete from: ")
+        rprint(f"Branch [red]'{branch_name}'[/red] deleted from: ")
         for module in modules:
             rprint(f" - [yellow]{module}[/yellow]")
 
@@ -184,16 +184,23 @@ class GitOrchestrator:
         :param add: If true, add all tracked changes to commit.
         """
         module_list = self.git_commit_service.commit(message, amend, add)
-        print("Commit created in the following modules:")
+        action = "amended" if amend else "created"
+        print(f"Commit {action} in the following modules:")
         for module in module_list:
             rprint(f" - [yellow]{module}[/yellow]")
 
 
-@click.command(context_settings=dict(max_content_width=100))
+@click.group(name="git")
+def git_cli() -> None:
+    """Perform git actions against the base repo and enabled modules."""
+    pass
+
+
+@git_cli.command(context_settings=dict(max_content_width=100))
 @click.option("-b", "--branch", required=True, help="Name of branch to create.")
 @click.option("-r", "--revision", default="HEAD", help="Revision to base created branch off.")
 @click.pass_context
-def git_branch_create(ctx: click.Context, revision: str, branch: str) -> None:
+def branch_create(ctx: click.Context, revision: str, branch: str) -> None:
     """Create a new git branch on all enabled repositories."""
     validation_service = inject.instance(ValidationService)
     validation_service.validate_git_command()
@@ -201,9 +208,9 @@ def git_branch_create(ctx: click.Context, revision: str, branch: str) -> None:
     orchestrator.create_branch(branch, revision)
 
 
-@click.command(context_settings=dict(max_content_width=100))
+@git_cli.command(context_settings=dict(max_content_width=100))
 @click.pass_context
-def git_branch_show(ctx: click.Context) -> None:
+def branch_show(ctx: click.Context) -> None:
     """Show existing branches on all enabled repositories."""
     validation_service = inject.instance(ValidationService)
     validation_service.validate_git_command()
@@ -211,10 +218,10 @@ def git_branch_show(ctx: click.Context) -> None:
     orchestrator.view_branches()
 
 
-@click.command(context_settings=dict(max_content_width=100))
+@git_cli.command(context_settings=dict(max_content_width=100))
 @click.option("-b", "--branch", required=True, help="Name of branch to delete.")
 @click.pass_context
-def git_branch_switch(ctx: click.Context, branch: str) -> None:
+def branch_switch(ctx: click.Context, branch: str) -> None:
     """Checkout the specified branch in all enabled modules."""
     validation_service = inject.instance(ValidationService)
     validation_service.validate_git_command()
@@ -222,10 +229,10 @@ def git_branch_switch(ctx: click.Context, branch: str) -> None:
     orchestrator.switch_branch(branch)
 
 
-@click.command(context_settings=dict(max_content_width=100))
+@git_cli.command(context_settings=dict(max_content_width=100))
 @click.option("-b", "--branch", required=True, help="Name of branch to delete.")
 @click.pass_context
-def git_branch_delete(ctx: click.Context, branch: str) -> None:
+def branch_delete(ctx: click.Context, branch: str) -> None:
     """Delete given branch in all enabled modules."""
     validation_service = inject.instance(ValidationService)
     validation_service.validate_git_command()
@@ -233,7 +240,7 @@ def git_branch_delete(ctx: click.Context, branch: str) -> None:
     orchestrator.delete_branch(branch)
 
 
-@click.command(context_settings=dict(max_content_width=100))
+@git_cli.command(context_settings=dict(max_content_width=100))
 @click.option(
     "--rebase",
     is_flag=True,
@@ -241,7 +248,7 @@ def git_branch_delete(ctx: click.Context, branch: str) -> None:
     help="Rebase on top of any changes instead of merging changes.",
 )
 @click.pass_context
-def git_branch_pull(ctx: click.Context, rebase: bool) -> None:
+def branch_pull(ctx: click.Context, rebase: bool) -> None:
     """Pull the latest updates from remote repositories."""
     validation_service = inject.instance(ValidationService)
     validation_service.validate_git_command()
@@ -249,7 +256,7 @@ def git_branch_pull(ctx: click.Context, rebase: bool) -> None:
     orchestrator.pull(rebase)
 
 
-@click.command(context_settings=dict(max_content_width=100))
+@git_cli.command(context_settings=dict(max_content_width=100))
 @click.option("-b", "--branch", type=str, required=True, help="Branch to pull updates from.")
 @click.option(
     "--rebase",
@@ -258,7 +265,7 @@ def git_branch_pull(ctx: click.Context, rebase: bool) -> None:
     help="Rebase on top of any changes instead of merging changes.",
 )
 @click.pass_context
-def git_branch_update(ctx: click.Context, branch: str, rebase: bool) -> None:
+def branch_update(ctx: click.Context, branch: str, rebase: bool) -> None:
     """Get the latest changes from remote repositories and update the current branch with them."""
     validation_service = inject.instance(ValidationService)
     validation_service.validate_git_command()
@@ -266,9 +273,9 @@ def git_branch_update(ctx: click.Context, branch: str, rebase: bool) -> None:
     orchestrator.update_branch(branch, rebase)
 
 
-@click.command(context_settings=dict(max_content_width=100))
+@git_cli.command(context_settings=dict(max_content_width=100))
 @click.pass_context
-def git_status(ctx: click.Context) -> None:
+def status(ctx: click.Context) -> None:
     """Get the git status of all modules."""
     validation_service = inject.instance(ValidationService)
     validation_service.validate_git_command()
@@ -276,7 +283,7 @@ def git_status(ctx: click.Context) -> None:
     orchestrator.status()
 
 
-@click.command(context_settings=dict(max_content_width=100))
+@git_cli.command(context_settings=dict(max_content_width=100))
 @click.option("-m", "--message", help="Git commit message to use.")
 @click.option("--amend", is_flag=True, default=False, help="Amend changes to the previous commit.")
 @click.option(
@@ -287,7 +294,7 @@ def git_status(ctx: click.Context) -> None:
     help="Add change to any tracked file in the created commit.",
 )
 @click.pass_context
-def git_commit(ctx: click.Context, message: Optional[str], amend: bool, add: bool) -> None:
+def commit(ctx: click.Context, message: Optional[str], amend: bool, add: bool) -> None:
     """Get the git status of all modules."""
     validation_service = inject.instance(ValidationService)
     validation_service.validate_git_command()
@@ -295,10 +302,10 @@ def git_commit(ctx: click.Context, message: Optional[str], amend: bool, add: boo
     orchestrator.commit(message, amend, add)
 
 
-@click.command(context_settings=dict(max_content_width=100))
+@git_cli.command(context_settings=dict(max_content_width=100))
 @click.argument("pathspec", nargs=-1)
 @click.pass_context
-def git_add(ctx: click.Context, pathspec: List[str]) -> None:
+def add(ctx: click.Context, pathspec: List[str]) -> None:
     """Perform git add on all matching files in all modules."""
     validation_service = inject.instance(ValidationService)
     validation_service.validate_git_command()
@@ -306,12 +313,12 @@ def git_add(ctx: click.Context, pathspec: List[str]) -> None:
     orchestrator.add(pathspec)
 
 
-@click.command(context_settings=dict(max_content_width=100))
+@git_cli.command(context_settings=dict(max_content_width=100))
 @click.option("--staged", is_flag=True, default=False, help="Restore file from the staging area.")
 @click.argument("pathspec", nargs=-1)
 @click.pass_context
-def git_restore(ctx: click.Context, pathspec: List[str], staged: bool) -> None:
-    """Perform git add on all matching files in all modules."""
+def restore(ctx: click.Context, pathspec: List[str], staged: bool) -> None:
+    """Perform git restore on all matching files in all modules."""
     validation_service = inject.instance(ValidationService)
     validation_service.validate_git_command()
     orchestrator = inject.instance(GitOrchestrator)
