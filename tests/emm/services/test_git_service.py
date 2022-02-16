@@ -6,6 +6,10 @@ import pytest
 
 import emm.services.git_service as under_test
 
+# TODO: Find a better way to handle the Path module when testing 3.7
+# We shouldn't have to mock the entire Path module when testing
+
+
 NAMESPACE = "emm.services.git_service"
 
 
