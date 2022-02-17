@@ -1,16 +1,17 @@
 """Unit tests for modules_service.py."""
 from pathlib import Path
-from unittest.mock import MagicMock, call
+from typing import Optional
+from unittest.mock import MagicMock
 
 import pytest
 from shrub.v3.evg_project import EvgModule
 
 import emm.services.modules_service as under_test
+from emm.clients.evg_service import EvgService
+from emm.clients.git_proxy import GitProxy
+from emm.models.repository import BASE_REPO
 from emm.options import EmmOptions
-from emm.services.evg_service import EvgService
 from emm.services.file_service import FileService
-from emm.services.git_service import GitAction, GitService
-from emm.services.github_service import GithubService
 
 
 @pytest.fixture()
@@ -28,14 +29,8 @@ def evg_service():
 
 @pytest.fixture()
 def git_service():
-    git_service = MagicMock(spec_set=GitService)
+    git_service = MagicMock(spec_set=GitProxy)
     return git_service
-
-
-@pytest.fixture()
-def github_service():
-    github_service = MagicMock(spec_set=GithubService)
-    return github_service
 
 
 @pytest.fixture()
@@ -45,19 +40,25 @@ def file_service():
 
 
 @pytest.fixture()
-def modules_service(emm_options, evg_service, git_service, github_service, file_service):
-    modules_service = under_test.ModulesService(
-        emm_options, evg_service, git_service, github_service, file_service
-    )
+def modules_service(emm_options, evg_service, git_service, file_service):
+    modules_service = under_test.ModulesService(emm_options, evg_service, git_service, file_service)
     return modules_service
 
 
-def build_module_data():
+def build_module_data(i: Optional[int] = None):
+    if i is None:
+        i = 0
     return EvgModule(
-        name="mock module",
-        repo="git@github.com:org/mock-module.git",
+        name=f"mock module {i}",
+        repo=f"git@github.com:org/mock-module-{i}.git",
         branch="main",
         prefix="src/modules",
+    )
+
+
+def build_mock_repository(i: int) -> under_test.Repository:
+    return under_test.Repository(
+        name=f"module {i}", directory=Path(f"prefix/{i}/module {i}"), target_branch=f"branch_{i}"
     )
 
 
@@ -248,96 +249,37 @@ class TestSyncModule:
             modules_service.sync_module(module_name, module_data)
 
 
-class TestGitOperateBase:
-    def test_checkout_should_call_git_checkout(self, modules_service, evg_service, git_service):
-        revision = "test_revision"
-        modules_service.git_operate_base(GitAction.CHECKOUT, revision, None)
-
-        git_service.perform_git_action.assert_called_with(GitAction.CHECKOUT, revision, None, None)
-
-    def test_checkout_should_create_branch_if_specified(
-        self, modules_service, evg_service, git_service
-    ):
-        revision = "test_revision"
-        branch = "test_branch"
-        modules_service.git_operate_base(GitAction.CHECKOUT, revision, branch)
-        git_service.perform_git_action.assert_called_with(
-            GitAction.CHECKOUT, revision, branch, None
-        )
-
-    def test_rebase_should_call_git_rebase(self, modules_service, evg_service, git_service):
-        revision = "test_revision"
-        modules_service.git_operate_base(GitAction.REBASE, revision, None)
-        git_service.perform_git_action.assert_called_with(GitAction.REBASE, revision, None, None)
-
-    def test_merge_should_should_call_git_merge(self, modules_service, evg_service, git_service):
-        revision = "test_revision"
-        modules_service.git_operate_base(GitAction.MERGE, revision, None)
-        git_service.perform_git_action.assert_called_with(GitAction.MERGE, revision, None, None)
-
-
-class TestGitOperateModule:
-    def test_operate_module_with_no_manifest_should_raise_exception(
-        self, modules_service, evg_service, git_service
-    ):
-        evg_service.get_manifest.return_value.modules = None
-        enabled_module = {"module_name": build_module_data()}
-
-        with pytest.raises(ValueError):
-            modules_service.git_operate_modules(GitAction.CHECKOUT, None, enabled_module)
-
-    def test_operate_module_with_no_module_should_raise_exception(
-        self, modules_service, evg_service, git_service
-    ):
-        evg_service.get_manifest.return_value.modules = {}
-        enabled_module = {"module_name": build_module_data()}
-
-        with pytest.raises(ValueError):
-            modules_service.git_operate_modules(GitAction.CHECKOUT, None, enabled_module)
-
-    def test_checkout_should_apply_revision_and_directory_to_each_module(
-        self, modules_service, evg_service, git_service
-    ):
-        evg_service.get_manifest.return_value.modules = {
-            f"module_name_{i}": MagicMock(revision=f"revision_{i}") for i in range(5)
-        }
-        enabled_module = {f"module_name_{i}": build_module_data() for i in range(5)}
-
-        modules_service.git_operate_modules(GitAction.CHECKOUT, None, enabled_module)
-        calls = [
-            call(
-                GitAction.CHECKOUT, f"revision_{i}", None, Path("src/modules") / f"module_name_{i}"
-            )
-            for i in range(5)
-        ]
-        git_service.perform_git_action.assert_has_calls(calls, any_order=True)
-
-
-class TestCommitModule:
-    def test_commit_should_call_git_commit_all(
+class TestCollectRepositories:
+    def test_base_repository_should_be_included(
         self,
-        modules_service,
-        evg_service,
-        git_service,
+        modules_service: under_test.ModulesService,
+        evg_service: EvgService,
+        file_service: FileService,
     ):
-        commit = "test_commit"
-        modules_service.git_commit_modules(commit)
-        git_service.commit_all.assert_called_with(commit)
+        evg_service.get_module_map.return_value = {}
+        file_service.path_exists.return_value = True
 
-    def test_commit_should_apply_path_to_each_module(
+        repo_list = modules_service.collect_repositories()
+
+        assert len(repo_list) == 1
+        repo = repo_list[0]
+        assert repo.name == BASE_REPO
+        assert repo.directory is None
+        assert repo.target_branch == evg_service.get_project_branch.return_value
+
+    def test_module_repositories_should_be_included(
         self,
-        modules_service,
-        evg_service,
-        git_service,
+        modules_service: under_test.ModulesService,
+        evg_service: EvgService,
+        file_service: FileService,
     ):
-        commit = "test_commit"
-        evg_service.get_module_map.return_value = {
-            f"module_name_{i}": build_module_data() for i in range(3)
-        }
-        modules_service.git_commit_modules(commit)
-        calls = [
-            call(commit),
-            call(commit, Path("src/modules") / "module_name_1"),
-            call(commit, Path("src/modules") / "module_name_2"),
-        ]
-        git_service.commit_all.assert_has_calls(calls, any_order=True)
+        n_modules = 3
+        module_list = [build_module_data(i) for i in range(n_modules)]
+        evg_service.get_module_map.return_value = {module.name: module for module in module_list}
+        file_service.path_exists.return_value = True
+
+        repo_list = modules_service.collect_repositories()
+
+        assert len(repo_list) == n_modules + 1  # +1 for the base repository.
+        for module in module_list:
+            assert module.name in [repo.name for repo in repo_list]

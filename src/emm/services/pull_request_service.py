@@ -1,16 +1,15 @@
 """Service for creating pull requests."""
-from pathlib import Path
 from typing import Dict, List, NamedTuple, Optional
 
 import inject
 
+from emm.clients.evg_service import EvgService
+from emm.clients.git_proxy import LOGGER, GitProxy
+from emm.clients.github_service import GithubService
+from emm.models.repository import Repository
 from emm.options import EmmOptions
-from emm.services.evg_service import EvgService
-from emm.services.git_service import LOGGER, GitService
-from emm.services.github_service import GithubService
 from emm.services.modules_service import ModulesService
 
-BASE_REPO = "base"
 PR_PREFIX = (
     "This code review is spread across multiple repositories. Here are the other "
     "Pull Requests associated with the code review:"
@@ -33,27 +32,13 @@ class PullRequest(NamedTuple):
         return f"* [{self.name}]({self.link})"
 
 
-class Repository(NamedTuple):
-    """
-    Information about a repository.
-
-    * name: Name of the repository.
-    * directory: Path to the location of the repository.
-    * target_branch: Branch that a PR should be created against.
-    """
-
-    name: str
-    directory: Optional[Path]
-    target_branch: str
-
-
 class PullRequestService:
     """A service for creating pull requests."""
 
     @inject.autoparams()
     def __init__(
         self,
-        git_service: GitService,
+        git_service: GitProxy,
         github_service: GithubService,
         modules_service: ModulesService,
         evg_service: EvgService,
@@ -74,32 +59,6 @@ class PullRequestService:
         self.evg_service = evg_service
         self.emm_options = emm_options
 
-    def collect_repositories(self) -> List[Repository]:
-        """
-        Create a list of potential repositories for PRs.
-
-        :param project_id: Evergreen Project ID of base repository.
-        :return: List of repositories associated the base repository.
-        """
-        enabled_modules = self.modules_service.get_all_modules(enabled=True)
-        repository_list = [
-            Repository(
-                name=module.name,
-                directory=Path(module.prefix) / module.name,
-                target_branch=module.branch,
-            )
-            for module in enabled_modules.values()
-        ]
-        evg_project_id = self.emm_options.evg_project
-        repository_list.append(
-            Repository(
-                name=BASE_REPO,
-                directory=None,
-                target_branch=self.evg_service.get_project_branch(evg_project_id),
-            )
-        )
-        return repository_list
-
     def create_pull_request(self, title: Optional[str], body: Optional[str]) -> List[PullRequest]:
         """
         Create pull request for any repos with changes.
@@ -107,7 +66,7 @@ class PullRequestService:
         :param args: Arguments to pass to the github CLi.
         :return: List of pull requests being created associate with its link.
         """
-        repositories = self.collect_repositories()
+        repositories = self.modules_service.collect_repositories()
         changed_repos = [repo for repo in repositories if self.repo_has_changes(repo)]
 
         self.push_changes_to_origin(changed_repos)

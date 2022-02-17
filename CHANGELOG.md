@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.0 - 2022-02-17
+- Add several new git subcommands to support a more flexible workflow.
+- Replace `create-branch` subcommand with `git-branch-create` subcommand.
+- Replace `update-branch` subcommand with `git-branch-update` subcommand.
+- Replace `commit-queue` subcommand with `evg-commit-queue` subcommand.
+- Replace `patch` subcommand with `evg-patch` subcommand.
+
 ## 0.2.3 - 2022-02-16
 - Add support for Python 3.7
 

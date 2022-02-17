@@ -5,9 +5,9 @@ import pytest
 from shrub.v3.evg_project import EvgModule
 
 import emm.services.patch_service as under_test
+from emm.clients.evg_cli_service import EvgCliService
+from emm.clients.evg_service import EvgService
 from emm.options import EmmOptions
-from emm.services.evg_cli_service import EvgCliService
-from emm.services.evg_service import EvgService
 from emm.services.file_service import FileService
 
 

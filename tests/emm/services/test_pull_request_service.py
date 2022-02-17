@@ -3,18 +3,17 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-from shrub.v3.evg_project import EvgModule
 
 import emm.services.pull_request_service as under_test
-from emm.services.evg_service import EvgService
-from emm.services.git_service import GitService
-from emm.services.github_service import GithubService
+from emm.clients.evg_service import EvgService
+from emm.clients.git_proxy import GitProxy
+from emm.clients.github_service import GithubService
 from emm.services.modules_service import ModulesService
 
 
 @pytest.fixture()
 def git_service():
-    git_service = MagicMock(spec_set=GitService)
+    git_service = MagicMock(spec_set=GitProxy)
     return git_service
 
 
@@ -60,59 +59,18 @@ def build_mock_pull_request(i: int) -> under_test.PullRequest:
     return under_test.PullRequest(name=f"PR Name {i}", link=f"http://link.to.pr/{i}")
 
 
-class TestCollectRepositories:
-    def test_base_repository_should_be_included(
-        self,
-        pull_request_service: under_test.PullRequestService,
-        modules_service: ModulesService,
-        evg_service: EvgService,
-    ):
-        modules_service.get_all_modules.return_value = {}
-
-        repo_list = pull_request_service.collect_repositories()
-
-        assert len(repo_list) == 1
-        repo = repo_list[0]
-        assert repo.name == under_test.BASE_REPO
-        assert repo.directory is None
-        assert repo.target_branch == evg_service.get_project_branch.return_value
-
-    def test_module_repositories_should_be_included(
-        self,
-        pull_request_service: under_test.PullRequestService,
-        modules_service: ModulesService,
-        evg_service: EvgService,
-    ):
-        n_modules = 3
-        modules_service.get_all_modules.return_value = {
-            f"module {i}": EvgModule(
-                name=f"module {i}", repo=f"repo {i}", branch=f"branch_{i}", prefix=f"prefix/{i}"
-            )
-            for i in range(n_modules)
-        }
-
-        repo_list = pull_request_service.collect_repositories()
-
-        assert len(repo_list) == n_modules + 1  # +1 for the base repository.
-        for i in range(n_modules):
-            assert build_mock_repository(i) in repo_list
-
-
 class TestCreatePullRequest:
     def test_pull_request_should_be_orchestrated(
         self,
         pull_request_service: under_test.PullRequestService,
         modules_service: ModulesService,
-        git_service: GitService,
+        git_service: GitProxy,
         github_service: GithubService,
     ):
         n_modules = 5
-        modules_service.get_all_modules.return_value = {
-            f"module {i}": EvgModule(
-                name=f"module {i}", repo=f"repo {i}", branch=f"branch_{i}", prefix=f"prefix/{i}"
-            )
-            for i in range(n_modules)
-        }
+        modules_service.collect_repositories.return_value = [
+            build_mock_repository(i) for i in range(n_modules)
+        ]
         git_service.check_changes.side_effect = [True, False, True, False, True, False]
 
         pr_links = pull_request_service.create_pull_request(None, None)
@@ -124,7 +82,7 @@ class TestCreatePullRequest:
 
 class TestPushChangesToOrigin:
     def test_all_repositories_should_have_their_changes_pushed(
-        self, pull_request_service: under_test.PullRequestService, git_service: GitService
+        self, pull_request_service: under_test.PullRequestService, git_service: GitProxy
     ):
         n_repos = 4
         changed_repos = [build_mock_repository(i) for i in range(n_repos)]
@@ -206,7 +164,7 @@ class TestCreatePrArguments:
 
 class TestRepoHasChanges:
     def test_repo_with_changes_should_return_true(
-        self, pull_request_service: under_test.PullRequestService, git_service: GitService
+        self, pull_request_service: under_test.PullRequestService, git_service: GitProxy
     ):
         git_service.check_changes.return_value = True
         mock_repository = build_mock_repository(3)
@@ -218,7 +176,7 @@ class TestRepoHasChanges:
         )
 
     def test_repo_without_changes_should_return_true(
-        self, pull_request_service: under_test.PullRequestService, git_service: GitService
+        self, pull_request_service: under_test.PullRequestService, git_service: GitProxy
     ):
         git_service.check_changes.return_value = False
         mock_repository = build_mock_repository(3)

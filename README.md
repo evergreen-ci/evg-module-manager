@@ -61,10 +61,9 @@ $ pipx install evg-module-manager
 
 ## Usage
 
-See the [usage](docs/usage.md) documentation for details about using this tool.
+See the [documentation](https://evergreen-ci.github.io/evg-module-manager/) for details about using this tool.
 
 ```bash
-evg-module-manager --help
 Usage: evg-module-manager [OPTIONS] COMMAND [ARGS]...
 
   Evergreen Module Manager is a tool help simplify the local workflows of evergreen modules.
@@ -72,20 +71,17 @@ Usage: evg-module-manager [OPTIONS] COMMAND [ARGS]...
 Options:
   --modules-dir PATH      Directory to store module repositories [default='..']
   --evg-config-file PATH  Path to file with evergreen auth configuration
-                          [default='/Users/user/.evergreen.yml']
+                          [default='/Users/dbradf/.evergreen.yml']
   --evg-project TEXT      Name of Evergreen project [default='mongodb-mongo-master']
   --help                  Show this message and exit.
 
 Commands:
-  commit-queue  Submit changes from the base repository and any enabled modules to the...
-  create-branch Perform git checkout operation to create the branch.
   disable       Disable the specified module in the current repo.
   enable        Enable the specified module in the current repo.
-  git-commit    Perform git commit of changes in each module.
+  evg           Perform evergreen actions against the base repo and enabled modules.
+  git           Perform git actions against the base repo and enabled modules.
   list-modules  List the modules available for the current repo.
-  patch         Create an Evergreen patch with changes from the base repo and any enabled...
-  pull-request   Create pull request for the changes in each module.
-  update-branch Perform git merge|rebase operation to update the branch.
+  pull-request  Create a Github pull request for changes in the base repository and any...
 ```
 
 ## Contributor's Guide
