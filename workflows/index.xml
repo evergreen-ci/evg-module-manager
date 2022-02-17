@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Evergreen Module Manager Documentation</title>
+    <link>https://evergreen-ci.github.io/evg-module-manager/workflows/</link>
+    <description>Recent content on Evergreen Module Manager Documentation</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language><atom:link href="https://evergreen-ci.github.io/evg-module-manager/workflows/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/workflows/project-setup/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/workflows/project-setup/</guid>
+      <description>When you first start work on a change, you will want to enable any modules that you will be working with.
+You can see what modules are available with the list-modules subcommand:
+$ evg-module-manager list-modules - enterprise - wtdevelop Then you can enable any modules you wish with the enable subcommand:
+$ evg-module-manager enable -m enterprise Note
+Enabling a module will attempt to checkout the module&amp;rsquo;s repository to the commit that was associated with the base commit in Evergreen.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/workflows/working-with-git/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/workflows/working-with-git/</guid>
+      <description>Once you have your project setupwith any enabled modules you want to work with, next you will want to create a branch to work on.
+Creating a branch to work on     You may want to run pull to get the latest changes for your base repository. In additional to pulling the latest changes, each enabled module will be checked out to the commit that was run with the latest commit in the base repo in evergreen.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/workflows/staying-up-to-date/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/workflows/staying-up-to-date/</guid>
+      <description>After you have been working on a branch for some time, you will likely want to update your branch with the latest changes from the branch it was based on.
+Updating your branch     The git branch-update subcommand will:
+ fetch the latest changes from the origin of all the repositories. update your branch with the latest changes in the base repository. update all enabled modules up to the change associated with where the base repository was updated to.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/workflows/working-with-evergreen/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/workflows/working-with-evergreen/</guid>
+      <description>At some point, you will want to test your changes in Evergreen. You can use evg-module-manager to gather up changes to all your enabled modules and send them together.
+Creating Patch Builds     The evg patch subcommand will create a patch build with changes from your base repository and all enabled repositories.
+Note
+You can pass any options supported by the evergreen patch tool to the evg-patch subcommand.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/workflows/creating-pull-requests/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/workflows/creating-pull-requests/</guid>
+      <description>Once you have your changes ready to share with others you can use evg-module-manager to create a Github Pull Request.
+Creating a Pull Request     The pull-request subcommand will create pull requests for the base repo and all modules that contain changes. If more than 1 pull request is created, a comment will be added to each pull request with links to the others.
+NOTE
+By default the pull-request subcommand with use information from the git commits to determine the pull request title and body.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/workflows/cleaning-up/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/workflows/cleaning-up/</guid>
+      <description>Once your branch has been merged via the commit-queue, you will likely want to cleanup it up.
+Switching to a selected branch     You cannot delete a branch you currently have checked out, so the first step to cleaning up the branch is to switch to a different branch. You can use the git branch-switch subcommand to change branches.
+$ evg-module-manager git branch-switch --branch master Switched to &amp;#39;master&amp;#39; in: - enterprise - base Deleting old branches     Once you no longer have the branch you wish to remove checked out, you can remove it.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -9,7 +9,7 @@
 
 
 
-  <meta name="description" content="Changelog     0.2.3 - 2022-02-16      Add support for Python 3.7  0.2.2 - 2022-02-14      Add documentation site.  0.2.1 - 2022-02-11      Fix create patch not configurable in Linux  0.2.0 - 2022-02-04      &lsquo;pull-request&rsquo; subcommand will now default to &lsquo;&ndash;fill&rsquo; and validate arguments. &lsquo;pull-request&rsquo; will only add comments if there are multiple PRs being created." />
+  <meta name="description" content="Changelog     1.0.0 - 2022-02-17      Add several new git subcommands to support a more flexible workflow. Replace create-branch subcommand with git-branch-create subcommand. Replace update-branch subcommand with git-branch-update subcommand. Replace commit-queue subcommand with evg-commit-queue subcommand. Replace patch subcommand with evg-patch subcommand.  0.2.3 - 2022-02-16      Add support for Python 3.7  0.2.2 - 2022-02-14      Add documentation site." />
 
 
 
@@ -36,7 +36,7 @@
     
 
     <meta property="og:title" content="" />
-<meta property="og:description" content="Changelog     0.2.3 - 2022-02-16      Add support for Python 3.7  0.2.2 - 2022-02-14      Add documentation site.  0.2.1 - 2022-02-11      Fix create patch not configurable in Linux  0.2.0 - 2022-02-04      &lsquo;pull-request&rsquo; subcommand will now default to &lsquo;&ndash;fill&rsquo; and validate arguments. &lsquo;pull-request&rsquo; will only add comments if there are multiple PRs being created." />
+<meta property="og:description" content="Changelog     1.0.0 - 2022-02-17      Add several new git subcommands to support a more flexible workflow. Replace create-branch subcommand with git-branch-create subcommand. Replace update-branch subcommand with git-branch-update subcommand. Replace commit-queue subcommand with evg-commit-queue subcommand. Replace patch subcommand with evg-patch subcommand.  0.2.3 - 2022-02-16      Add support for Python 3.7  0.2.2 - 2022-02-14      Add documentation site." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://evergreen-ci.github.io/evg-module-manager/project-history/CHANGELOG/" /><meta property="article:section" content="project-history" />
 
@@ -45,7 +45,7 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content=""/>
-<meta name="twitter:description" content="Changelog     0.2.3 - 2022-02-16      Add support for Python 3.7  0.2.2 - 2022-02-14      Add documentation site.  0.2.1 - 2022-02-11      Fix create patch not configurable in Linux  0.2.0 - 2022-02-04      &lsquo;pull-request&rsquo; subcommand will now default to &lsquo;&ndash;fill&rsquo; and validate arguments. &lsquo;pull-request&rsquo; will only add comments if there are multiple PRs being created."/>
+<meta name="twitter:description" content="Changelog     1.0.0 - 2022-02-17      Add several new git subcommands to support a more flexible workflow. Replace create-branch subcommand with git-branch-create subcommand. Replace update-branch subcommand with git-branch-update subcommand. Replace commit-queue subcommand with evg-commit-queue subcommand. Replace patch subcommand with evg-patch subcommand.  0.2.3 - 2022-02-16      Add support for Python 3.7  0.2.2 - 2022-02-14      Add documentation site."/>
 
 
     <script src="/evg-module-manager/js/main-8b6f2ee8.bundle.min.js"></script>
@@ -123,7 +123,7 @@
     "name": "",
     "headline": "",
     "alternativeHeadline": "",
-    "description": "Changelog     0.2.3 - 2022-02-16      Add support for Python 3.7  0.2.2 - 2022-02-14      Add documentation site.  0.2.1 - 2022-02-11      Fix create patch not configurable in Linux  0.2.0 - 2022-02-04      \u0026lsquo;pull-request\u0026rsquo; subcommand will now default to \u0026lsquo;\u0026ndash;fill\u0026rsquo; and validate arguments. \u0026lsquo;pull-request\u0026rsquo; will only add comments if there are multiple PRs being created.",
+    "description": "Changelog     1.0.0 - 2022-02-17      Add several new git subcommands to support a more flexible workflow. Replace create-branch subcommand with git-branch-create subcommand. Replace update-branch subcommand with git-branch-update subcommand. Replace commit-queue subcommand with evg-commit-queue subcommand. Replace patch subcommand with evg-patch subcommand.  0.2.3 - 2022-02-16      Add support for Python 3.7  0.2.2 - 2022-02-14      Add documentation site.",
     "inLanguage": "en",
     "isFamilyFriendly": "true",
     "mainEntityOfPage": {
@@ -147,7 +147,7 @@
         }
     },
     "url" : "https:\/\/evergreen-ci.github.io\/evg-module-manager\/project-history\/CHANGELOG\/",
-    "wordCount" : "136",
+    "wordCount" : "174",
     "genre" : [ ]
 }
 </script>
@@ -644,10 +644,10 @@
               
                 <span class="flex">
                   <a
-                    href="/evg-module-manager/subcommands/create-branch/"
+                    href="/evg-module-manager/subcommands/git-branch-show/"
                     class="gdoc-nav__entry "
                   >
-                    Create Branch
+                    Git Branch Show
                   </a>
                 </span>
               
@@ -689,10 +689,460 @@
               
                 <span class="flex">
                   <a
-                    href="/evg-module-manager/subcommands/patch/"
+                    href="/evg-module-manager/subcommands/git-branch-create/"
                     class="gdoc-nav__entry "
                   >
-                    Patch
+                    Git Branch Create
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-branch-delete/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Branch Delete
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-branch-switch/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Branch Switch
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-branch-update/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Branch Update
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-branch-pull/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Branch Pull
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-status/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Status
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-add/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Add
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-restore/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Restore
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-commit/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Commit
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/evg-patch/"
+                    class="gdoc-nav__entry "
+                  >
+                    Evg Patch
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/evg-commit-queue/"
+                    class="gdoc-nav__entry "
+                  >
+                    Evg Commit Queue
                   </a>
                 </span>
               
@@ -749,6 +1199,13 @@
         
       
     
+  </ul>
+
+            
+          </li>
+        
+      
+    
       
 
       
@@ -779,10 +1236,283 @@
               
                 <span class="flex">
                   <a
-                    href="/evg-module-manager/subcommands/commit-queue/"
+                    href="/evg-module-manager/workflows/"
                     class="gdoc-nav__entry "
                   >
-                    Commit Queue
+                    Workflows
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+              
+  
+
+
+  <ul class="gdoc-nav__list">
+    
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/project-setup/"
+                    class="gdoc-nav__entry "
+                  >
+                    Project Setup
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/working-with-git/"
+                    class="gdoc-nav__entry "
+                  >
+                    Working With Git
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/staying-up-to-date/"
+                    class="gdoc-nav__entry "
+                  >
+                    Staying Up to Date
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/working-with-evergreen/"
+                    class="gdoc-nav__entry "
+                  >
+                    Working With Evergreen
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/creating-pull-requests/"
+                    class="gdoc-nav__entry "
+                  >
+                    Creating Pull Requests
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/cleaning-up/"
+                    class="gdoc-nav__entry "
+                  >
+                    Cleaning Up
                   </a>
                 </span>
               
@@ -993,6 +1723,21 @@
         </a>
     </h1>
 </div>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="100---2022-02-17">
+        1.0.0 - 2022-02-17
+        <a data-clipboard-text="https://evergreen-ci.github.io/evg-module-manager/project-history/CHANGELOG/#100---2022-02-17" class="gdoc-page__anchor gdoc-page__anchor--right clip" title="Anchor to: 1.0.0 - 2022-02-17" aria-label="Anchor to: 1.0.0 - 2022-02-17" href="#100---2022-02-17">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<ul>
+<li>Add several new git subcommands to support a more flexible workflow.</li>
+<li>Replace <code>create-branch</code> subcommand with <code>git-branch-create</code> subcommand.</li>
+<li>Replace <code>update-branch</code> subcommand with <code>git-branch-update</code> subcommand.</li>
+<li>Replace <code>commit-queue</code> subcommand with <code>evg-commit-queue</code> subcommand.</li>
+<li>Replace <code>patch</code> subcommand with <code>evg-patch</code> subcommand.</li>
+</ul>
 <div class="gdoc-page__anchorwrap">
     <h2 id="023---2022-02-16">
         0.2.3 - 2022-02-16

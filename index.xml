@@ -28,6 +28,19 @@ $ evg-module-manager enable --module wiredtiger </description>
     
     <item>
       <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/workflows/project-setup/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/workflows/project-setup/</guid>
+      <description>When you first start work on a change, you will want to enable any modules that you will be working with.
+You can see what modules are available with the list-modules subcommand:
+$ evg-module-manager list-modules - enterprise - wtdevelop Then you can enable any modules you wish with the enable subcommand:
+$ evg-module-manager enable -m enterprise Note
+Enabling a module will attempt to checkout the module&amp;rsquo;s repository to the commit that was associated with the base commit in Evergreen.</description>
+    </item>
+    
+    <item>
+      <title></title>
       <link>https://evergreen-ci.github.io/evg-module-manager/getting-started/global-options/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
@@ -49,23 +62,182 @@ $ evg-module-manager disable --module wiredtiger </description>
     
     <item>
       <title></title>
-      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/create-branch/</link>
+      <link>https://evergreen-ci.github.io/evg-module-manager/workflows/working-with-git/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/create-branch/</guid>
-      <description>Use create-branch command to create a new branch on the base repo and any enabled modules. Use the --branch option to specify the name of the branch to create.
-To create a branch named my-branch, use the following:
-$ evg-module-manager create-branch --branch my-branch By default, the branch will be created based on the currently checked out commit. You can use the --revision option to base the commit off a different revision.</description>
+      <guid>https://evergreen-ci.github.io/evg-module-manager/workflows/working-with-git/</guid>
+      <description>Once you have your project setupwith any enabled modules you want to work with, next you will want to create a branch to work on.
+Creating a branch to work on     You may want to run pull to get the latest changes for your base repository. In additional to pulling the latest changes, each enabled module will be checked out to the commit that was run with the latest commit in the base repo in evergreen.</description>
     </item>
     
     <item>
       <title></title>
-      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/patch/</link>
+      <link>https://evergreen-ci.github.io/evg-module-manager/workflows/staying-up-to-date/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
-      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/patch/</guid>
+      <guid>https://evergreen-ci.github.io/evg-module-manager/workflows/staying-up-to-date/</guid>
+      <description>After you have been working on a branch for some time, you will likely want to update your branch with the latest changes from the branch it was based on.
+Updating your branch     The git branch-update subcommand will:
+ fetch the latest changes from the origin of all the repositories. update your branch with the latest changes in the base repository. update all enabled modules up to the change associated with where the base repository was updated to.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-show/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-show/</guid>
+      <description>Use the git branch-show subcommand to see the local branch in the base repo and all modules. The currently checked out branch in each module will be preceded by an *.
+$ evg-module-manager git branch-show Branches in &amp;#39;enterprise&amp;#39;: dbradf/my-test-branch * master Branches in &amp;#39;base&amp;#39;: dbradf/my-test-branch * master </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/workflows/working-with-evergreen/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/workflows/working-with-evergreen/</guid>
+      <description>At some point, you will want to test your changes in Evergreen. You can use evg-module-manager to gather up changes to all your enabled modules and send them together.
+Creating Patch Builds     The evg patch subcommand will create a patch build with changes from your base repository and all enabled repositories.
+Note
+You can pass any options supported by the evergreen patch tool to the evg-patch subcommand.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-create/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-create/</guid>
+      <description>Use git branch-create subcommand to create a new branch on the base repo and any enabled modules. Use the --branch option to specify the name of the branch to create.
+To create a branch named my-branch, use the following:
+$ evg-module-manager git branch-create --branch my-branch By default, the branch will be created based on the currently checked out commit. You can use the --revision option to base the commit off a different revision.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/workflows/creating-pull-requests/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/workflows/creating-pull-requests/</guid>
+      <description>Once you have your changes ready to share with others you can use evg-module-manager to create a Github Pull Request.
+Creating a Pull Request     The pull-request subcommand will create pull requests for the base repo and all modules that contain changes. If more than 1 pull request is created, a comment will be added to each pull request with links to the others.
+NOTE
+By default the pull-request subcommand with use information from the git commits to determine the pull request title and body.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-delete/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-delete/</guid>
+      <description>Use git branch-delete subcommand to delete an existing branch in all modules. Use the --branch option to specify the name of the branch to delete.
+The command will display the branch that was deleted along with all the modules the branch was created on.
+$ evg-module-manager git branch-delete --branch dbradf/my-test-branch Branch &amp;#39;dbradf/my-test-branch&amp;#39; delete from: - enterprise - base </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-switch/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-switch/</guid>
+      <description>Use the git branch-switch subcommand to switch between branches. The --branch option allows you to specify the branch to switch to.
+$ evg-module-manager git branch-switch --branch master Switched to &amp;#39;master&amp;#39; in: - enterprise - base </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-update/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-update/</guid>
+      <description>Use the git branch-update subcommand to update your current branch with the changes made remotely.
+The git branch-update subcommand will:
+ fetch the latest changes from the origin of all the repositories. update your branch with the latest changes in the base repository. update all enabled modules up to the change associated with where the base repository was updated to.  $ evg-module-manager git branch-update Base: updated to latest &amp;#39;master&amp;#39; - enterprise: 07c4792479f85fb8af129a87ee6e116c4b7d7808 </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-pull/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-pull/</guid>
+      <description>Use git branch-pull subcommand to get the latest changes for your base repo and sync all modules to the latest commit of the base repo.
+NOTE Since Evergreen builds are only run against a single branch. You will only want to run this subcommand on the branch tracked by Evergreen.  The command will display the revision that each module to set to.
+$ evg-module-manager git branch-pull Base: pulled to latest - enterprise: 07c4792479f85fb8af129a87ee6e116c4b7d7808 </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-status/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-status/</guid>
+      <description>The git status subcommand will display the current status of the base repository and the repository of all modules.
+$ evg-module-manager git status Status of enterprise: On branch dbradf/my-test-branch Changes to be committed: (use &amp;#34;git restore --staged &amp;lt;file&amp;gt;...&amp;#34; to unstage) modified: README Status of base: On branch dbradf/my-test-branch Changes to be committed: (use &amp;#34;git restore --staged &amp;lt;file&amp;gt;...&amp;#34; to unstage) modified: README.md </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/workflows/cleaning-up/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/workflows/cleaning-up/</guid>
+      <description>Once your branch has been merged via the commit-queue, you will likely want to cleanup it up.
+Switching to a selected branch     You cannot delete a branch you currently have checked out, so the first step to cleaning up the branch is to switch to a different branch. You can use the git branch-switch subcommand to change branches.
+$ evg-module-manager git branch-switch --branch master Switched to &amp;#39;master&amp;#39; in: - enterprise - base Deleting old branches     Once you no longer have the branch you wish to remove checked out, you can remove it.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-add/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-add/</guid>
+      <description>Adding files to git     The git add subcommand will add files to the staging area of all modules. The command will attempt to add files matching the given filespec in each module and display a list of modules in which files were added.
+$ evg-module-manager git add &amp;#34;.&amp;#34; Files added to enterprise. Files added to base. </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-restore/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-restore/</guid>
+      <description>Restoring files in git     The git restore subcommand will restore files from the staging area of all modules. The command will attempt to restore files matching the given filespec in each module and display a list of modules in which files were restore.
+$ evg-module-manager git restore --staged &amp;#34;.&amp;#34; Files restored from enterprise. Files restored from base. </description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-commit/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-commit/</guid>
+      <description>Use the git commit subcommand to create a new commit with your changes. The commit will be created on all modules that contain committable changes. By default, this means changes that have been staged. You can use the --add flag to automatically include any changes to tracked files as part of the commit.
+If you are creating a new commit, use the --message option to supply a commit message. If you would like to commit the changes to the previous commit, use the --amend flag instead.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/evg-patch/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/evg-patch/</guid>
       <description>Creating an Evergreen patch build     Note
-In order to create a patch build in Evergreen, you need to ensure the evergreen command line tool is available and configured. See Evergreen authenticationfor details.  The patch subcommand will create an evergreen patch build with changes to your base repository and any modules that are currently enabled. You can pass along any options that the evergreen patch command supports, however, the --skip_confirm and --project options are already specified by the tools and should not be included.</description>
+In order to create a patch build in Evergreen, you need to ensure the evergreen command line tool is available and configured. See Evergreen authenticationfor details.  The evg patch subcommand will create an evergreen patch build with changes to your base repository and any modules that are currently enabled. You can pass along any options that the evergreen patch command supports, however, the --skip_confirm and --project options are already specified by the tools and should not be included.</description>
+    </item>
+    
+    <item>
+      <title></title>
+      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/evg-commit-queue/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/evg-commit-queue/</guid>
+      <description>Submitting to the commit-queue     Note
+In order to submit changes to the commit queue in Evergreen, you need to ensure the evergreen command line tool is available and configured. See Evergreen authenticationfor details.  The evg commit-queue subcommand will submit changes to the evergreen commit-queue that include changes to your base repository and any modules that are currently enabled. You can pass along any options that the evergreen commit-queue merge command supports, however, the --skip_confirm and --project options are already specified by the tools and should not be included.</description>
     </item>
     
     <item>
@@ -81,21 +253,11 @@ After local changes have been committed in all repos, you can create the pull re
     
     <item>
       <title></title>
-      <link>https://evergreen-ci.github.io/evg-module-manager/subcommands/commit-queue/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>https://evergreen-ci.github.io/evg-module-manager/subcommands/commit-queue/</guid>
-      <description>Submitting to the commit-queue     Note
-In order to submit changes to the commit queue in Evergreen, you need to ensure the evergreen command line tool is available and configured. See Evergreen authenticationfor details.  The commit-queue subcommand will submit changes to the evergreen commit-queue that include changes to your base repository and any modules that are currently enabled. You can pass along any options that the evergreen commit-queue merge command supports, however, the --skip_confirm and --project options are already specified by the tools and should not be included.</description>
-    </item>
-    
-    <item>
-      <title></title>
       <link>https://evergreen-ci.github.io/evg-module-manager/project-history/CHANGELOG/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       
       <guid>https://evergreen-ci.github.io/evg-module-manager/project-history/CHANGELOG/</guid>
-      <description>Changelog     0.2.3 - 2022-02-16      Add support for Python 3.7  0.2.2 - 2022-02-14      Add documentation site.  0.2.1 - 2022-02-11      Fix create patch not configurable in Linux  0.2.0 - 2022-02-04      &amp;lsquo;pull-request&amp;rsquo; subcommand will now default to &amp;lsquo;&amp;ndash;fill&amp;rsquo; and validate arguments. &amp;lsquo;pull-request&amp;rsquo; will only add comments if there are multiple PRs being created.</description>
+      <description>Changelog     1.0.0 - 2022-02-17      Add several new git subcommands to support a more flexible workflow. Replace create-branch subcommand with git-branch-create subcommand. Replace update-branch subcommand with git-branch-update subcommand. Replace commit-queue subcommand with evg-commit-queue subcommand. Replace patch subcommand with evg-patch subcommand.  0.2.3 - 2022-02-16      Add support for Python 3.7  0.2.2 - 2022-02-14      Add documentation site.</description>
     </item>
     
     <item>

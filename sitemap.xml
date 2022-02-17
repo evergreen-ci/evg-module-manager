@@ -11,6 +11,9 @@
     <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/enable/</loc>
     <lastmod>2022-02-14T13:28:39-05:00</lastmod>
   </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/workflows/project-setup/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
     <loc>https://evergreen-ci.github.io/evg-module-manager/getting-started/global-options/</loc>
     <lastmod>2022-02-14T13:28:39-05:00</lastmod>
   </url><url>
@@ -20,23 +23,68 @@
     <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/disable/</loc>
     <lastmod>2022-02-14T13:28:39-05:00</lastmod>
   </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/workflows/working-with-git/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/workflows/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/workflows/staying-up-to-date/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
     <loc>https://evergreen-ci.github.io/evg-module-manager/project-history/</loc>
-    <lastmod>2022-02-14T13:28:39-05:00</lastmod>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
   </url><url>
-    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/create-branch/</loc>
-    <lastmod>2022-02-14T13:28:39-05:00</lastmod>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-show/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
   </url><url>
-    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/patch/</loc>
-    <lastmod>2022-02-14T13:28:39-05:00</lastmod>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/workflows/working-with-evergreen/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-create/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/workflows/creating-pull-requests/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-delete/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-switch/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-update/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-pull/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-status/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/workflows/cleaning-up/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-add/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-restore/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/git-commit/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/evg-patch/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
+  </url><url>
+    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/evg-commit-queue/</loc>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
   </url><url>
     <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/pull-request/</loc>
-    <lastmod>2022-02-14T13:28:39-05:00</lastmod>
-  </url><url>
-    <loc>https://evergreen-ci.github.io/evg-module-manager/subcommands/commit-queue/</loc>
-    <lastmod>2022-02-14T13:28:39-05:00</lastmod>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
   </url><url>
     <loc>https://evergreen-ci.github.io/evg-module-manager/</loc>
-    <lastmod>2022-02-14T13:28:39-05:00</lastmod>
+    <lastmod>2022-02-17T13:30:51-05:00</lastmod>
     <priority>0</priority>
   </url><url>
     <loc>https://evergreen-ci.github.io/evg-module-manager/project-history/CHANGELOG/</loc>

@@ -9,15 +9,14 @@
 
 
 
-  <meta name="description" content="Use create-branch command to create a new branch on the base repo and any enabled modules. Use the --branch option to specify the name of the branch to create.
-To create a branch named my-branch, use the following:
-$ evg-module-manager create-branch --branch my-branch By default, the branch will be created based on the currently checked out commit. You can use the --revision option to base the commit off a different revision." />
+  <meta name="description" content="Once you have your project setupwith any enabled modules you want to work with, next you will want to create a branch to work on.
+Creating a branch to work on     You may want to run pull to get the latest changes for your base repository. In additional to pulling the latest changes, each enabled module will be checked out to the commit that was run with the latest commit in the base repo in evergreen." />
 
 
 
     <title>
       
-        Create Branch | 
+        Working With Git | 
       Evergreen Module Manager Documentation
     </title>
 
@@ -38,20 +37,18 @@ $ evg-module-manager create-branch --branch my-branch By default, the branch wil
     
 
     <meta property="og:title" content="" />
-<meta property="og:description" content="Use create-branch command to create a new branch on the base repo and any enabled modules. Use the --branch option to specify the name of the branch to create.
-To create a branch named my-branch, use the following:
-$ evg-module-manager create-branch --branch my-branch By default, the branch will be created based on the currently checked out commit. You can use the --revision option to base the commit off a different revision." />
+<meta property="og:description" content="Once you have your project setupwith any enabled modules you want to work with, next you will want to create a branch to work on.
+Creating a branch to work on     You may want to run pull to get the latest changes for your base repository. In additional to pulling the latest changes, each enabled module will be checked out to the commit that was run with the latest commit in the base repo in evergreen." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://evergreen-ci.github.io/evg-module-manager/subcommands/create-branch/" /><meta property="article:section" content="subcommands" />
+<meta property="og:url" content="https://evergreen-ci.github.io/evg-module-manager/workflows/working-with-git/" /><meta property="article:section" content="workflows" />
 
-<meta property="article:modified_time" content="2022-02-14T13:28:39-05:00" />
+<meta property="article:modified_time" content="2022-02-17T13:30:51-05:00" />
 
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content=""/>
-<meta name="twitter:description" content="Use create-branch command to create a new branch on the base repo and any enabled modules. Use the --branch option to specify the name of the branch to create.
-To create a branch named my-branch, use the following:
-$ evg-module-manager create-branch --branch my-branch By default, the branch will be created based on the currently checked out commit. You can use the --revision option to base the commit off a different revision."/>
+<meta name="twitter:description" content="Once you have your project setupwith any enabled modules you want to work with, next you will want to create a branch to work on.
+Creating a branch to work on     You may want to run pull to get the latest changes for your base repository. In additional to pulling the latest changes, each enabled module will be checked out to the commit that was run with the latest commit in the base repo in evergreen."/>
 
 
     <script src="/evg-module-manager/js/main-8b6f2ee8.bundle.min.js"></script>
@@ -125,22 +122,22 @@ $ evg-module-manager create-branch --branch my-branch By default, the branch wil
 {
     "@context": "http://schema.org",
     "@type": "TechArticle",
-    "articleSection": "subcommands",
+    "articleSection": "workflows",
     "name": "",
     "headline": "",
     "alternativeHeadline": "",
-    "description": "Use create-branch command to create a new branch on the base repo and any enabled modules. Use the --branch option to specify the name of the branch to create.\nTo create a branch named my-branch, use the following:\n$ evg-module-manager create-branch --branch my-branch By default, the branch will be created based on the currently checked out commit. You can use the --revision option to base the commit off a different revision.",
+    "description": "Once you have your project setupwith any enabled modules you want to work with, next you will want to create a branch to work on.\nCreating a branch to work on     You may want to run pull to get the latest changes for your base repository. In additional to pulling the latest changes, each enabled module will be checked out to the commit that was run with the latest commit in the base repo in evergreen.",
     "inLanguage": "en",
     "isFamilyFriendly": "true",
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https:\/\/evergreen-ci.github.io\/evg-module-manager\/subcommands\/create-branch\/"
+        "@id": "https:\/\/evergreen-ci.github.io\/evg-module-manager\/workflows\/working-with-git\/"
     },
     "copyrightHolder" : "Evergreen Module Manager Documentation",
     "copyrightYear" : "0001",
     "dateCreated": "0001-01-01T00:00:00.00Z",
     "datePublished": "0001-01-01T00:00:00.00Z",
-    "dateModified": "2022-02-14T13:28:39.00Z",
+    "dateModified": "2022-02-17T13:30:51.00Z",
     "publisher":{
         "@type":"Organization",
         "name": "Evergreen Module Manager Documentation",
@@ -152,8 +149,8 @@ $ evg-module-manager create-branch --branch my-branch By default, the branch wil
             "height":"32"
         }
     },
-    "url" : "https:\/\/evergreen-ci.github.io\/evg-module-manager\/subcommands\/create-branch\/",
-    "wordCount" : "91",
+    "url" : "https:\/\/evergreen-ci.github.io\/evg-module-manager\/workflows\/working-with-git\/",
+    "wordCount" : "481",
     "genre" : [ ]
 }
 </script>
@@ -650,10 +647,10 @@ $ evg-module-manager create-branch --branch my-branch By default, the branch wil
               
                 <span class="flex">
                   <a
-                    href="/evg-module-manager/subcommands/create-branch/"
-                    class="gdoc-nav__entry is-active"
+                    href="/evg-module-manager/subcommands/git-branch-show/"
+                    class="gdoc-nav__entry "
                   >
-                    Create Branch
+                    Git Branch Show
                   </a>
                 </span>
               
@@ -695,10 +692,460 @@ $ evg-module-manager create-branch --branch my-branch By default, the branch wil
               
                 <span class="flex">
                   <a
-                    href="/evg-module-manager/subcommands/patch/"
+                    href="/evg-module-manager/subcommands/git-branch-create/"
                     class="gdoc-nav__entry "
                   >
-                    Patch
+                    Git Branch Create
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-branch-delete/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Branch Delete
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-branch-switch/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Branch Switch
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-branch-update/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Branch Update
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-branch-pull/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Branch Pull
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-status/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Status
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-add/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Add
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-restore/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Restore
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-commit/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Commit
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/evg-patch/"
+                    class="gdoc-nav__entry "
+                  >
+                    Evg Patch
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/evg-commit-queue/"
+                    class="gdoc-nav__entry "
+                  >
+                    Evg Commit Queue
                   </a>
                 </span>
               
@@ -755,6 +1202,13 @@ $ evg-module-manager create-branch --branch my-branch By default, the branch wil
         
       
     
+  </ul>
+
+            
+          </li>
+        
+      
+    
       
 
       
@@ -785,10 +1239,283 @@ $ evg-module-manager create-branch --branch my-branch By default, the branch wil
               
                 <span class="flex">
                   <a
-                    href="/evg-module-manager/subcommands/commit-queue/"
+                    href="/evg-module-manager/workflows/"
                     class="gdoc-nav__entry "
                   >
-                    Commit Queue
+                    Workflows
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+              
+  
+
+
+  <ul class="gdoc-nav__list">
+    
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/project-setup/"
+                    class="gdoc-nav__entry "
+                  >
+                    Project Setup
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/working-with-git/"
+                    class="gdoc-nav__entry is-active"
+                  >
+                    Working With Git
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/staying-up-to-date/"
+                    class="gdoc-nav__entry "
+                  >
+                    Staying Up to Date
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/working-with-evergreen/"
+                    class="gdoc-nav__entry "
+                  >
+                    Working With Evergreen
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/creating-pull-requests/"
+                    class="gdoc-nav__entry "
+                  >
+                    Creating Pull Requests
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/cleaning-up/"
+                    class="gdoc-nav__entry "
+                  >
+                    Cleaning Up
                   </a>
                 </span>
               
@@ -972,7 +1699,7 @@ $ evg-module-manager create-branch --branch my-branch By default, the branch wil
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/evg-module-manager/' href='/evg-module-manager/'><span itemprop='name'></span></a><meta itemprop='position' content='2' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/evg-module-manager/subcommands/' href='/evg-module-manager/subcommands/'><span itemprop='name'>Subcommands</span></a><meta itemprop='position' content='3' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Create Branch</span><meta itemprop='position' content='4' /></li>
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/evg-module-manager/' href='/evg-module-manager/'><span itemprop='name'></span></a><meta itemprop='position' content='2' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/evg-module-manager/workflows/' href='/evg-module-manager/workflows/'><span itemprop='name'>Workflows</span></a><meta itemprop='position' content='3' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Working With Git</span><meta itemprop='position' content='4' /></li>
   
 
   
@@ -990,16 +1717,112 @@ $ evg-module-manager create-branch --branch my-branch By default, the branch wil
   <article
     class="gdoc-markdown gdoc-markdown__align--left"
   >
-    <h1>Create Branch</h1>
-    <p>Use <code>create-branch</code> command to create a new branch on the base repo and any enabled modules. Use the
-<code>--branch</code> option to specify the name of the branch to create.</p>
-<p>To create a branch named <code>my-branch</code>, use the following:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager create-branch --branch my-branch
-</code></pre></div><p>By default, the branch will be created based on the currently checked out commit. You can use the
-<code>--revision</code> option to base the commit off a different revision.</p>
-<p>To create a branch with the revision you want to start work with:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager create-branch --branch my-branch --revision <span class="s2">&#34;revision_to_checkout&#34;</span>
-</code></pre></div>
+    <h1>Working With Git</h1>
+    <p>Once you have your <a
+  class="gdoc-markdown__link"
+  href="/evg-module-manager/workflows/project-setup/"
+  
+  >project setup</a
+> with any enabled modules
+you want to work with, next you will want to create a branch to work on.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="creating-a-branch-to-work-on">
+        Creating a branch to work on
+        <a data-clipboard-text="https://evergreen-ci.github.io/evg-module-manager/workflows/working-with-git/#creating-a-branch-to-work-on" class="gdoc-page__anchor gdoc-page__anchor--right clip" title="Anchor to: Creating a branch to work on" aria-label="Anchor to: Creating a branch to work on" href="#creating-a-branch-to-work-on">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<p>You may want to run pull to get the latest changes for your base repository. In additional to pulling
+the latest changes, each enabled module will be checked out to the commit that was run with the
+latest commit in the base repo in evergreen.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git branch-pull
+Base: pulled to latest
+- enterprise: 07c4792479f85fb8af129a87ee6e116c4b7d7808
+</code></pre></div><p>You can use the <code>git branch-create</code> subcommand to create a local branch across all the repositories:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git branch-create --branch dbradf/my-test-branch
+Branch <span class="s1">&#39;dbradf/my-test-branch&#39;</span> created on:
+ - enterprise
+ - base
+</code></pre></div><p>After your branch has been created, you can work on the branch and make whatever changes you wish.
+Once you are ready to make a commit, the following subcommand will help you.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="committing-changes-to-git">
+        Committing changes to git
+        <a data-clipboard-text="https://evergreen-ci.github.io/evg-module-manager/workflows/working-with-git/#committing-changes-to-git" class="gdoc-page__anchor gdoc-page__anchor--right clip" title="Anchor to: Committing changes to git" aria-label="Anchor to: Committing changes to git" href="#committing-changes-to-git">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<p>First, you can see the status of all the modules with the <code>git-status</code> subcommand:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git status
+Status of enterprise:
+  On branch dbradf/my-test-branch
+  Changes not staged <span class="k">for</span> commit:
+    <span class="o">(</span>use <span class="s2">&#34;git add &lt;file&gt;...&#34;</span> to update what will be committed<span class="o">)</span>
+    <span class="o">(</span>use <span class="s2">&#34;git restore &lt;file&gt;...&#34;</span> to discard changes in working directory<span class="o">)</span>
+        modified:   README
+
+  no changes added to commit <span class="o">(</span>use <span class="s2">&#34;git add&#34;</span> and/or <span class="s2">&#34;git commit -a&#34;</span><span class="o">)</span>
+
+Status of base:
+  On branch dbradf/my-test-branch
+  Changes not staged <span class="k">for</span> commit:
+    <span class="o">(</span>use <span class="s2">&#34;git add &lt;file&gt;...&#34;</span> to update what will be committed<span class="o">)</span>
+    <span class="o">(</span>use <span class="s2">&#34;git restore &lt;file&gt;...&#34;</span> to discard changes in working directory<span class="o">)</span>
+        modified:   README.md
+
+  no changes added to commit <span class="o">(</span>use <span class="s2">&#34;git add&#34;</span> and/or <span class="s2">&#34;git commit -a&#34;</span><span class="o">)</span>
+</code></pre></div><p>Once you have checked that the changes look as expected, you can add any changes you wish to
+the staging area with the <code>git add</code> subcommand. Note that the add will be run against all
+modules.  If you want to only add changes to a specific module, you will need to do that with
+manual git commands.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git add .
+Files added to enterprise.
+Files added to base.
+</code></pre></div><p>If we run the <code>git status</code> subcommand again, we can see that the changes are now staged to be
+committed:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git status
+Status of enterprise:
+  On branch dbradf/my-test-branch
+  Changes to be committed:
+    <span class="o">(</span>use <span class="s2">&#34;git restore --staged &lt;file&gt;...&#34;</span> to unstage<span class="o">)</span>
+        modified:   README
+
+Status of base:
+  On branch dbradf/my-test-branch
+  Changes to be committed:
+    <span class="o">(</span>use <span class="s2">&#34;git restore --staged &lt;file&gt;...&#34;</span> to unstage<span class="o">)</span>
+        modified:   README.md
+</code></pre></div><p>After your changes have been staged, you can use the <code>git commit</code> subcommand to create a new
+commit.
+<blockquote class="gdoc-hint info">
+  <strong>NOTE</strong><br>
+You can skip manually adding files by passing the <code>--add</code> flag to the <code>git commit</code>
+subcommand, this will use the same behavior as you get from <code>git commit -a</code>.
+</blockquote>
+</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git commit --message <span class="s2">&#34;My commit message&#34;</span>
+Commit created in the following modules:
+ - enterprise
+ - base
+</code></pre></div><p>Now your changes should be committed.</p>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="whats-next">
+        What&rsquo;s next
+        <a data-clipboard-text="https://evergreen-ci.github.io/evg-module-manager/workflows/working-with-git/#whats-next" class="gdoc-page__anchor gdoc-page__anchor--right clip" title="Anchor to: What&rsquo;s next" aria-label="Anchor to: What&rsquo;s next" href="#whats-next">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<p>Now that your changes have your changes ready, you can
+<a
+  class="gdoc-markdown__link"
+  href="/evg-module-manager/workflows/working-with-evergreen/"
+  
+  >send them to evergreen</a
+>.</p>
+
   </article>
 
 

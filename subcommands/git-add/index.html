@@ -9,14 +9,14 @@
 
 
 
-  <meta name="description" content="Submitting to the commit-queue     Note
-In order to submit changes to the commit queue in Evergreen, you need to ensure the evergreen command line tool is available and configured. See Evergreen authenticationfor details.  The commit-queue subcommand will submit changes to the evergreen commit-queue that include changes to your base repository and any modules that are currently enabled. You can pass along any options that the evergreen commit-queue merge command supports, however, the --skip_confirm and --project options are already specified by the tools and should not be included." />
+  <meta name="description" content="Adding files to git     The git add subcommand will add files to the staging area of all modules. The command will attempt to add files matching the given filespec in each module and display a list of modules in which files were added.
+$ evg-module-manager git add &#34;.&#34; Files added to enterprise. Files added to base. " />
 
 
 
     <title>
       
-        Commit Queue | 
+        Git Add | 
       Evergreen Module Manager Documentation
     </title>
 
@@ -37,18 +37,18 @@ In order to submit changes to the commit queue in Evergreen, you need to ensure 
     
 
     <meta property="og:title" content="" />
-<meta property="og:description" content="Submitting to the commit-queue     Note
-In order to submit changes to the commit queue in Evergreen, you need to ensure the evergreen command line tool is available and configured. See Evergreen authenticationfor details.  The commit-queue subcommand will submit changes to the evergreen commit-queue that include changes to your base repository and any modules that are currently enabled. You can pass along any options that the evergreen commit-queue merge command supports, however, the --skip_confirm and --project options are already specified by the tools and should not be included." />
+<meta property="og:description" content="Adding files to git     The git add subcommand will add files to the staging area of all modules. The command will attempt to add files matching the given filespec in each module and display a list of modules in which files were added.
+$ evg-module-manager git add &#34;.&#34; Files added to enterprise. Files added to base. " />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://evergreen-ci.github.io/evg-module-manager/subcommands/commit-queue/" /><meta property="article:section" content="subcommands" />
+<meta property="og:url" content="https://evergreen-ci.github.io/evg-module-manager/subcommands/git-add/" /><meta property="article:section" content="subcommands" />
 
-<meta property="article:modified_time" content="2022-02-14T13:28:39-05:00" />
+<meta property="article:modified_time" content="2022-02-17T13:30:51-05:00" />
 
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content=""/>
-<meta name="twitter:description" content="Submitting to the commit-queue     Note
-In order to submit changes to the commit queue in Evergreen, you need to ensure the evergreen command line tool is available and configured. See Evergreen authenticationfor details.  The commit-queue subcommand will submit changes to the evergreen commit-queue that include changes to your base repository and any modules that are currently enabled. You can pass along any options that the evergreen commit-queue merge command supports, however, the --skip_confirm and --project options are already specified by the tools and should not be included."/>
+<meta name="twitter:description" content="Adding files to git     The git add subcommand will add files to the staging area of all modules. The command will attempt to add files matching the given filespec in each module and display a list of modules in which files were added.
+$ evg-module-manager git add &#34;.&#34; Files added to enterprise. Files added to base. "/>
 
 
     <script src="/evg-module-manager/js/main-8b6f2ee8.bundle.min.js"></script>
@@ -126,18 +126,18 @@ In order to submit changes to the commit queue in Evergreen, you need to ensure 
     "name": "",
     "headline": "",
     "alternativeHeadline": "",
-    "description": "Submitting to the commit-queue     Note\nIn order to submit changes to the commit queue in Evergreen, you need to ensure the evergreen command line tool is available and configured. See Evergreen authenticationfor details.  The commit-queue subcommand will submit changes to the evergreen commit-queue that include changes to your base repository and any modules that are currently enabled. You can pass along any options that the evergreen commit-queue merge command supports, however, the --skip_confirm and --project options are already specified by the tools and should not be included.",
+    "description": "Adding files to git     The git add subcommand will add files to the staging area of all modules. The command will attempt to add files matching the given filespec in each module and display a list of modules in which files were added.\n$ evg-module-manager git add \u0026#34;.\u0026#34; Files added to enterprise. Files added to base. ",
     "inLanguage": "en",
     "isFamilyFriendly": "true",
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https:\/\/evergreen-ci.github.io\/evg-module-manager\/subcommands\/commit-queue\/"
+        "@id": "https:\/\/evergreen-ci.github.io\/evg-module-manager\/subcommands\/git-add\/"
     },
     "copyrightHolder" : "Evergreen Module Manager Documentation",
     "copyrightYear" : "0001",
     "dateCreated": "0001-01-01T00:00:00.00Z",
     "datePublished": "0001-01-01T00:00:00.00Z",
-    "dateModified": "2022-02-14T13:28:39.00Z",
+    "dateModified": "2022-02-17T13:30:51.00Z",
     "publisher":{
         "@type":"Organization",
         "name": "Evergreen Module Manager Documentation",
@@ -149,8 +149,8 @@ In order to submit changes to the commit queue in Evergreen, you need to ensure 
             "height":"32"
         }
     },
-    "url" : "https:\/\/evergreen-ci.github.io\/evg-module-manager\/subcommands\/commit-queue\/",
-    "wordCount" : "90",
+    "url" : "https:\/\/evergreen-ci.github.io\/evg-module-manager\/subcommands\/git-add\/",
+    "wordCount" : "56",
     "genre" : [ ]
 }
 </script>
@@ -647,10 +647,10 @@ In order to submit changes to the commit queue in Evergreen, you need to ensure 
               
                 <span class="flex">
                   <a
-                    href="/evg-module-manager/subcommands/create-branch/"
+                    href="/evg-module-manager/subcommands/git-branch-show/"
                     class="gdoc-nav__entry "
                   >
-                    Create Branch
+                    Git Branch Show
                   </a>
                 </span>
               
@@ -692,10 +692,460 @@ In order to submit changes to the commit queue in Evergreen, you need to ensure 
               
                 <span class="flex">
                   <a
-                    href="/evg-module-manager/subcommands/patch/"
+                    href="/evg-module-manager/subcommands/git-branch-create/"
                     class="gdoc-nav__entry "
                   >
-                    Patch
+                    Git Branch Create
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-branch-delete/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Branch Delete
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-branch-switch/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Branch Switch
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-branch-update/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Branch Update
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-branch-pull/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Branch Pull
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-status/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Status
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-add/"
+                    class="gdoc-nav__entry is-active"
+                  >
+                    Git Add
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-restore/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Restore
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/git-commit/"
+                    class="gdoc-nav__entry "
+                  >
+                    Git Commit
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/evg-patch/"
+                    class="gdoc-nav__entry "
+                  >
+                    Evg Patch
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/evg-commit-queue/"
+                    class="gdoc-nav__entry "
+                  >
+                    Evg Commit Queue
                   </a>
                 </span>
               
@@ -752,6 +1202,13 @@ In order to submit changes to the commit queue in Evergreen, you need to ensure 
         
       
     
+  </ul>
+
+            
+          </li>
+        
+      
+    
       
 
       
@@ -782,10 +1239,283 @@ In order to submit changes to the commit queue in Evergreen, you need to ensure 
               
                 <span class="flex">
                   <a
-                    href="/evg-module-manager/subcommands/commit-queue/"
-                    class="gdoc-nav__entry is-active"
+                    href="/evg-module-manager/workflows/"
+                    class="gdoc-nav__entry "
                   >
-                    Commit Queue
+                    Workflows
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+              
+  
+
+
+  <ul class="gdoc-nav__list">
+    
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/project-setup/"
+                    class="gdoc-nav__entry "
+                  >
+                    Project Setup
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/working-with-git/"
+                    class="gdoc-nav__entry "
+                  >
+                    Working With Git
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/staying-up-to-date/"
+                    class="gdoc-nav__entry "
+                  >
+                    Staying Up to Date
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/working-with-evergreen/"
+                    class="gdoc-nav__entry "
+                  >
+                    Working With Evergreen
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/creating-pull-requests/"
+                    class="gdoc-nav__entry "
+                  >
+                    Creating Pull Requests
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/workflows/cleaning-up/"
+                    class="gdoc-nav__entry "
+                  >
+                    Cleaning Up
                   </a>
                 </span>
               
@@ -969,7 +1699,7 @@ In order to submit changes to the commit queue in Evergreen, you need to ensure 
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/evg-module-manager/' href='/evg-module-manager/'><span itemprop='name'></span></a><meta itemprop='position' content='2' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/evg-module-manager/subcommands/' href='/evg-module-manager/subcommands/'><span itemprop='name'>Subcommands</span></a><meta itemprop='position' content='3' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Commit Queue</span><meta itemprop='position' content='4' /></li>
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/evg-module-manager/' href='/evg-module-manager/'><span itemprop='name'></span></a><meta itemprop='position' content='2' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/evg-module-manager/subcommands/' href='/evg-module-manager/subcommands/'><span itemprop='name'>Subcommands</span></a><meta itemprop='position' content='3' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Git Add</span><meta itemprop='position' content='4' /></li>
   
 
   
@@ -987,32 +1717,21 @@ In order to submit changes to the commit queue in Evergreen, you need to ensure 
   <article
     class="gdoc-markdown gdoc-markdown__align--left"
   >
-    <h1>Commit Queue</h1>
+    <h1>Git Add</h1>
     <div class="gdoc-page__anchorwrap">
-    <h2 id="submitting-to-the-commit-queue">
-        Submitting to the commit-queue
-        <a data-clipboard-text="https://evergreen-ci.github.io/evg-module-manager/subcommands/commit-queue/#submitting-to-the-commit-queue" class="gdoc-page__anchor gdoc-page__anchor--right clip" title="Anchor to: Submitting to the commit-queue" aria-label="Anchor to: Submitting to the commit-queue" href="#submitting-to-the-commit-queue">
+    <h3 id="adding-files-to-git">
+        Adding files to git
+        <a data-clipboard-text="https://evergreen-ci.github.io/evg-module-manager/subcommands/git-add/#adding-files-to-git" class="gdoc-page__anchor gdoc-page__anchor--right clip" title="Anchor to: Adding files to git" aria-label="Anchor to: Adding files to git" href="#adding-files-to-git">
             <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
         </a>
-    </h2>
+    </h3>
 </div>
-<blockquote class="gdoc-hint warning">
-  <strong>Note</strong><br>
-In order to submit changes to the commit queue in Evergreen, you need to ensure the
-<code>evergreen</code> command line tool is available and configured. See
-<a
-  class="gdoc-markdown__link"
-  href="/getting-started/installation#evergreen-authentication"
-  
-  >Evergreen authentication</a
-> for details.
-</blockquote>
-
-<p>The <code>commit-queue</code> subcommand will submit changes to the evergreen commit-queue that include
-changes to your base repository and any modules that are currently enabled. You can pass along any
-options that the <code>evergreen commit-queue merge</code> command supports, however, the <code>--skip_confirm</code>
-and <code>--project</code> options are already specified by the tools and should not be included.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager commit-queue
+<p>The <code>git add</code> subcommand will add files to the staging area of all modules. The command will
+attempt to add files matching the given filespec in each module and display a list of modules
+in which files were added.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git add <span class="s2">&#34;.&#34;</span>
+Files added to enterprise.
+Files added to base.
 </code></pre></div>
   </article>
 
