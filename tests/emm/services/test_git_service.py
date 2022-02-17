@@ -6,11 +6,19 @@ import pytest
 
 import emm.services.git_service as under_test
 
+# TODO: Find a better way to handle the Path module when testing 3.7
+# We shouldn't have to mock the entire Path module when testing
+
+
 NAMESPACE = "emm.services.git_service"
 
 
 def ns(local_path: str) -> str:
     return f"{NAMESPACE}.{local_path}"
+
+
+def make_fake_path() -> Path:
+    return Path("./fake/path")
 
 
 @pytest.fixture()
@@ -36,8 +44,9 @@ class TestPerformGitAction:
         ],
     )
     @patch(ns("local"))
+    @patch(ns("Path"))
     def test_action_with_revision_should_call_git_action(
-        self, local_mock, git_service, mock_git, action, git_cmd
+        self, path_mock, local_mock, git_service, mock_git, action, git_cmd
     ):
         git_service.perform_git_action(action, "abc123")
 
@@ -84,11 +93,14 @@ class TestClone:
 
 class TestFetch:
     @patch(ns("local"))
-    def test_fetch_should_call_git_clone(self, local_mock, git_service, mock_git):
+    @patch(ns("Path"))
+    def test_fetch_should_call_git_clone(self, path_mock, local_mock, git_service, mock_git):
+        test_path = make_fake_path()
+        path_mock.return_value = test_path
         git_service.fetch()
 
         mock_git.assert_git_call(["fetch", "origin"])
-        local_mock.cwd.assert_called_with(Path(local_mock.cwd))
+        local_mock.cwd.assert_called_with(test_path)
 
     @patch(ns("local"))
     def test_fetch_with_directory_should_call_git_fetch_from_dir(
@@ -103,20 +115,26 @@ class TestFetch:
 
 class TestCheckout:
     @patch(ns("local"))
-    def test_checkout_should_call_git_checkout(self, local_mock, git_service, mock_git):
+    @patch(ns("Path"))
+    def test_checkout_should_call_git_checkout(self, path_mock, local_mock, git_service, mock_git):
+        test_path = make_fake_path()
+        path_mock.return_value = test_path
         git_service.checkout("abc123", directory=None, branch_name=None)
 
         mock_git.assert_git_call(["checkout", "abc123"])
-        local_mock.cwd.assert_called_with(Path(local_mock.cwd))
+        local_mock.cwd.assert_called_with(test_path)
 
     @patch(ns("local"))
+    @patch(ns("Path"))
     def test_checkout_with_branch_should_call_git_checkout_with_branch(
-        self, local_mock, git_service, mock_git
+        self, path_mock, local_mock, git_service, mock_git
     ):
+        test_path = make_fake_path()
+        path_mock.return_value = test_path
         git_service.checkout("abc123", directory=None, branch_name="main")
 
         mock_git.assert_git_call(["checkout", "-b", "main", "abc123"])
-        local_mock.cwd.assert_called_with(Path(local_mock.cwd))
+        local_mock.cwd.assert_called_with(test_path)
 
     @patch(ns("local"))
     def test_checkout_with_directory_should_call_git_checkout_from_directory(
@@ -131,13 +149,16 @@ class TestCheckout:
 
 class TestRebase:
     @patch(ns("local"))
+    @patch(ns("Path"))
     def test_rebase_with_no_directory_should_call_git_rebase(
-        self, local_mock, git_service, mock_git
+        self, path_mock, local_mock, git_service, mock_git
     ):
+        test_path = make_fake_path()
+        path_mock.return_value = test_path
         git_service.rebase("abc123")
 
         mock_git.assert_git_call(["rebase", "abc123"])
-        local_mock.cwd.assert_called_with(Path(local_mock.cwd))
+        local_mock.cwd.assert_called_with(test_path)
 
     @patch(ns("local"))
     def test_rebase_with_directory_should_switch_directories(
@@ -152,13 +173,16 @@ class TestRebase:
 
 class TestMerge:
     @patch(ns("local"))
+    @patch(ns("Path"))
     def test_merge_with_no_directory_should_call_git_rebase(
-        self, local_mock, git_service, mock_git
+        self, path_mock, local_mock, git_service, mock_git
     ):
+        test_path = make_fake_path()
+        path_mock.return_value = test_path
         git_service.merge("abc123")
 
         mock_git.assert_git_call(["merge", "abc123"])
-        local_mock.cwd.assert_called_with(Path(local_mock.cwd))
+        local_mock.cwd.assert_called_with(test_path)
 
     @patch(ns("local"))
     def test_merge_with_directory_should_switch_directories(
@@ -173,8 +197,9 @@ class TestMerge:
 
 class TestCurrentCommit:
     @patch(ns("local"))
+    @patch(ns("Path"))
     def test_current_commit_with_no_directory_should_return_git_hash(
-        self, local_mock, git_service, mock_git
+        self, path_mock, local_Mock, git_service, mock_git
     ):
         mock_git.__getitem__.return_value.return_value = "abc123\n"
 
@@ -199,8 +224,9 @@ class TestCurrentCommit:
 
 class TestMergeBase:
     @patch(ns("local"))
+    @patch(ns("Path"))
     def test_merge_base_with_no_directory_should_return_merge_base(
-        self, local_mock, git_service, mock_git
+        self, path_mock, local_mock, git_service, mock_git
     ):
         mock_git.__getitem__.return_value.return_value = "abc123\n"
 
@@ -225,7 +251,10 @@ class TestMergeBase:
 
 class TestGetBaseName:
     @patch(ns("local"))
-    def test_get_base_name_should_return_default_basename(self, local_mock, git_service, mock_git):
+    @patch(ns("Path"))
+    def test_get_base_name_should_return_default_basename(
+        self, path_mock, local_mock, git_service, mock_git
+    ):
         mock_git.__getitem__.return_value.return_value = "origin/master"
 
         basename = git_service.get_mergebase_branch_name()
@@ -235,7 +264,10 @@ class TestGetBaseName:
 
 class TestPushBranchToRemote:
     @patch(ns("local"))
-    def test_check_changes_should_return_changes(self, local_mock, git_service, mock_git):
+    @patch(ns("Path"))
+    def test_check_changes_should_return_changes(
+        self, path_mock, local_mock, git_service, mock_git
+    ):
         mock_git.__getitem__.return_value.return_value = "diff --git aaa bbb\n"
 
         diff = git_service.check_changes("master")
@@ -244,7 +276,10 @@ class TestPushBranchToRemote:
         assert diff is True
 
     @patch(ns("local"))
-    def test_current_branch_should_return_branch_name(self, local_mock, git_service, mock_git):
+    @patch(ns("Path"))
+    def test_current_branch_should_return_branch_name(
+        self, path_mock, local_mock, git_service, mock_git
+    ):
         mock_git.__getitem__.return_value.return_value = "branch\n"
 
         diff = git_service.current_branch()
@@ -253,8 +288,9 @@ class TestPushBranchToRemote:
         assert diff == "branch"
 
     @patch(ns("local"))
+    @patch(ns("Path"))
     def test_branch_exist_on_remote_should_return_remote_branch(
-        self, local_mock, git_service, mock_git
+        self, path_mock, local_mock, git_service, mock_git
     ):
         mock_git.__getitem__.return_value.return_value = "origin/branch\n"
 
@@ -267,11 +303,13 @@ class TestPushBranchToRemote:
 class TestDetermineDirectory:
     @patch(ns("local"))
     def test_directory_of_none_should_return_cwd(self, local_mock, git_service):
+        local_mock.cwd = "fake"
         assert git_service._determine_directory(None) == Path(local_mock.cwd)
 
     @patch(ns("local"))
     def test_relative_directory_should_return_full_path(self, local_mock, git_service):
         directory = Path("a/relative/path")
+        local_mock.cwd = "fake"
         assert git_service._determine_directory(directory) == Path(local_mock.cwd / directory)
 
     @patch(ns("local"))

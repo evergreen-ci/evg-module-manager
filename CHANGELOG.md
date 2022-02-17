@@ -1,5 +1,8 @@
 # Changelog
 
+## 0.2.3 - 2022-02-16
+- Add support for Python 3.7
+
 ## 0.2.2 - 2022-02-14
 - Add documentation site.
 

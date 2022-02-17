@@ -4,26 +4,56 @@ buildvariants:
     run_on:
       - ubuntu1804-small
     tasks:
-      - name: unit_tests
+      - name: unit_tests_3.7
+      - name: unit_tests_3.8
+      - name: unit_tests_3.9
       - name: check_pypi_version
       - name: build_docs
 
   - display_name: Windows
     name: windows
     run_on:
-      - windows-vsCurrent-small
+      - windows-64-vsMulti-small
     tasks:
-      - name: unit_tests
+      - name: unit_tests_3.7
+      - name: unit_tests_3.8
+      - name: unit_tests_3.9
 
   - display_name: macOS Mojave
     name: macos-1014
     run_on:
       - macos-1014
     tasks:
-      - name: unit_tests
+      - name: unit_tests_3.7
+      - name: unit_tests_3.8
+      - name: unit_tests_3.9
 
 functions:
-  create virtualenv:
+  run_tests:
+    - command: shell.exec
+      params:
+        working_dir: src
+        script: |
+          set -o errexit
+          set -o verbose
+          
+          export LC_ALL=C.UTF-8
+          export LANG=C.UTF-8
+          
+          if [ "Windows_NT" = "$OS" ]; then
+            dos2unix "venv/Scripts/activate"
+            . "venv/Scripts/activate"
+          else
+            export PYENV_ROOT="$PWD/pyenv"
+            export PATH="$PYENV_ROOT/bin:$PATH" 
+            eval "$(pyenv init -)"
+            eval "$(pyenv init --path)"
+            eval "$(pyenv virtualenv-init -)"
+          fi
+
+          poetry run pytest --cov=src --junitxml=junit-test-output.xml
+
+  install_poetry:
     - command: shell.exec
       params:
         working_dir: src
@@ -31,22 +61,30 @@ functions:
           set -o errexit
           set -o verbose
 
-          PATH="$PATH:$HOME"
-
           export LC_ALL=C.UTF-8
           export LANG=C.UTF-8
+          
+          echo $OS
 
           if [ "Windows_NT" = "$OS" ]; then
-            "/cygdrive/c/python/python39/python.exe" -m venv venv
-            # venv creates its Scripts/activate file with CLRF endings, which
-            # cygwin bash does not like. dos2unix it
-            # (See https://bugs.python.org/issue32451)
+            PYTHON="/cygdrive/c/python/python${short_python_version}/python.exe"
+            $PYTHON -m venv venv
             dos2unix "venv/Scripts/activate"
             . "venv/Scripts/activate"
+            $PYTHON -m ensurepip
             pip install poetry
           else
-            /opt/mongodbtoolchain/v3/bin/python3 -m venv venv
-            . venv/bin/activate
+            git clone https://github.com/pyenv/pyenv.git pyenv
+            export PYENV_ROOT="$PWD/pyenv"
+            export PATH="$PYENV_ROOT/bin:$PATH" 
+            eval "$(pyenv init -)"
+            eval "$(pyenv init --path)"
+            git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
+            SDKROOT=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk MACOSX_DEPLOYMENT_TARGET=10.14 pyenv install ${python_version}
+            pyenv virtualenv ${python_version} venv-${python_version}
+            
+            pyenv global venv-${python_version}
+          
             pip install --upgrade pip
             pip install poetry
           fi
@@ -83,7 +121,6 @@ pre:
 - command: git.get_project
   params:
     directory: src
-- func: create virtualenv
 
 post:
 - command: attach.xunit_results
@@ -91,26 +128,29 @@ post:
     file: src/junit-*.xml
 
 tasks:
-- name: unit_tests
+- name: unit_tests_3.7
   commands:
-  - command: shell.exec
-    params:
-      working_dir: src
-      script: |
-        set -o errexit
-        set -o verbose
+    - func: install_poetry
+      vars:
+        python_version: "3.7.1"
+        short_python_version: "37"
+    - func: run_tests
 
-        export LC_ALL=C.UTF-8
-        export LANG=C.UTF-8
+- name: unit_tests_3.8
+  commands:
+    - func: install_poetry
+      vars:
+        python_version: "3.8.10"
+        short_python_version: "38"
+    - func: run_tests
 
-        if [ "Windows_NT" = "$OS" ]; then
-          dos2unix "venv/Scripts/activate"
-          . "venv/Scripts/activate"
-        else
-          . venv/bin/activate
-        fi
-        PATH="$PATH:$HOME"
-        poetry run pytest --cov=src --junitxml=junit-test-output.xml
+- name: unit_tests_3.9
+  commands:
+    - func: install_poetry
+      vars:
+        python_version: "3.9.7"
+        short_python_version: "39"
+    - func: run_tests
 
 - name: check_pypi_version
   commands:
