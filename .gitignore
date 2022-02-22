@@ -497,3 +497,4 @@ emm-docs/public
 emm-docs/LICENSE
 emm-docs/README.md
 emm-docs/content/project-history/CHANGELOG.md
+.emm-local.yml
