@@ -9,15 +9,14 @@
 
 
 
-  <meta name="description" content="Once your branch has been merged via the commit-queue, you will likely want to cleanup it up.
-Switching to a selected branch     You cannot delete a branch you currently have checked out, so the first step to cleaning up the branch is to switch to a different branch. You can use the git branch-switch subcommand to change branches.
-$ evg-module-manager git branch-switch --branch master Switched to &#39;master&#39; in: - enterprise - base Deleting old branches     Once you no longer have the branch you wish to remove checked out, you can remove it." />
+  <meta name="description" content="The save-local-config subcommand will write a configuration file to the local directory that future executions of evg-module-manager run from the same directory can use to determine the configuration options to use.
+$ evg-module-manager save-local-config --help Usage: evg-module-manager save-local-config [OPTIONS] Save the given configuration options at &#39;./.emm-local.yml&#39;. When this file is present in the directory `evg-module-manager` is run from, the values defined in the file will be used. This allows you to run `evg-module-manager` without needing to specify global options every run." />
 
 
 
     <title>
       
-        Cleaning Up | 
+        Save Local Config | 
       Evergreen Module Manager Documentation
     </title>
 
@@ -38,20 +37,18 @@ $ evg-module-manager git branch-switch --branch master Switched to &#39;master&#
     
 
     <meta property="og:title" content="" />
-<meta property="og:description" content="Once your branch has been merged via the commit-queue, you will likely want to cleanup it up.
-Switching to a selected branch     You cannot delete a branch you currently have checked out, so the first step to cleaning up the branch is to switch to a different branch. You can use the git branch-switch subcommand to change branches.
-$ evg-module-manager git branch-switch --branch master Switched to &#39;master&#39; in: - enterprise - base Deleting old branches     Once you no longer have the branch you wish to remove checked out, you can remove it." />
+<meta property="og:description" content="The save-local-config subcommand will write a configuration file to the local directory that future executions of evg-module-manager run from the same directory can use to determine the configuration options to use.
+$ evg-module-manager save-local-config --help Usage: evg-module-manager save-local-config [OPTIONS] Save the given configuration options at &#39;./.emm-local.yml&#39;. When this file is present in the directory `evg-module-manager` is run from, the values defined in the file will be used. This allows you to run `evg-module-manager` without needing to specify global options every run." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://evergreen-ci.github.io/evg-module-manager/workflows/cleaning-up/" /><meta property="article:section" content="workflows" />
+<meta property="og:url" content="https://evergreen-ci.github.io/evg-module-manager/subcommands/save-local-config/" /><meta property="article:section" content="subcommands" />
 
-<meta property="article:modified_time" content="2022-02-17T13:30:51-05:00" />
+<meta property="article:modified_time" content="2022-02-22T17:04:11-05:00" />
 
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content=""/>
-<meta name="twitter:description" content="Once your branch has been merged via the commit-queue, you will likely want to cleanup it up.
-Switching to a selected branch     You cannot delete a branch you currently have checked out, so the first step to cleaning up the branch is to switch to a different branch. You can use the git branch-switch subcommand to change branches.
-$ evg-module-manager git branch-switch --branch master Switched to &#39;master&#39; in: - enterprise - base Deleting old branches     Once you no longer have the branch you wish to remove checked out, you can remove it."/>
+<meta name="twitter:description" content="The save-local-config subcommand will write a configuration file to the local directory that future executions of evg-module-manager run from the same directory can use to determine the configuration options to use.
+$ evg-module-manager save-local-config --help Usage: evg-module-manager save-local-config [OPTIONS] Save the given configuration options at &#39;./.emm-local.yml&#39;. When this file is present in the directory `evg-module-manager` is run from, the values defined in the file will be used. This allows you to run `evg-module-manager` without needing to specify global options every run."/>
 
 
     <script src="/evg-module-manager/js/main-8b6f2ee8.bundle.min.js"></script>
@@ -125,22 +122,22 @@ $ evg-module-manager git branch-switch --branch master Switched to &#39;master&#
 {
     "@context": "http://schema.org",
     "@type": "TechArticle",
-    "articleSection": "workflows",
+    "articleSection": "subcommands",
     "name": "",
     "headline": "",
     "alternativeHeadline": "",
-    "description": "Once your branch has been merged via the commit-queue, you will likely want to cleanup it up.\nSwitching to a selected branch     You cannot delete a branch you currently have checked out, so the first step to cleaning up the branch is to switch to a different branch. You can use the git branch-switch subcommand to change branches.\n$ evg-module-manager git branch-switch --branch master Switched to \u0026#39;master\u0026#39; in: - enterprise - base Deleting old branches     Once you no longer have the branch you wish to remove checked out, you can remove it.",
+    "description": "The save-local-config subcommand will write a configuration file to the local directory that future executions of evg-module-manager run from the same directory can use to determine the configuration options to use.\n$ evg-module-manager save-local-config --help Usage: evg-module-manager save-local-config [OPTIONS] Save the given configuration options at \u0026#39;.\/.emm-local.yml\u0026#39;. When this file is present in the directory `evg-module-manager` is run from, the values defined in the file will be used. This allows you to run `evg-module-manager` without needing to specify global options every run.",
     "inLanguage": "en",
     "isFamilyFriendly": "true",
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https:\/\/evergreen-ci.github.io\/evg-module-manager\/workflows\/cleaning-up\/"
+        "@id": "https:\/\/evergreen-ci.github.io\/evg-module-manager\/subcommands\/save-local-config\/"
     },
     "copyrightHolder" : "Evergreen Module Manager Documentation",
     "copyrightYear" : "0001",
     "dateCreated": "0001-01-01T00:00:00.00Z",
     "datePublished": "0001-01-01T00:00:00.00Z",
-    "dateModified": "2022-02-17T13:30:51.00Z",
+    "dateModified": "2022-02-22T17:04:11.00Z",
     "publisher":{
         "@type":"Organization",
         "name": "Evergreen Module Manager Documentation",
@@ -152,8 +149,8 @@ $ evg-module-manager git branch-switch --branch master Switched to &#39;master&#
             "height":"32"
         }
     },
-    "url" : "https:\/\/evergreen-ci.github.io\/evg-module-manager\/workflows\/cleaning-up\/",
-    "wordCount" : "184",
+    "url" : "https:\/\/evergreen-ci.github.io\/evg-module-manager\/subcommands\/save-local-config\/",
+    "wordCount" : "107",
     "genre" : [ ]
 }
 </script>
@@ -1236,7 +1233,7 @@ $ evg-module-manager git branch-switch --branch master Switched to &#39;master&#
                 <span class="flex">
                   <a
                     href="/evg-module-manager/subcommands/save-local-config/"
-                    class="gdoc-nav__entry "
+                    class="gdoc-nav__entry is-active"
                   >
                     Save Local Config
                   </a>
@@ -1561,7 +1558,7 @@ $ evg-module-manager git branch-switch --branch master Switched to &#39;master&#
                 <span class="flex">
                   <a
                     href="/evg-module-manager/workflows/cleaning-up/"
-                    class="gdoc-nav__entry is-active"
+                    class="gdoc-nav__entry "
                   >
                     Cleaning Up
                   </a>
@@ -1747,7 +1744,7 @@ $ evg-module-manager git branch-switch --branch master Switched to &#39;master&#
     
   
   
-    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/evg-module-manager/' href='/evg-module-manager/'><span itemprop='name'></span></a><meta itemprop='position' content='2' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/evg-module-manager/workflows/' href='/evg-module-manager/workflows/'><span itemprop='name'>Workflows</span></a><meta itemprop='position' content='3' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Cleaning Up</span><meta itemprop='position' content='4' /></li>
+    <li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/evg-module-manager/' href='/evg-module-manager/'><span itemprop='name'></span></a><meta itemprop='position' content='2' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><a itemscope itemtype='https://schema.org/WebPage' itemprop='item' itemid='/evg-module-manager/subcommands/' href='/evg-module-manager/subcommands/'><span itemprop='name'>Subcommands</span></a><meta itemprop='position' content='3' /></li><li> / </li><li itemprop='itemListElement' itemscope itemtype='https://schema.org/ListItem'><span itemprop='name'>Save Local Config</span><meta itemprop='position' content='4' /></li>
   
 
   
@@ -1765,58 +1762,30 @@ $ evg-module-manager git branch-switch --branch master Switched to &#39;master&#
   <article
     class="gdoc-markdown gdoc-markdown__align--left"
   >
-    <h1>Cleaning Up</h1>
-    <p>Once your branch has been <a
-  class="gdoc-markdown__link"
-  href="/evg-module-manager/workflows/working-with-evergreen/"
-  
-  >merged via the commit-queue</a
->,
-you will likely want to cleanup it up.</p>
-<div class="gdoc-page__anchorwrap">
-    <h2 id="switching-to-a-selected-branch">
-        Switching to a selected branch
-        <a data-clipboard-text="https://evergreen-ci.github.io/evg-module-manager/workflows/cleaning-up/#switching-to-a-selected-branch" class="gdoc-page__anchor gdoc-page__anchor--right clip" title="Anchor to: Switching to a selected branch" aria-label="Anchor to: Switching to a selected branch" href="#switching-to-a-selected-branch">
-            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-        </a>
-    </h2>
-</div>
-<p>You cannot delete a branch you currently have checked out, so the first step to cleaning up
-the branch is to switch to a different branch. You can use the <code>git branch-switch</code> subcommand
-to change branches.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git branch-switch --branch master
-Switched to <span class="s1">&#39;master&#39;</span> in:
- - enterprise
- - base
-</code></pre></div><div class="gdoc-page__anchorwrap">
-    <h2 id="deleting-old-branches">
-        Deleting old branches
-        <a data-clipboard-text="https://evergreen-ci.github.io/evg-module-manager/workflows/cleaning-up/#deleting-old-branches" class="gdoc-page__anchor gdoc-page__anchor--right clip" title="Anchor to: Deleting old branches" aria-label="Anchor to: Deleting old branches" href="#deleting-old-branches">
-            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
-        </a>
-    </h2>
-</div>
-<p>Once you no longer have the branch you wish to remove checked out, you can remove it. First, you can
-use the <code>git branch-show</code> subcommand to see the existing branches in each enabled repository.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git branch-show
-Branches in <span class="s1">&#39;enterprise&#39;</span>:
-  dbradf/my-test-branch
-* master
-Branches in <span class="s1">&#39;base&#39;</span>:
-  dbradf/my-test-branch
-* master
-</code></pre></div><p>Next, you can use the <code>git branch-delete</code> subcommand to remove the desired branch.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git branch-delete --branch dbradf/my-test-branch
-Branch <span class="s1">&#39;dbradf/my-test-branch&#39;</span> deleted from:
- - enterprise
- - base
-</code></pre></div><p>If you run the <code>git branch-show</code> subcommand again, you will see that the branch no longer shows
-up.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git branch-show
-Branches in <span class="s1">&#39;enterprise&#39;</span>:
-* master
-Branches in <span class="s1">&#39;base&#39;</span>:
-* master
+    <h1>Save Local Config</h1>
+    <p>The <code>save-local-config</code> subcommand will write a configuration file to the local directory that
+future executions of <code>evg-module-manager</code> run from the same directory can use to determine the
+configuration options to use.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager save-local-config --help
+Usage: evg-module-manager save-local-config <span class="o">[</span>OPTIONS<span class="o">]</span>
+
+  Save the given configuration options at <span class="s1">&#39;./.emm-local.yml&#39;</span>.
+
+  When this file is present in the directory <span class="sb">`</span>evg-module-manager<span class="sb">`</span> is run from, the values defined
+  in the file will be used. This allows you to run <span class="sb">`</span>evg-module-manager<span class="sb">`</span> without needing to specify
+  global options every run.
+
+  The supported option are:
+  * evg_project
+  * modules_directory
+
+Options:
+  --help  Show this message and exit.
+
+$ evg-module-manager --evg-project<span class="o">=</span>evg-module-manager save-local-config
+$ cat .emm-local.yml
+evg_project: evg-module-manager
+modules_directory: ..
 </code></pre></div>
   </article>
 

@@ -44,7 +44,7 @@ By default, modules will be stored in the parent directory (." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://evergreen-ci.github.io/evg-module-manager/getting-started/global-options/" /><meta property="article:section" content="getting-started" />
 
-<meta property="article:modified_time" content="2022-02-14T13:28:39-05:00" />
+<meta property="article:modified_time" content="2022-02-22T17:04:11-05:00" />
 
 
 <meta name="twitter:card" content="summary"/>
@@ -140,7 +140,7 @@ By default, modules will be stored in the parent directory (."/>
     "copyrightYear" : "0001",
     "dateCreated": "0001-01-01T00:00:00.00Z",
     "datePublished": "0001-01-01T00:00:00.00Z",
-    "dateModified": "2022-02-14T13:28:39.00Z",
+    "dateModified": "2022-02-22T17:04:11.00Z",
     "publisher":{
         "@type":"Organization",
         "name": "Evergreen Module Manager Documentation",
@@ -153,7 +153,7 @@ By default, modules will be stored in the parent directory (."/>
         }
     },
     "url" : "https:\/\/evergreen-ci.github.io\/evg-module-manager\/getting-started\/global-options\/",
-    "wordCount" : "124",
+    "wordCount" : "248",
     "genre" : [ ]
 }
 </script>
@@ -1205,6 +1205,51 @@ By default, modules will be stored in the parent directory (."/>
         
       
     
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/save-local-config/"
+                    class="gdoc-nav__entry "
+                  >
+                    Save Local Config
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
   </ul>
 
             
@@ -1743,7 +1788,28 @@ and the &lsquo;<code>mongodb-mongo-master</code>&rsquo; project will be used.</p
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager --evg-project mongodb-mongo-v5.0 --modules-dir ~/my_modules ...
 </code></pre></div><p>To override the defaults via environment variables, use <code>EMM_EVG_PROJECT</code> and <code>EMM_MODULES_DIR</code>.</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ <span class="nv">EMM_EVG_PROJECT</span><span class="o">=</span>mongodb-mongo-v5.0 <span class="nv">EMM_MODULES_DIR</span><span class="o">=</span>~/mymodules evg-module-manager ...
-</code></pre></div>
+</code></pre></div><div class="gdoc-page__anchorwrap">
+    <h2 id="remembering-configuration">
+        Remembering configuration
+        <a data-clipboard-text="https://evergreen-ci.github.io/evg-module-manager/getting-started/global-options/#remembering-configuration" class="gdoc-page__anchor gdoc-page__anchor--right clip" title="Anchor to: Remembering configuration" aria-label="Anchor to: Remembering configuration" href="#remembering-configuration">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<p>When working in a repository, it would be useful if <code>evg-module-manager</code> could remember which
+evergreen project was associated with the repository so that you don&rsquo;t have to specify it
+every run. You can use a local configuration file to do this.</p>
+<p>A local configuration file is a file that lives in the directory that you are running
+<code>evg-module-manager</code> from and provides configuration options.</p>
+<p>The file should be name <code>.emm-local.yml</code> and be in the yaml file format. <code>evg-module-manager</code>
+can automatically create the file for you with the <code>save-local-config</code> subcommand:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager --evg-project<span class="o">=</span>evg-module-manager save-local-config
+$ cat .emm-local.yml
+evg_project: evg-module-manager
+modules_directory: ..
+</code></pre></div><p>Any time the <code>evg-module-manager</code> is run in a directory with a <code>.emm-local.yml</code> file, the values
+in that files will be used for configuration.</p>
+
   </article>
 
 

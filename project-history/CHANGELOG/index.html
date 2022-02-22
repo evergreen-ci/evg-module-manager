@@ -9,7 +9,7 @@
 
 
 
-  <meta name="description" content="Changelog     1.0.0 - 2022-02-17      Add several new git subcommands to support a more flexible workflow. Replace create-branch subcommand with git-branch-create subcommand. Replace update-branch subcommand with git-branch-update subcommand. Replace commit-queue subcommand with evg-commit-queue subcommand. Replace patch subcommand with evg-patch subcommand.  0.2.3 - 2022-02-16      Add support for Python 3.7  0.2.2 - 2022-02-14      Add documentation site." />
+  <meta name="description" content="Changelog     1.1.0 - 2022-02-18      Add save-local-config subcommand. Support reading configuration from local file.  1.0.0 - 2022-02-17      Add several new git subcommands to support a more flexible workflow. Replace create-branch subcommand with git-branch-create subcommand. Replace update-branch subcommand with git-branch-update subcommand. Replace commit-queue subcommand with evg-commit-queue subcommand. Replace patch subcommand with evg-patch subcommand.  0.2.3 - 2022-02-16      Add support for Python 3." />
 
 
 
@@ -36,7 +36,7 @@
     
 
     <meta property="og:title" content="" />
-<meta property="og:description" content="Changelog     1.0.0 - 2022-02-17      Add several new git subcommands to support a more flexible workflow. Replace create-branch subcommand with git-branch-create subcommand. Replace update-branch subcommand with git-branch-update subcommand. Replace commit-queue subcommand with evg-commit-queue subcommand. Replace patch subcommand with evg-patch subcommand.  0.2.3 - 2022-02-16      Add support for Python 3.7  0.2.2 - 2022-02-14      Add documentation site." />
+<meta property="og:description" content="Changelog     1.1.0 - 2022-02-18      Add save-local-config subcommand. Support reading configuration from local file.  1.0.0 - 2022-02-17      Add several new git subcommands to support a more flexible workflow. Replace create-branch subcommand with git-branch-create subcommand. Replace update-branch subcommand with git-branch-update subcommand. Replace commit-queue subcommand with evg-commit-queue subcommand. Replace patch subcommand with evg-patch subcommand.  0.2.3 - 2022-02-16      Add support for Python 3." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://evergreen-ci.github.io/evg-module-manager/project-history/CHANGELOG/" /><meta property="article:section" content="project-history" />
 
@@ -45,7 +45,7 @@
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content=""/>
-<meta name="twitter:description" content="Changelog     1.0.0 - 2022-02-17      Add several new git subcommands to support a more flexible workflow. Replace create-branch subcommand with git-branch-create subcommand. Replace update-branch subcommand with git-branch-update subcommand. Replace commit-queue subcommand with evg-commit-queue subcommand. Replace patch subcommand with evg-patch subcommand.  0.2.3 - 2022-02-16      Add support for Python 3.7  0.2.2 - 2022-02-14      Add documentation site."/>
+<meta name="twitter:description" content="Changelog     1.1.0 - 2022-02-18      Add save-local-config subcommand. Support reading configuration from local file.  1.0.0 - 2022-02-17      Add several new git subcommands to support a more flexible workflow. Replace create-branch subcommand with git-branch-create subcommand. Replace update-branch subcommand with git-branch-update subcommand. Replace commit-queue subcommand with evg-commit-queue subcommand. Replace patch subcommand with evg-patch subcommand.  0.2.3 - 2022-02-16      Add support for Python 3."/>
 
 
     <script src="/evg-module-manager/js/main-8b6f2ee8.bundle.min.js"></script>
@@ -123,7 +123,7 @@
     "name": "",
     "headline": "",
     "alternativeHeadline": "",
-    "description": "Changelog     1.0.0 - 2022-02-17      Add several new git subcommands to support a more flexible workflow. Replace create-branch subcommand with git-branch-create subcommand. Replace update-branch subcommand with git-branch-update subcommand. Replace commit-queue subcommand with evg-commit-queue subcommand. Replace patch subcommand with evg-patch subcommand.  0.2.3 - 2022-02-16      Add support for Python 3.7  0.2.2 - 2022-02-14      Add documentation site.",
+    "description": "Changelog     1.1.0 - 2022-02-18      Add save-local-config subcommand. Support reading configuration from local file.  1.0.0 - 2022-02-17      Add several new git subcommands to support a more flexible workflow. Replace create-branch subcommand with git-branch-create subcommand. Replace update-branch subcommand with git-branch-update subcommand. Replace commit-queue subcommand with evg-commit-queue subcommand. Replace patch subcommand with evg-patch subcommand.  0.2.3 - 2022-02-16      Add support for Python 3.",
     "inLanguage": "en",
     "isFamilyFriendly": "true",
     "mainEntityOfPage": {
@@ -147,7 +147,7 @@
         }
     },
     "url" : "https:\/\/evergreen-ci.github.io\/evg-module-manager\/project-history\/CHANGELOG\/",
-    "wordCount" : "174",
+    "wordCount" : "186",
     "genre" : [ ]
 }
 </script>
@@ -1199,6 +1199,51 @@
         
       
     
+      
+
+      
+        
+      
+
+      
+        
+
+          
+          
+          
+          
+          
+          
+
+
+          <li>
+            <input
+              type="checkbox"
+              
+                class="hidden"
+              
+            />
+            <label
+              
+            >
+              
+                <span class="flex">
+                  <a
+                    href="/evg-module-manager/subcommands/save-local-config/"
+                    class="gdoc-nav__entry "
+                  >
+                    Save Local Config
+                  </a>
+                </span>
+              
+              
+            </label>
+
+            
+          </li>
+        
+      
+    
   </ul>
 
             
@@ -1723,6 +1768,18 @@
         </a>
     </h1>
 </div>
+<div class="gdoc-page__anchorwrap">
+    <h2 id="110---2022-02-18">
+        1.1.0 - 2022-02-18
+        <a data-clipboard-text="https://evergreen-ci.github.io/evg-module-manager/project-history/CHANGELOG/#110---2022-02-18" class="gdoc-page__anchor gdoc-page__anchor--right clip" title="Anchor to: 1.1.0 - 2022-02-18" aria-label="Anchor to: 1.1.0 - 2022-02-18" href="#110---2022-02-18">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h2>
+</div>
+<ul>
+<li>Add save-local-config subcommand.</li>
+<li>Support reading configuration from local file.</li>
+</ul>
 <div class="gdoc-page__anchorwrap">
     <h2 id="100---2022-02-17">
         1.0.0 - 2022-02-17
