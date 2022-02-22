@@ -41,7 +41,7 @@ Read the documentation [here](https://evergreen-ci.github.io/evg-module-manager/
 
 ## Dependencies
 
-* Python 3.8 or later
+* Python 3.7 or later
 * git
 * evergreen command line tool
 * [Evergreen config file](https://github.com/evergreen-ci/evergreen/wiki/Using-the-Command-Line-Tool#downloading-the-command-line-tool)

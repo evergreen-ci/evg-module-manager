@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0 - 2022-02-18
+- Add save-local-config subcommand.
+- Support reading configuration from local file.
+
 ## 1.0.0 - 2022-02-17
 - Add several new git subcommands to support a more flexible workflow.
 - Replace `create-branch` subcommand with `git-branch-create` subcommand.

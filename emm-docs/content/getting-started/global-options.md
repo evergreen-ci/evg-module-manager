@@ -26,3 +26,25 @@ To override the defaults via environment variables, use `EMM_EVG_PROJECT` and `E
 ```bash
 $ EMM_EVG_PROJECT=mongodb-mongo-v5.0 EMM_MODULES_DIR=~/mymodules evg-module-manager ...
 ```
+
+## Remembering configuration
+
+When working in a repository, it would be useful if `evg-module-manager` could remember which
+evergreen project was associated with the repository so that you don't have to specify it 
+every run. You can use a local configuration file to do this.
+
+A local configuration file is a file that lives in the directory that you are running 
+`evg-module-manager` from and provides configuration options. 
+
+The file should be name `.emm-local.yml` and be in the yaml file format. `evg-module-manager` 
+can automatically create the file for you with the `save-local-config` subcommand:
+
+```bash
+$ evg-module-manager --evg-project=evg-module-manager save-local-config
+$ cat .emm-local.yml
+evg_project: evg-module-manager
+modules_directory: ..
+```
+
+Any time the `evg-module-manager` is run in a directory with a `.emm-local.yml` file, the values
+in that files will be used for configuration.

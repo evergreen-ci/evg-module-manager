@@ -17,7 +17,13 @@ from emm.cli.git_cli import git_cli
 from emm.clients.evg_cli_service import EvgCliService
 from emm.clients.git_proxy import GitProxy
 from emm.clients.github_service import GithubService
-from emm.options import DEFAULT_EVG_CONFIG, DEFAULT_EVG_PROJECT, DEFAULT_MODULES_PATH, EmmOptions
+from emm.options import (
+    DEFAULT_EVG_CONFIG,
+    DEFAULT_EVG_PROJECT,
+    DEFAULT_MODULES_PATH,
+    EmmConfiguration,
+    EmmOptions,
+)
 from emm.services.modules_service import ModulesService
 from emm.services.patch_service import PatchService
 from emm.services.pull_request_service import PullRequestService
@@ -30,6 +36,7 @@ EXTERNAL_LOGGERS = [
     "inject",
     "urllib3",
 ]
+DEFAULT_LOCAL_FILE = ".emm-local.yml"
 
 
 class EmmOrchestrator:
@@ -111,6 +118,33 @@ def configure_logging(verbose: bool) -> None:
         logging.getLogger(log_name).setLevel(logging.WARNING)
 
 
+def generate_configuration(
+    ctx: click.Context, evg_config_file: str, modules_dir: str, evg_project: str
+) -> None:
+    """
+    Create the configuration to run with and add it to the context.
+
+    :param ctx: Context to add configuration to.
+    :param evg_config_file: Evergreen configuration file from command line.
+    :param modules_dir: Modules directory from the command line.
+    :param evg_project: Evergreen project from the command line.
+    """
+    ctx.ensure_object(EmmOptions)
+    ctx.obj.evg_config = Path(evg_config_file)
+    ctx.obj.modules_directory = Path(modules_dir)
+    ctx.obj.evg_project = evg_project
+
+    # If there is a local configuration file, use configuration values from it.
+    local_file = Path(DEFAULT_LOCAL_FILE)
+    if local_file.exists():
+        LOGGER.debug("Using local files for configuration", local_file=DEFAULT_LOCAL_FILE)
+        local_config = EmmConfiguration.from_yaml_file(local_file)
+        if local_config.modules_directory is not None:
+            ctx.obj.modules_directory = Path(local_config.modules_directory)
+        if local_config.evg_project is not None:
+            ctx.obj.evg_project = local_config.evg_project
+
+
 @click.group(context_settings=dict(auto_envvar_prefix="EMM", max_content_width=100))
 @click.option(
     "--modules-dir",
@@ -129,15 +163,14 @@ def configure_logging(verbose: bool) -> None:
     default=DEFAULT_EVG_PROJECT,
     help=f"Name of Evergreen project [default='{DEFAULT_EVG_PROJECT}']",
 )
+@click.option("--verbose", is_flag=True, default=False, help="Enable verbose logging")
 @click.pass_context
-def cli(ctx: click.Context, modules_dir: str, evg_config_file: str, evg_project: str) -> None:
+def cli(
+    ctx: click.Context, modules_dir: str, evg_config_file: str, evg_project: str, verbose: bool
+) -> None:
     """Evergreen Module Manager is a tool help simplify the local workflows of evergreen modules."""
-    ctx.ensure_object(EmmOptions)
-    ctx.obj.modules_directory = Path(modules_dir)
-    ctx.obj.evg_config = Path(evg_config_file)
-    ctx.obj.evg_project = evg_project
-
-    configure_logging(False)
+    configure_logging(verbose)
+    generate_configuration(ctx, evg_config_file, modules_dir, evg_project)
 
     evg_config_file = os.path.expanduser(evg_config_file)
     evg_api = RetryingEvergreenApi.get_api(config_file=evg_config_file)
@@ -217,6 +250,27 @@ def pull_request(ctx: click.Context, title: Optional[str], body: Optional[str]) 
 
     orchestrator = inject.instance(EmmOrchestrator)
     orchestrator.create_pull_request(title, body)
+
+
+@cli.command(context_settings=dict(max_content_width=100))
+@click.pass_context
+def save_local_config(ctx: click.Context) -> None:
+    """
+    Save the given configuration options at './.emm-local.yml'.
+
+    When this file is present in the directory `evg-module-manager` is run from, the values
+    defined in the file will be used. This allows you to run `evg-module-manager` without
+    needing to specify global options every run.
+
+    \b
+    The supported option are:
+    * evg_project
+    * modules_directory
+    """
+    emm_config = EmmConfiguration(
+        evg_project=ctx.obj.evg_project, modules_directory=str(ctx.obj.modules_directory)
+    )
+    emm_config.save_yaml_file(Path(DEFAULT_LOCAL_FILE))
 
 
 cli.add_command(evg_cli)
