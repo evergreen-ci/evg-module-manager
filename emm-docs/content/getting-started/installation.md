@@ -3,7 +3,10 @@ weight: 1
 ---
 ## Prerequisites
 
-To fully utilize this tool, the following commands need to be installed and available on your
+You'll need an installation of [Python](https://www.python.org/) on your computer. It needs to
+be version [3.7.1](https://www.python.org/downloads/release/python-371/) or higher.
+
+To fully utilize this tool, the following commands also need to be installed and available on your
 PATH:
 
 * [evergreen](https://github.com/evergreen-ci/evergreen/wiki/Using-the-Command-Line-Tool): The evergreen command line tool.
