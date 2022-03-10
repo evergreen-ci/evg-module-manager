@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.1 - 2022-3-10
+## 1.1.1 - 2022-03-10
 - Update documentation to call out Python 3.7.1 dependency.
 
 ## 1.1.0 - 2022-02-18
