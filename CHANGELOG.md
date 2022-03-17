@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.2 - 2022-03-17
+- Set upstream when pushing a branch.
+
 ## 1.1.1 - 2022-03-10
 - Update documentation to call out Python 3.7.1 dependency.
 
