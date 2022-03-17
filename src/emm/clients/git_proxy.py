@@ -308,7 +308,7 @@ class GitProxy:
                 f"in directory '{self._determine_directory(directory)}'"
             )
 
-        args = ["push", "origin", "HEAD"]
+        args = ["push", "-u", "origin", "HEAD"]
         with local.cwd(self._determine_directory(directory)):
             return self.git[args]().strip()
 

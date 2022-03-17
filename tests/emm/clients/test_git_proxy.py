@@ -521,7 +521,7 @@ class TestPushBranchToRemote:
 
         git_proxy.push_branch_to_remote()
 
-        mock_git.assert_git_call(["push", "origin", "HEAD"])
+        mock_git.assert_git_call(["push", "-u", "origin", "HEAD"])
 
     @patch(ns("local"))
     @patch(ns("Path"))
@@ -543,7 +543,7 @@ class TestPushBranchToRemote:
         path = Path("/path/to/repo").absolute()
         git_proxy.push_branch_to_remote(directory=path)
 
-        mock_git.assert_git_call(["push", "origin", "HEAD"])
+        mock_git.assert_git_call(["push", "-u", "origin", "HEAD"])
         local_mock.cwd.assert_called_with(path)
 
 
