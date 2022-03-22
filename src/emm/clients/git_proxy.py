@@ -1,7 +1,6 @@
 """Service for working with git."""
 from __future__ import annotations
 
-import re
 from os import path
 from pathlib import Path
 from typing import List, Optional
@@ -14,6 +13,7 @@ from plumbum.machines.local import LocalCommand
 LOGGER = structlog.get_logger(__name__)
 PROTECTED_BRANCHES = {"main", "master"}
 PROTECTED_REMOTE = "mongodb"
+ALLOWED_REMOTE = "10gen"
 
 
 class GitProxy:
@@ -314,51 +314,47 @@ class GitProxy:
         with local.cwd(self._determine_directory(directory)):
             return self.git[args]().strip()
 
-    def current_remote(self, directory: Optional[Path] = None) -> List[str]:
+    def current_remote(self, directory: Optional[Path] = None) -> str:
         """
         Get the current remote.
 
         :param directory: Directory to execute command at.
+        :return: Remote origin url.
         """
-        args = ["remote", "--verbose"]
+        args = ["config", "remote.origin.url"]
         with local.cwd(self._determine_directory(directory)):
-            return self.git[args]().split("\n")
+            return self.git[args]().strip()
 
-    def check_remote(self, directory: Optional[Path]) -> None:
+    def determine_remote_overwritten(self, directory: Optional[Path]) -> bool:
         """
-        Check whether to overwrite remote.
+        Determine whether need to overwrite remote.
 
         :param directory: Directory to execute command at.
+        :return Result whether to overwrite remote.
         """
         current_remote = self.current_remote(directory)
-        for remote in current_remote:
-            if PROTECTED_REMOTE in remote:
-                LOGGER.warning(
-                    "Attempting to push protected remote",
-                    remote=remote,
-                    directory=directory,
-                )
-                remote_url = remote.replace("mongodb", "10gen")
-                new_remote = re.split(" |\t", remote_url)
-                LOGGER.debug("Overwrite {} to {}", old_remote=remote, new_remote=new_remote[1])
-                push_exists = True if "push" in remote_url else False
-                self.set_remote(new_remote[1], push_exists, directory)
+        if PROTECTED_REMOTE in current_remote:
+            LOGGER.warning(
+                "Attempting to push protected remote",
+                remote=current_remote,
+                directory=directory,
+            )
+            return True
+        return False
 
-    def set_remote(
-        self, remote_url: str, push_exists: bool, directory: Optional[Path] = None
-    ) -> None:
+    def overwrite_remote(self, directory: Optional[Path] = None) -> str:
         """
         Overwrite current remote.
 
+        :param remote_url: Remote url to overwrite.
         :param directory: Directory to execute command at.
         """
-        args = (
-            ["remote", "set-url", "origin", remote_url]
-            if push_exists
-            else ["remote", "set-url", "--push", "origin", remote_url]
-        )
+        current_remote = self.current_remote(directory)
+        new_remote = current_remote.replace(PROTECTED_REMOTE, ALLOWED_REMOTE)
+        LOGGER.warning(f"Overwrite {current_remote} to {new_remote}")
+        args = ["config", "remote.origin.pushurl", new_remote]
         with local.cwd(self._determine_directory(directory)):
-            self.git[args]()
+            return self.git[args]().strip()
 
     @staticmethod
     def _determine_directory(directory: Optional[Path] = None) -> Path:

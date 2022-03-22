@@ -80,6 +80,18 @@ class TestCreatePullRequest:
         assert github_service.pr_comment.call_count == 3
 
 
+class TestUpdateRemote:
+    def test_all_push_remote_should_not_be_mongodb(
+        self, pull_request_service: under_test.PullRequestService, git_service: GitProxy
+    ):
+        n_repos = 4
+        changed_repos = [build_mock_repository(i) for i in range(n_repos)]
+
+        pull_request_service.update_remote_if_need(changed_repos)
+
+        assert git_service.overwrite_remote.call_count == n_repos
+
+
 class TestPushChangesToOrigin:
     def test_all_repositories_should_have_their_changes_pushed(
         self, pull_request_service: under_test.PullRequestService, git_service: GitProxy
