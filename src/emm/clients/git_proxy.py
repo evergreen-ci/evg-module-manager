@@ -1,6 +1,7 @@
 """Service for working with git."""
 from __future__ import annotations
 
+import re
 from os import path
 from pathlib import Path
 from typing import List, Optional
@@ -12,6 +13,7 @@ from plumbum.machines.local import LocalCommand
 
 LOGGER = structlog.get_logger(__name__)
 PROTECTED_BRANCHES = {"main", "master"}
+PROTECTED_REMOTE = "mongodb"
 
 
 class GitProxy:
@@ -311,6 +313,52 @@ class GitProxy:
         args = ["push", "-u", "origin", "HEAD"]
         with local.cwd(self._determine_directory(directory)):
             return self.git[args]().strip()
+
+    def current_remote(self, directory: Optional[Path] = None) -> List[str]:
+        """
+        Get the current remote.
+
+        :param directory: Directory to execute command at.
+        """
+        args = ["remote", "--verbose"]
+        with local.cwd(self._determine_directory(directory)):
+            return self.git[args]().split("\n")
+
+    def check_remote(self, directory: Optional[Path]) -> None:
+        """
+        Check whether to overwrite remote.
+
+        :param directory: Directory to execute command at.
+        """
+        current_remote = self.current_remote(directory)
+        for remote in current_remote:
+            if PROTECTED_REMOTE in remote:
+                LOGGER.warning(
+                    "Attempting to push protected remote",
+                    remote=remote,
+                    directory=directory,
+                )
+                remote_url = remote.replace("mongodb", "10gen")
+                new_remote = re.split(" |\t", remote_url)
+                LOGGER.debug("Overwrite {} to {}", old_remote=remote, new_remote=new_remote[1])
+                push_exists = True if "push" in remote_url else False
+                self.set_remote(new_remote[1], push_exists, directory)
+
+    def set_remote(
+        self, remote_url: str, push_exists: bool, directory: Optional[Path] = None
+    ) -> None:
+        """
+        Overwrite current remote.
+
+        :param directory: Directory to execute command at.
+        """
+        args = (
+            ["remote", "set-url", "origin", remote_url]
+            if push_exists
+            else ["remote", "set-url", "--push", "origin", remote_url]
+        )
+        with local.cwd(self._determine_directory(directory)):
+            self.git[args]()
 
     @staticmethod
     def _determine_directory(directory: Optional[Path] = None) -> Path:

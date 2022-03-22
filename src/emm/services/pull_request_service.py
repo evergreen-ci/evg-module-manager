@@ -68,7 +68,6 @@ class PullRequestService:
         """
         repositories = self.modules_service.collect_repositories()
         changed_repos = [repo for repo in repositories if self.repo_has_changes(repo)]
-
         self.push_changes_to_origin(changed_repos)
         pr_arguments = self.create_pr_arguments(title, body)
         pr_links = self.create_prs(changed_repos, pr_arguments)
@@ -83,6 +82,7 @@ class PullRequestService:
         :param changed_repos: List of repos to push.
         """
         for repo in changed_repos:
+            self.git_service.check_remote(repo.directory)
             self.git_service.push_branch_to_remote(repo.directory)
 
     def create_prs(
