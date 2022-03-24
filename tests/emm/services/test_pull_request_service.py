@@ -59,6 +59,12 @@ def build_mock_pull_request(i: int) -> under_test.PullRequest:
     return under_test.PullRequest(name=f"PR Name {i}", link=f"http://link.to.pr/{i}")
 
 
+def build_mock_pull_request_option(i: int) -> under_test.PullRequestOption:
+    return under_test.PullRequestOption(
+        title="title", body="body", branch="branch", remote="remote"
+    )
+
+
 class TestCreatePullRequest:
     def test_pull_request_should_be_orchestrated(
         self,
@@ -87,19 +93,20 @@ class TestUpdateRemote:
         n_repos = 4
         changed_repos = [build_mock_repository(i) for i in range(n_repos)]
 
-        pull_request_service.update_remote_if_need(changed_repos)
+        pull_request_service.determine_remote(changed_repos)
 
-        assert git_service.overwrite_remote.call_count == n_repos
+        assert git_service.determine_remote.call_count == n_repos
 
 
-class TestPushChangesToOrigin:
+class TestPushChangesToRemote:
     def test_all_repositories_should_have_their_changes_pushed(
         self, pull_request_service: under_test.PullRequestService, git_service: GitProxy
     ):
         n_repos = 4
         changed_repos = [build_mock_repository(i) for i in range(n_repos)]
+        mock_remotes = ["origin" for i in range(n_repos)]
 
-        pull_request_service.push_changes_to_origin(changed_repos)
+        pull_request_service.push_changes_to_remote(mock_remotes, changed_repos)
 
         assert git_service.push_branch_to_remote.call_count == n_repos
 
@@ -110,8 +117,9 @@ class TestCreatePrs:
     ):
         n_repos = 3
         changed_repos = [build_mock_repository(i) for i in range(n_repos)]
+        pr_arguements = [build_mock_pull_request_option(i) for i in range(n_repos)]
 
-        pr_links = pull_request_service.create_prs(changed_repos, ["arguments", "to", "gh"])
+        pr_links = pull_request_service.create_prs(changed_repos, pr_arguements)
 
         assert len(pr_links) == n_repos
         for repo in changed_repos:

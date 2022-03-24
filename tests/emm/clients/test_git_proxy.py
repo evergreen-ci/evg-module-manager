@@ -547,7 +547,7 @@ class TestPushBranchToRemote:
         local_mock.cwd.assert_called_with(path)
 
 
-class TestDetermineOverwrittenRemote:
+class TestDetermineRemote:
     @patch(ns("local"))
     @patch(ns("Path"))
     def test_current_remote_should_return_remote_name(
@@ -559,49 +559,21 @@ class TestDetermineOverwrittenRemote:
 
         diff = git_proxy.current_remote(test_path)
 
-        mock_git.assert_git_call(["config", "remote.origin.url"])
-        assert diff == "remote"
+        mock_git.assert_git_call(["remote", "-v"])
+        assert diff == ["remote"]
 
     @patch(ns("local"))
     @patch(ns("Path"))
-    def test_remote_contain_mongodb_should_be_overwritten(
-        self, path_mock, local_mock, git_proxy, mock_git
-    ):
-        test_path = make_fake_path()
-        path_mock.return_value = test_path
-        mock_git.__getitem__.return_value.return_value = "mongodb\n"
-
-        should_overwritten = git_proxy.determine_remote_overwritten(test_path)
-
-        assert should_overwritten is True
-
-    @patch(ns("local"))
-    @patch(ns("Path"))
-    def test_remote_contain_mongodb_should_not_be_overwritten(
+    def test_on_other_remote_option_should_return_nothing(
         self, path_mock, local_mock, git_proxy, mock_git
     ):
         test_path = make_fake_path()
         path_mock.return_value = test_path
         mock_git.__getitem__.return_value.return_value = "10gen\n"
 
-        should_overwritten = git_proxy.determine_remote_overwritten(test_path)
+        should_overwritten = git_proxy.determine_remote(test_path)
 
-        assert should_overwritten is False
-
-    @patch(ns("local"))
-    @patch(ns("Path"))
-    def test_overwritten_remote_should_successful_update_remote(
-        self, path_mock, local_mock, git_proxy, mock_git
-    ):
-        test_path = make_fake_path()
-        path_mock.return_value = test_path
-        mock_git.__getitem__.return_value.return_value = "10gen\n"
-
-        remote = git_proxy.overwrite_remote(test_path)
-
-        mock_git.assert_git_call(["config", "remote.origin.pushurl", "10gen"])
-
-        assert remote == "10gen"
+        assert should_overwritten == "origin"
 
 
 class TestDetermineDirectory:

@@ -12,8 +12,7 @@ from plumbum.machines.local import LocalCommand
 
 LOGGER = structlog.get_logger(__name__)
 PROTECTED_BRANCHES = {"main", "master"}
-PROTECTED_REMOTE = "mongodb"
-ALLOWED_REMOTE = "10gen"
+DEFAULT_REMOTE = "origin"
 
 
 class GitProxy:
@@ -293,10 +292,13 @@ class GitProxy:
         with local.cwd(self._determine_directory(directory)):
             return self.git[args]().strip()
 
-    def push_branch_to_remote(self, directory: Optional[Path] = None) -> str:
+    def push_branch_to_remote(
+        self, remote: Optional[str] = DEFAULT_REMOTE, directory: Optional[Path] = None
+    ) -> str:
         """
         Push current branch to remote.
 
+        :param remote: Name of remote to push.
         :param directory: Directory to execute command at.
         :return: Errors that occur during push branch to remote.
         """
@@ -310,51 +312,36 @@ class GitProxy:
                 f"in directory '{self._determine_directory(directory)}'"
             )
 
-        args = ["push", "-u", "origin", "HEAD"]
+        args = ["push", "-u", remote, "HEAD"]
         with local.cwd(self._determine_directory(directory)):
             return self.git[args]().strip()
 
-    def current_remote(self, directory: Optional[Path] = None) -> str:
+    def current_remote(self, directory: Optional[Path] = None) -> List[str]:
         """
         Get the current remote.
 
         :param directory: Directory to execute command at.
-        :return: Remote origin url.
+        :return: List of remote url.
         """
-        args = ["config", "remote.origin.url"]
+        args = ["remote", "-v"]
         with local.cwd(self._determine_directory(directory)):
-            return self.git[args]().strip()
+            return self.git[args]().strip().split("\n")
 
-    def determine_remote_overwritten(self, directory: Optional[Path]) -> bool:
+    def determine_remote(self, directory: Optional[Path]) -> str:
         """
         Determine whether need to overwrite remote.
 
         :param directory: Directory to execute command at.
-        :return Result whether to overwrite remote.
+        :return: Result whether to overwrite remote.
         """
-        current_remote = self.current_remote(directory)
-        if PROTECTED_REMOTE in current_remote:
-            LOGGER.warning(
-                "Attempting to push protected remote",
-                remote=current_remote,
-                directory=directory,
-            )
-            return True
-        return False
-
-    def overwrite_remote(self, directory: Optional[Path] = None) -> str:
-        """
-        Overwrite current remote.
-
-        :param remote_url: Remote url to overwrite.
-        :param directory: Directory to execute command at.
-        """
-        current_remote = self.current_remote(directory)
-        new_remote = current_remote.replace(PROTECTED_REMOTE, ALLOWED_REMOTE)
-        LOGGER.warning(f"Overwrite {current_remote} to {new_remote}")
-        args = ["config", "remote.origin.pushurl", new_remote]
-        with local.cwd(self._determine_directory(directory)):
-            return self.git[args]().strip()
+        current_remotes = self.current_remote(directory)
+        if len(current_remotes) <= 2:
+            # TODO: handle case when remote is mongodb/mongo
+            return DEFAULT_REMOTE
+        for remote in current_remotes:
+            # TODO: ask user to select the remote
+            return remote
+        return DEFAULT_REMOTE
 
     @staticmethod
     def _determine_directory(directory: Optional[Path] = None) -> Path:

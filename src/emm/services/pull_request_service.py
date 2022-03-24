@@ -32,6 +32,24 @@ class PullRequest(NamedTuple):
         return f"* [{self.name}]({self.link})"
 
 
+class PullRequestOption(NamedTuple):
+    """
+    Arguments for creating a pull request.
+
+    * name: The name to label with PR with.
+    * url: URL to pull request in github.
+    """
+
+    title: Optional[str]
+    body: Optional[str]
+    branch: Optional[str]
+    remote: Optional[str]
+
+    def to_arguement_list(self) -> List[str]:
+        """Convert pull request arguements to arguement lists."""
+        return ["--title", "--body", "--head", "--repo"]
+
+
 class PullRequestService:
     """A service for creating pull requests."""
 
@@ -68,35 +86,34 @@ class PullRequestService:
         """
         repositories = self.modules_service.collect_repositories()
         changed_repos = [repo for repo in repositories if self.repo_has_changes(repo)]
-        self.update_remote_if_need(changed_repos)
-        self.push_changes_to_origin(changed_repos)
-        pr_arguments = self.create_pr_arguments(title, body)
+        remotes = self.determine_remote(changed_repos)
+        self.push_changes_to_remote(remotes, changed_repos)
+        pr_arguments = self.combine_pr_arugments(title, body, remotes)
         pr_links = self.create_prs(changed_repos, pr_arguments)
         self.annotate_prs(changed_repos, pr_links)
 
         return list(pr_links.values())
 
-    def update_remote_if_need(self, changed_repos: List[Repository]) -> None:
+    def determine_remote(self, changed_repos: List[Repository]) -> List[str]:
         """
-        Update remote before push changes.
+        Determine which remote to push.
 
-        :param changed_repos: List of repos to push.
+        :param changed_repos: List of pull request arguements.
         """
-        for repo in changed_repos:
-            if self.git_service.determine_remote_overwritten(repo.directory):
-                self.git_service.overwrite_remote(repo.directory)
+        return [self.git_service.determine_remote(repo.directory) for repo in changed_repos]
 
-    def push_changes_to_origin(self, changed_repos: List[Repository]) -> None:
+    def push_changes_to_remote(self, remotes: List[str], changed_repos: List[Repository]) -> None:
         """
         Push changes in the given repositories to their origin.
 
+        :param remotes: List of remote url to push changes.
         :param changed_repos: List of repos to push.
         """
-        for repo in changed_repos:
-            self.git_service.push_branch_to_remote(repo.directory)
+        for idx, repo in enumerate(changed_repos):
+            self.git_service.push_branch_to_remote(remotes[idx], repo.directory)
 
     def create_prs(
-        self, changed_repos: List[Repository], pr_args: List[str]
+        self, changed_repos: List[Repository], pr_args: List[PullRequestOption]
     ) -> Dict[str, PullRequest]:
         """
         Create PRs for the given repositories.
@@ -108,9 +125,11 @@ class PullRequestService:
         return {
             repo.name: PullRequest(
                 name=repo.name,
-                link=self.github_service.pull_request(pr_args, directory=repo.directory),
+                link=self.github_service.pull_request(
+                    pr_args[idx].to_arguement_list(), directory=repo.directory
+                ),
             )
-            for repo in changed_repos
+            for idx, repo in enumerate(changed_repos)
         }
 
     def annotate_prs(
@@ -131,6 +150,24 @@ class PullRequestService:
                     self.create_comment(list(pr_links.values()), repo.name),
                     repo.directory,
                 )
+
+    def combine_pr_arugments(
+        self, title: Optional[str], body: Optional[str], remotes: List[str]
+    ) -> List[PullRequestOption]:
+        """
+        Determine the arguments to pass to the gh cli command.
+
+        :param title: Title for pull request.
+        :param body: Body for pull request.
+        :param remotes: Remote to push for pull request.
+        :return: List of arguments to pass to gh cli command.
+        """
+        return [
+            PullRequestOption(
+                title=title, body=body, branch=self.git_service.current_branch(), remote=remote
+            )
+            for remote in remotes
+        ]
 
     @staticmethod
     def create_comment(pr_list: List[PullRequest], name: str) -> str:
