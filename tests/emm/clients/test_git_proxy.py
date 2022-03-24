@@ -546,6 +546,17 @@ class TestPushBranchToRemote:
         mock_git.assert_git_call(["push", "-u", "origin", "HEAD"])
         local_mock.cwd.assert_called_with(path)
 
+    @patch(ns("local"))
+    @patch(ns("Path"))
+    def test_push_with_specified_remote_should_call_git_push(
+        self, path_mock, local_mock, git_proxy, mock_git
+    ):
+        test_path = make_fake_path()
+        path_mock.return_value = test_path
+        git_proxy.push_branch_to_remote(remote="remote")
+
+        mock_git.assert_git_call(["push", "-u", "remote", "HEAD"])
+
 
 class TestDetermineRemote:
     @patch(ns("local"))
@@ -559,21 +570,42 @@ class TestDetermineRemote:
 
         diff = git_proxy.current_remote(test_path)
 
-        mock_git.assert_git_call(["remote", "-v"])
+        mock_git.assert_git_call(["config", "--get-regexp", ".url"])
         assert diff == ["remote"]
 
     @patch(ns("local"))
     @patch(ns("Path"))
-    def test_on_other_remote_option_should_return_nothing(
+    @pytest.mark.parametrize(
+        "remote, current_remotes, urls",
+        [
+            ("origin", "remote.10gen 10gen_url\nremote.origin origin_url", "origin_url"),
+            ("origin", "remote.origin origin_url", "origin"),
+        ],
+    )
+    def test_determine_remote_should_return_remote_url_if_find(
+        self, path_mock, local_mock, git_proxy, mock_git, remote, current_remotes, urls
+    ):
+        test_path = make_fake_path()
+        path_mock.return_value = test_path
+        mock_git.__getitem__.return_value.return_value = current_remotes
+
+        remote_url = git_proxy.determine_remote(remote, test_path)
+
+        assert urls == remote_url
+
+    @patch(ns("local"))
+    @patch(ns("Path"))
+    def test_determine_remote_should_raise_error_if_remote_not_find(
         self, path_mock, local_mock, git_proxy, mock_git
     ):
         test_path = make_fake_path()
         path_mock.return_value = test_path
-        mock_git.__getitem__.return_value.return_value = "10gen\n"
+        current_remotes = "remote.10gen 10gen_url\nremote.mongodb mongodb_url\n"
+        mock_git.__getitem__.return_value.return_value = current_remotes
+        remote = "origin"
 
-        should_overwritten = git_proxy.determine_remote(test_path)
-
-        assert should_overwritten == "origin"
+        with pytest.raises(ValueError):
+            git_proxy.determine_remote(remote, test_path)
 
 
 class TestDetermineDirectory:

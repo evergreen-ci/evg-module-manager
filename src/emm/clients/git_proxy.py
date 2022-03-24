@@ -13,6 +13,7 @@ from plumbum.machines.local import LocalCommand
 LOGGER = structlog.get_logger(__name__)
 PROTECTED_BRANCHES = {"main", "master"}
 DEFAULT_REMOTE = "origin"
+PROTECTED_OWNER = "mongodb"
 
 
 class GitProxy:
@@ -323,25 +324,41 @@ class GitProxy:
         :param directory: Directory to execute command at.
         :return: List of remote url.
         """
-        args = ["remote", "-v"]
+        args = ["config", "--get-regexp", ".url"]
         with local.cwd(self._determine_directory(directory)):
             return self.git[args]().strip().split("\n")
 
-    def determine_remote(self, directory: Optional[Path]) -> str:
+    def determine_remote(self, remote_owner: str, directory: Optional[Path]) -> str:
         """
-        Determine whether need to overwrite remote.
+        Determine the remote url to push.
 
+        :param remote_owner: The remote user specified.
         :param directory: Directory to execute command at.
-        :return: Result whether to overwrite remote.
+        :return: The remote url to push.
         """
         current_remotes = self.current_remote(directory)
-        if len(current_remotes) <= 2:
-            # TODO: handle case when remote is mongodb/mongo
+        if len(current_remotes) < 2 and PROTECTED_OWNER not in current_remotes:
+            # Skip remote selection if only one remote exist and its not contain "mongodb"
             return DEFAULT_REMOTE
         for remote in current_remotes:
-            # TODO: ask user to select the remote
-            return remote
-        return DEFAULT_REMOTE
+            remote_name, remote_url = remote.split(" ")
+            if remote_owner in remote_name.split("."):
+                return remote_url
+        remote_lists = "\n".join(current_remotes)
+        raise ValueError(
+            f"Remote {remote_owner} doesn't exist. " f"Available remote are: " f"{remote_lists}"
+        )
+
+    def commit_message(self, directory: Optional[Path]) -> str:
+        """
+        Retrieve the latest commit message.
+
+        :param directory: Directory to execute command at.
+        :return: The latest commit message.
+        """
+        args = ["show", "-s", "--format=%s"]
+        with local.cwd(self._determine_directory(directory)):
+            return self.git[args]().strip()
 
     @staticmethod
     def _determine_directory(directory: Optional[Path] = None) -> Path:

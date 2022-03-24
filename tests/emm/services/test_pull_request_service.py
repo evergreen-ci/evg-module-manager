@@ -59,9 +59,9 @@ def build_mock_pull_request(i: int) -> under_test.PullRequest:
     return under_test.PullRequest(name=f"PR Name {i}", link=f"http://link.to.pr/{i}")
 
 
-def build_mock_pull_request_option(i: int) -> under_test.PullRequestOption:
+def build_mock_pull_request_option(remote: str) -> under_test.PullRequestOption:
     return under_test.PullRequestOption(
-        title="title", body="body", branch="branch", remote="remote"
+        title="title", body="body", branch="branch", remote_url=remote
     )
 
 
@@ -74,26 +74,28 @@ class TestCreatePullRequest:
         github_service: GithubService,
     ):
         n_modules = 5
+        remote = "origin"
         modules_service.collect_repositories.return_value = [
             build_mock_repository(i) for i in range(n_modules)
         ]
         git_service.check_changes.side_effect = [True, False, True, False, True, False]
 
-        pr_links = pull_request_service.create_pull_request(None, None)
+        pr_links = pull_request_service.create_pull_request(None, None, remote)
 
         assert len(pr_links) == 3
         assert github_service.pull_request.call_count == 3
         assert github_service.pr_comment.call_count == 3
 
 
-class TestUpdateRemote:
-    def test_all_push_remote_should_not_be_mongodb(
+class TestDetermineRemote:
+    def test_all_repositories_should_have_their_own_remote(
         self, pull_request_service: under_test.PullRequestService, git_service: GitProxy
     ):
         n_repos = 4
+        remote = "origin"
         changed_repos = [build_mock_repository(i) for i in range(n_repos)]
 
-        pull_request_service.determine_remote(changed_repos)
+        pull_request_service.determine_remote(remote, changed_repos)
 
         assert git_service.determine_remote.call_count == n_repos
 
@@ -103,8 +105,9 @@ class TestPushChangesToRemote:
         self, pull_request_service: under_test.PullRequestService, git_service: GitProxy
     ):
         n_repos = 4
+        remote = "origin"
         changed_repos = [build_mock_repository(i) for i in range(n_repos)]
-        mock_remotes = ["origin" for i in range(n_repos)]
+        mock_remotes = [None, None, remote, remote]
 
         pull_request_service.push_changes_to_remote(mock_remotes, changed_repos)
 
@@ -116,8 +119,11 @@ class TestCreatePrs:
         self, pull_request_service: under_test.PullRequestService, github_service: GithubService
     ):
         n_repos = 3
+        remote = "origin"
         changed_repos = [build_mock_repository(i) for i in range(n_repos)]
-        pr_arguements = [build_mock_pull_request_option(i) for i in range(n_repos)]
+        pr_arguements = [
+            build_mock_pull_request_option(remote).option_list() for i in range(n_repos)
+        ]
 
         pr_links = pull_request_service.create_prs(changed_repos, pr_arguements)
 
@@ -180,6 +186,128 @@ class TestCreatePrArguments:
         self, title, body, arguments, pull_request_service: under_test.PullRequestService
     ):
         assert pull_request_service.create_pr_arguments(title, body) == arguments
+
+
+class TestCombinePRArugments:
+    @pytest.mark.parametrize(
+        "title,body,remote,arguments",
+        [
+            (
+                None,
+                None,
+                ["origin", "origin"],
+                [
+                    ["--title", "commit message", "--body", "''"],
+                    ["--title", "commit message", "--body", "''"],
+                ],
+            ),
+            (
+                "my title",
+                None,
+                ["origin", "origin"],
+                [["--title", "my title", "--body", "''"], ["--title", "my title", "--body", "''"]],
+            ),
+            (
+                "my title",
+                "my body",
+                ["origin", "origin"],
+                [
+                    ["--title", "my title", "--body", "my body"],
+                    ["--title", "my title", "--body", "my body"],
+                ],
+            ),
+            (
+                None,
+                None,
+                ["url", "origin"],
+                [
+                    [
+                        "--title",
+                        "commit message",
+                        "--body",
+                        "''",
+                        "--head",
+                        "branch",
+                        "--repo",
+                        "url",
+                    ],
+                    ["--title", "commit message", "--body", "''"],
+                ],
+            ),
+            (
+                None,
+                None,
+                ["url", "url"],
+                [
+                    [
+                        "--title",
+                        "commit message",
+                        "--body",
+                        "''",
+                        "--head",
+                        "branch",
+                        "--repo",
+                        "url",
+                    ],
+                    [
+                        "--title",
+                        "commit message",
+                        "--body",
+                        "''",
+                        "--head",
+                        "branch",
+                        "--repo",
+                        "url",
+                    ],
+                ],
+            ),
+            (
+                None,
+                "my body",
+                ["url", "url"],
+                [
+                    [
+                        "--title",
+                        "commit message",
+                        "--body",
+                        "my body",
+                        "--head",
+                        "branch",
+                        "--repo",
+                        "url",
+                    ],
+                    [
+                        "--title",
+                        "commit message",
+                        "--body",
+                        "my body",
+                        "--head",
+                        "branch",
+                        "--repo",
+                        "url",
+                    ],
+                ],
+            ),
+        ],
+    )
+    def test_arguements_should_generate_corretly(
+        self,
+        title,
+        body,
+        remote,
+        arguments,
+        pull_request_service: under_test.PullRequestService,
+        git_service: GitProxy,
+    ):
+        n_repos = 2
+        changed_repos = [build_mock_repository(i) for i in range(n_repos)]
+        git_service.commit_message.return_value = "commit message"
+        git_service.current_branch.return_value = "branch"
+
+        assert (
+            pull_request_service.combine_pr_arugments(title, body, remote, changed_repos)
+            == arguments
+        )
 
 
 class TestRepoHasChanges:

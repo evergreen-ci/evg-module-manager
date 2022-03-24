@@ -88,14 +88,14 @@ class EmmOrchestrator:
                 print(f"\trepo: {module_data.repo}")
                 print(f"\tbranch: {module_data.branch}")
 
-    def create_pull_request(self, title: Optional[str], body: Optional[str]) -> None:
+    def create_pull_request(self, title: Optional[str], body: Optional[str], remote: str) -> None:
         """
         Create pull requests in any repositories that contain changes.
 
         :param title: Title for the pull request.
         :param body: Body for the pull request.
         """
-        created_pull_requests = self.pull_request_service.create_pull_request(title, body)
+        created_pull_requests = self.pull_request_service.create_pull_request(title, body, remote)
         print("Created the following pull requests:")
         for pr in created_pull_requests:
             print(f"- {pr.name}: {pr.link}")
@@ -225,8 +225,11 @@ def list_modules(ctx: click.Context, enabled: bool, show_details: bool) -> None:
 @cli.command(context_settings=dict(max_content_width=100))
 @click.option("--title", help="Title for the pull request.")
 @click.option("--body", help="Body for the pull request")
+@click.option("--remote", prompt="Please specify the remote you want push to. ie. origin")
 @click.pass_context
-def pull_request(ctx: click.Context, title: Optional[str], body: Optional[str]) -> None:
+def pull_request(
+    ctx: click.Context, title: Optional[str], body: Optional[str], remote: str
+) -> None:
     """
     Create a Github pull request for changes in the base repository and any enabled modules.
 
@@ -249,7 +252,7 @@ def pull_request(ctx: click.Context, title: Optional[str], body: Optional[str]) 
         )
 
     orchestrator = inject.instance(EmmOrchestrator)
-    orchestrator.create_pull_request(title, body)
+    orchestrator.create_pull_request(title, body, remote)
 
 
 @cli.command(context_settings=dict(max_content_width=100))

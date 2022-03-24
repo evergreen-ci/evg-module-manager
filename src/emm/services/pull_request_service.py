@@ -1,10 +1,11 @@
 """Service for creating pull requests."""
+from dataclasses import dataclass
 from typing import Dict, List, NamedTuple, Optional
 
 import inject
 
 from emm.clients.evg_service import EvgService
-from emm.clients.git_proxy import LOGGER, GitProxy
+from emm.clients.git_proxy import DEFAULT_REMOTE, LOGGER, GitProxy
 from emm.clients.github_service import GithubService
 from emm.models.repository import Repository
 from emm.options import EmmOptions
@@ -32,22 +33,37 @@ class PullRequest(NamedTuple):
         return f"* [{self.name}]({self.link})"
 
 
-class PullRequestOption(NamedTuple):
+@dataclass
+class PullRequestOption:
     """
-    Arguments for creating a pull request.
+    Options for creating a pull request.
 
-    * name: The name to label with PR with.
-    * url: URL to pull request in github.
+    * title: Title of the pull request.
+    * branch: Remote branch of the pull request.
+    * remote_url: URL to pull request in github.
+    * body: Body of the pull request.
     """
 
-    title: Optional[str]
-    body: Optional[str]
-    branch: Optional[str]
-    remote: Optional[str]
+    title: str
+    branch: str
+    remote_url: str
+    body: str = "''"
 
-    def to_arguement_list(self) -> List[str]:
+    def option_list(self) -> List[str]:
         """Convert pull request arguements to arguement lists."""
-        return ["--title", "--body", "--head", "--repo"]
+        if self.remote_url == DEFAULT_REMOTE:
+            return ["--title", self.title, "--body", self.body]
+
+        return [
+            "--title",
+            self.title,
+            "--body",
+            self.body,
+            "--head",
+            self.branch,
+            "--repo",
+            self.remote_url,
+        ]
 
 
 class PullRequestService:
@@ -77,7 +93,9 @@ class PullRequestService:
         self.evg_service = evg_service
         self.emm_options = emm_options
 
-    def create_pull_request(self, title: Optional[str], body: Optional[str]) -> List[PullRequest]:
+    def create_pull_request(
+        self, title: Optional[str], body: Optional[str], remote: str
+    ) -> List[PullRequest]:
         """
         Create pull request for any repos with changes.
 
@@ -86,21 +104,22 @@ class PullRequestService:
         """
         repositories = self.modules_service.collect_repositories()
         changed_repos = [repo for repo in repositories if self.repo_has_changes(repo)]
-        remotes = self.determine_remote(changed_repos)
-        self.push_changes_to_remote(remotes, changed_repos)
-        pr_arguments = self.combine_pr_arugments(title, body, remotes)
+        remote_urls = self.determine_remote(remote, changed_repos)
+        self.push_changes_to_remote(remote_urls, changed_repos)
+        pr_arguments = self.combine_pr_arugments(title, body, remote_urls, changed_repos)
         pr_links = self.create_prs(changed_repos, pr_arguments)
         self.annotate_prs(changed_repos, pr_links)
 
         return list(pr_links.values())
 
-    def determine_remote(self, changed_repos: List[Repository]) -> List[str]:
+    def determine_remote(self, remote: str, changed_repos: List[Repository]) -> List[str]:
         """
         Determine which remote to push.
 
-        :param changed_repos: List of pull request arguements.
+        :param remote: The user specified remote.
+        :param changed_repos: List of pull request arguments.
         """
-        return [self.git_service.determine_remote(repo.directory) for repo in changed_repos]
+        return [self.git_service.determine_remote(remote, repo.directory) for repo in changed_repos]
 
     def push_changes_to_remote(self, remotes: List[str], changed_repos: List[Repository]) -> None:
         """
@@ -113,7 +132,7 @@ class PullRequestService:
             self.git_service.push_branch_to_remote(remotes[idx], repo.directory)
 
     def create_prs(
-        self, changed_repos: List[Repository], pr_args: List[PullRequestOption]
+        self, changed_repos: List[Repository], pr_args: List[List[str]]
     ) -> Dict[str, PullRequest]:
         """
         Create PRs for the given repositories.
@@ -125,9 +144,7 @@ class PullRequestService:
         return {
             repo.name: PullRequest(
                 name=repo.name,
-                link=self.github_service.pull_request(
-                    pr_args[idx].to_arguement_list(), directory=repo.directory
-                ),
+                link=self.github_service.pull_request(pr_args[idx], directory=repo.directory),
             )
             for idx, repo in enumerate(changed_repos)
         }
@@ -152,21 +169,29 @@ class PullRequestService:
                 )
 
     def combine_pr_arugments(
-        self, title: Optional[str], body: Optional[str], remotes: List[str]
-    ) -> List[PullRequestOption]:
+        self,
+        title: Optional[str],
+        body: Optional[str],
+        remotes: List[str],
+        changed_repos: List[Repository],
+    ) -> List[List[str]]:
         """
         Determine the arguments to pass to the gh cli command.
 
         :param title: Title for pull request.
         :param body: Body for pull request.
-        :param remotes: Remote to push for pull request.
+        :param remotes: List of remote urls to push for pull request.
+        :param changed_repos: List of repos with PR requests.
         :return: List of arguments to pass to gh cli command.
         """
         return [
             PullRequestOption(
-                title=title, body=body, branch=self.git_service.current_branch(), remote=remote
-            )
-            for remote in remotes
+                title=title if title else self.git_service.commit_message(repo.directory),
+                body=body if body else "''",
+                branch=self.git_service.current_branch(repo.directory),
+                remote_url=remotes[idx],
+            ).option_list()
+            for idx, repo in enumerate(changed_repos)
         ]
 
     @staticmethod
