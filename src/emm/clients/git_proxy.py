@@ -13,7 +13,7 @@ from plumbum.machines.local import LocalCommand
 LOGGER = structlog.get_logger(__name__)
 PROTECTED_BRANCHES = {"main", "master"}
 DEFAULT_REMOTE = "origin"
-PROTECTED_OWNER = "mongodb/mongo"
+PROTECTED_REMOTE = "mongodb/mongo"
 
 
 class GitProxy:
@@ -319,10 +319,10 @@ class GitProxy:
 
     def current_remote(self, directory: Optional[Path] = None) -> List[str]:
         """
-        Get the current remote.
+        Get the current remote and associate remote repo url.
 
         :param directory: Directory to execute command at.
-        :return: List of remote url.
+        :return: List of remote names and remote urls.
         """
         args = ["config", "--get-regexp", ".url"]
         with local.cwd(self._determine_directory(directory)):
@@ -337,32 +337,18 @@ class GitProxy:
         :return: The remote url to push.
         """
         current_remotes = self.current_remote(directory)
-        if len(current_remotes) < 2 and PROTECTED_OWNER not in current_remotes:
+        if len(current_remotes) < 2 and PROTECTED_REMOTE not in current_remotes:
             # Skip remote selection if only one remote exist and its not the protected remote
             return DEFAULT_REMOTE
-        url = None
-        for remote in current_remotes:
-            remote_name, remote_url = remote.split(" ")
-            if remote_owner in remote_name.split("."):
-                if PROTECTED_OWNER in remote_url:
-                    LOGGER.warning(
-                        "Attempting to push to protected remote",
-                        remote_owner=remote_owner,
-                        remote_url=remote_url,
-                    )
-                    raise UsageError(
-                        "Please specify the remote you want to push again by issuing command with option '--remote':\n"
-                        "evg-module-manager pull-request --remote your_desired_remote"
-                    )
-                url = remote_url
+        remote_url = self.get_remote_url(remote_owner, current_remotes)
         remote_lists = "\n".join(current_remotes)
-        if not url:
+        if not remote_url:
             raise UsageError(
                 f"Remote {remote_owner} doesn't exist. "
                 "\n\nAvailable remotes are:\n"
                 f"{remote_lists}"
             )
-        return url
+        return remote_url
 
     def commit_message(self, directory: Optional[Path]) -> str:
         """
@@ -374,6 +360,31 @@ class GitProxy:
         args = ["show", "--shortstat", "--format=%s"]
         with local.cwd(self._determine_directory(directory)):
             return self.git[args]().strip()
+
+    @staticmethod
+    def get_remote_url(remote_owner: str, current_remotes: List[str]) -> Optional[str]:
+        """
+        Retrieve the remote url to push.
+
+        :param remote_owner: The remote user specified.
+        :param current_remotes: Directory to execute command at.
+        :return: The remote url to push if exists.
+        """
+        for remote in current_remotes:
+            remote_name, remote_url = remote.split(" ")
+            if remote_owner in remote_name.split("."):
+                if PROTECTED_REMOTE in remote_url:
+                    LOGGER.warning(
+                        "Attempting to push to protected remote",
+                        remote_owner=remote_owner,
+                        remote_url=remote_url,
+                    )
+                    raise UsageError(
+                        "Please specify the remote you want to push again by issuing command with option '--remote':\n"
+                        "evg-module-manager pull-request --remote your_desired_remote"
+                    )
+                return remote_url
+        return None
 
     @staticmethod
     def _determine_directory(directory: Optional[Path] = None) -> Path:

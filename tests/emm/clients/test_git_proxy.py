@@ -607,19 +607,33 @@ class TestDetermineRemote:
         with pytest.raises(UsageError):
             git_proxy.determine_remote(remote, test_path)
 
+
+class TestGetRemoteUrl:
     @patch(ns("local"))
     @patch(ns("Path"))
-    def test_determine_remote_should_raise_error_if_push_to_protected_remote(
+    def test_get_remote_url_should_raise_error_if_push_to_protected_remote(
         self, path_mock, local_mock, git_proxy, mock_git
     ):
-        test_path = make_fake_path()
-        path_mock.return_value = test_path
-        current_remotes = "remote.10gen 10gen_url\nremote.origin.mongodb mongodb/mongo.git\n"
-        mock_git.__getitem__.return_value.return_value = current_remotes
+        current_remotes = ["remote.10gen 10gen_url", "remote.origin.mongodb mongodb/mongo.git"]
         remote = "origin"
 
         with pytest.raises(UsageError):
-            git_proxy.determine_remote(remote, test_path)
+            git_proxy.get_remote_url(remote, current_remotes)
+
+    @patch(ns("local"))
+    @pytest.mark.parametrize(
+        "remote, current_remotes, expected_url",
+        [
+            ("origin", ["remote.10gen 10gen_url", "remote.origin origin_url"], "origin_url"),
+            ("origin", ["remote.other other_url"], None),
+        ],
+    )
+    def test_get_remote_url_should_return_remote_url_if_find(
+        self, local_mock, git_proxy, remote, current_remotes, expected_url
+    ):
+        url = git_proxy.get_remote_url(remote, current_remotes)
+
+        assert url == expected_url
 
 
 class TestDetermineDirectory:
