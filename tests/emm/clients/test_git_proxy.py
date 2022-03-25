@@ -600,11 +600,25 @@ class TestDetermineRemote:
     ):
         test_path = make_fake_path()
         path_mock.return_value = test_path
-        current_remotes = "remote.10gen 10gen_url\nremote.mongodb mongodb_url\n"
+        current_remotes = "remote.10gen 10gen_url\nremote.tester tester_url\n"
         mock_git.__getitem__.return_value.return_value = current_remotes
         remote = "origin"
 
-        with pytest.raises(ValueError):
+        with pytest.raises(UsageError):
+            git_proxy.determine_remote(remote, test_path)
+
+    @patch(ns("local"))
+    @patch(ns("Path"))
+    def test_determine_remote_should_raise_error_if_push_to_protected_remote(
+        self, path_mock, local_mock, git_proxy, mock_git
+    ):
+        test_path = make_fake_path()
+        path_mock.return_value = test_path
+        current_remotes = "remote.10gen 10gen_url\nremote.origin.mongodb mongodb/mongo.git\n"
+        mock_git.__getitem__.return_value.return_value = current_remotes
+        remote = "origin"
+
+        with pytest.raises(UsageError):
             git_proxy.determine_remote(remote, test_path)
 
 

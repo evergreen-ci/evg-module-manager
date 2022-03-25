@@ -225,7 +225,11 @@ def list_modules(ctx: click.Context, enabled: bool, show_details: bool) -> None:
 @cli.command(context_settings=dict(max_content_width=100))
 @click.option("--title", help="Title for the pull request.")
 @click.option("--body", help="Body for the pull request")
-@click.option("--remote", prompt="Please specify the remote you want push to. ie. origin")
+@click.option(
+    "--remote",
+    default="origin",
+    help="Remote to push against for the pull request. The default would be 'origin'",
+)
 @click.pass_context
 def pull_request(
     ctx: click.Context, title: Optional[str], body: Optional[str], remote: str
@@ -237,7 +241,7 @@ def pull_request(
 
     A pull request will be created for the base repository and any enabled modules that contain
     changes. Additionally, a comment will be added to each pull request with links to the other
-    pull requests.
+    pull requests. To specify a remote to push against, `--remote` option can be used.
 
     By default, the commit info will be used to fill out the title and body of the pull request,
     however, the `--title` and `--body` options can be used to customize these.

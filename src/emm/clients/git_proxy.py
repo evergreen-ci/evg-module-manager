@@ -13,7 +13,7 @@ from plumbum.machines.local import LocalCommand
 LOGGER = structlog.get_logger(__name__)
 PROTECTED_BRANCHES = {"main", "master"}
 DEFAULT_REMOTE = "origin"
-PROTECTED_OWNER = "mongodb"
+PROTECTED_OWNER = "mongodb/mongo"
 
 
 class GitProxy:
@@ -338,16 +338,31 @@ class GitProxy:
         """
         current_remotes = self.current_remote(directory)
         if len(current_remotes) < 2 and PROTECTED_OWNER not in current_remotes:
-            # Skip remote selection if only one remote exist and its not contain "mongodb"
+            # Skip remote selection if only one remote exist and its not the protected remote
             return DEFAULT_REMOTE
+        url = None
         for remote in current_remotes:
             remote_name, remote_url = remote.split(" ")
             if remote_owner in remote_name.split("."):
-                return remote_url
+                if PROTECTED_OWNER in remote_url:
+                    LOGGER.warning(
+                        "Attempting to push to protected remote",
+                        remote_owner=remote_owner,
+                        remote_url=remote_url,
+                    )
+                    raise UsageError(
+                        "Please specify the remote you want to push again by issuing command with option '--remote':\n"
+                        "evg-module-manager pull-request --remote your_desired_remote"
+                    )
+                url = remote_url
         remote_lists = "\n".join(current_remotes)
-        raise ValueError(
-            f"Remote {remote_owner} doesn't exist. " f"Available remote are: " f"{remote_lists}"
-        )
+        if not url:
+            raise UsageError(
+                f"Remote {remote_owner} doesn't exist. "
+                "\n\nAvailable remotes are:\n"
+                f"{remote_lists}"
+            )
+        return url
 
     def commit_message(self, directory: Optional[Path]) -> str:
         """
@@ -356,7 +371,7 @@ class GitProxy:
         :param directory: Directory to execute command at.
         :return: The latest commit message.
         """
-        args = ["show", "-s", "--format=%s"]
+        args = ["show", "--shortstat", "--format=%s"]
         with local.cwd(self._determine_directory(directory)):
             return self.git[args]().strip()
 
