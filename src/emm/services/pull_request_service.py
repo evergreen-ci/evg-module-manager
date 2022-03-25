@@ -1,5 +1,4 @@
 """Service for creating pull requests."""
-from dataclasses import dataclass
 from typing import Dict, List, NamedTuple, Optional
 
 import inject
@@ -33,8 +32,7 @@ class PullRequest(NamedTuple):
         return f"* [{self.name}]({self.link})"
 
 
-@dataclass
-class PullRequestOption:
+class PullRequestOption(NamedTuple):
     """
     Options for creating a pull request.
 
@@ -45,9 +43,9 @@ class PullRequestOption:
     """
 
     title: str
+    body: str
     branch: str
     remote_url: str
-    body: str = "''"
 
     def option_list(self) -> List[str]:
         """Convert pull request arguements to arguement lists."""
@@ -205,23 +203,6 @@ class PullRequestService:
         """
         pr_links = "\n".join([pr.pr_comment() for pr in pr_list if pr.name != name])
         return f"{PR_PREFIX}\n{pr_links}"
-
-    @staticmethod
-    def create_pr_arguments(title: Optional[str], body: Optional[str]) -> List[str]:
-        """
-        Determine the arguments to pass to the gh cli command.
-
-        :param title: Title for pull request.
-        :param body: Body for pull request.
-        :return: List of arguments to pass to gh cli command.
-        """
-        if title is None:
-            return ["--fill"]
-
-        if body is None:
-            body = "''"
-
-        return ["--title", title, "--body", body]
 
     def repo_has_changes(self, repo: Repository) -> bool:
         """Check if the given repository has changes that would indicate a PR should be made."""

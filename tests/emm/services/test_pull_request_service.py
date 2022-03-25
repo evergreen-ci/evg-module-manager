@@ -173,21 +173,6 @@ class TestCreateComment:
                 assert pr.link in pr_comment
 
 
-class TestCreatePrArguments:
-    @pytest.mark.parametrize(
-        "title,body,arguments",
-        [
-            (None, None, ["--fill"]),
-            ("my title", None, ["--title", "my title", "--body", "''"]),
-            ("my title", "my body", ["--title", "my title", "--body", "my body"]),
-        ],
-    )
-    def test_arguments_should_work_correctly(
-        self, title, body, arguments, pull_request_service: under_test.PullRequestService
-    ):
-        assert pull_request_service.create_pr_arguments(title, body) == arguments
-
-
 class TestCombinePRArugments:
     @pytest.mark.parametrize(
         "title,body,remote,arguments",
