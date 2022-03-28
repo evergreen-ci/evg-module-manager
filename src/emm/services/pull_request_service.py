@@ -68,7 +68,6 @@ class PullRequestService:
         """
         repositories = self.modules_service.collect_repositories()
         changed_repos = [repo for repo in repositories if self.repo_has_changes(repo)]
-
         self.push_changes_to_origin(changed_repos)
         pr_arguments = self.create_pr_arguments(title, body)
         pr_links = self.create_prs(changed_repos, pr_arguments)
@@ -83,7 +82,8 @@ class PullRequestService:
         :param changed_repos: List of repos to push.
         """
         for repo in changed_repos:
-            self.git_service.push_branch_to_remote(repo.directory)
+            push_results = self.git_service.push_branch_to_remote(repo.directory)
+            print(push_results)
 
     def create_prs(
         self, changed_repos: List[Repository], pr_args: List[str]
@@ -157,6 +157,7 @@ class PullRequestService:
             LOGGER.debug(
                 "No changes found for module", module=repo.name, target_branch=repo.target_branch
             )
+            print(f"No changes found for module {repo.name}, target branch {repo.target_branch}")
             return False
 
         return True
