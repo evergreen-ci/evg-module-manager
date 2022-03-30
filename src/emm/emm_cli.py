@@ -96,9 +96,12 @@ class EmmOrchestrator:
         :param body: Body for the pull request.
         """
         created_pull_requests = self.pull_request_service.create_pull_request(title, body)
-        print("Created the following pull requests:")
-        for pr in created_pull_requests:
-            print(f"- {pr.name}: {pr.link}")
+        if created_pull_requests:
+            print("Created the following pull requests:")
+            for pr in created_pull_requests:
+                print(f"- {pr.name}: {pr.link}")
+        else:
+            print("No pull requests are being created.")
 
 
 def configure_logging(verbose: bool) -> None:

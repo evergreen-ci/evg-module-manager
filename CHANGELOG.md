@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.3 - 2022-03-28
+- Output message when no pull requests are being created.
+
 ## 1.1.2 - 2022-03-17
 - Set upstream when pushing a branch.
 
