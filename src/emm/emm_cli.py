@@ -235,6 +235,9 @@ def pull_request(ctx: click.Context, title: Optional[str], body: Optional[str]) 
 
     NOTE: Before using this command, you have to authenticate to github by 'gh auth login'.
 
+    This command will create a pull request against the `origin` repository in github.
+    You can run `git remote show origin` to confirm this is the repository you would like to use.
+
     A pull request will be created for the base repository and any enabled modules that contain
     changes. Additionally, a comment will be added to each pull request with links to the other
     pull requests.

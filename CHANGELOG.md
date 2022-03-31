@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.4 - 2022-03-31
+- Update documents to notify user set remote before pull-request
+
 ## 1.1.3 - 2022-03-28
 - Output message when no pull requests are being created.
 
