@@ -14,6 +14,25 @@ for details.
 The `pull-request` subcommand will create pull requests across the base repo and all enabled
 modules.
 
+
+{{< hint warning >}}
+**Note**\
+This command will create a pull request against the `origin` repository in github.
+You can run `git remote show origin` to confirm this is the repository you would like to use.
+
+```bash
+$ git remote show origin
+* remote origin
+  Fetch URL: git@github.com:mongodb/mongo.git
+  Push  URL: git@github.com:mongodb/mongo.git
+  HEAD branch: master
+  Remote branches:
+...
+```
+
+You can change the `origin` repository with the `git remote set-url origin <new_remote_url>` command.
+{{< /hint >}}
+
 After local changes have been committed in all repos, you can create the pull request from the base
 repo, and all enabled modules with changes will create a separate pull request. Each pull
 request will have comments that contain links for all other modules' pull requests.
@@ -31,7 +50,3 @@ you must also provide a `--title`.
 ```bash
 $ evg-module-manager pull-request --title "my pull request title" --body "my pull request body"
 ```
-
-Note: Before using this command, you may want to confirm your git remote url. The
-default remote this command using is `origin`. If you want to create the pull request
-against other remote, please make the change before issuing this command.
