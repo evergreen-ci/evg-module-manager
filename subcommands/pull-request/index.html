@@ -11,7 +11,8 @@
 
   <meta name="description" content="Creating github pull request     Note
 In order to create pull requests in github, you need to sure the gh command line tool is available and authentication to github is configured. See Github authenticationfor details.  The pull-request subcommand will create pull requests across the base repo and all enabled modules.
-After local changes have been committed in all repos, you can create the pull request from the base repo, and all enabled modules with changes will create a separate pull request." />
+Note
+This command will create a pull request against the origin repository in github. You can run git remote show origin to confirm this is the repository you would like to use." />
 
 
 
@@ -40,18 +41,20 @@ After local changes have been committed in all repos, you can create the pull re
     <meta property="og:title" content="" />
 <meta property="og:description" content="Creating github pull request     Note
 In order to create pull requests in github, you need to sure the gh command line tool is available and authentication to github is configured. See Github authenticationfor details.  The pull-request subcommand will create pull requests across the base repo and all enabled modules.
-After local changes have been committed in all repos, you can create the pull request from the base repo, and all enabled modules with changes will create a separate pull request." />
+Note
+This command will create a pull request against the origin repository in github. You can run git remote show origin to confirm this is the repository you would like to use." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://evergreen-ci.github.io/evg-module-manager/subcommands/pull-request/" /><meta property="article:section" content="subcommands" />
 
-<meta property="article:modified_time" content="2022-02-17T13:30:51-05:00" />
+<meta property="article:modified_time" content="2022-03-31T16:09:10-04:00" />
 
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content=""/>
 <meta name="twitter:description" content="Creating github pull request     Note
 In order to create pull requests in github, you need to sure the gh command line tool is available and authentication to github is configured. See Github authenticationfor details.  The pull-request subcommand will create pull requests across the base repo and all enabled modules.
-After local changes have been committed in all repos, you can create the pull request from the base repo, and all enabled modules with changes will create a separate pull request."/>
+Note
+This command will create a pull request against the origin repository in github. You can run git remote show origin to confirm this is the repository you would like to use."/>
 
 
     <script src="/evg-module-manager/js/main-8b6f2ee8.bundle.min.js"></script>
@@ -129,7 +132,7 @@ After local changes have been committed in all repos, you can create the pull re
     "name": "",
     "headline": "",
     "alternativeHeadline": "",
-    "description": "Creating github pull request     Note\nIn order to create pull requests in github, you need to sure the gh command line tool is available and authentication to github is configured. See Github authenticationfor details.  The pull-request subcommand will create pull requests across the base repo and all enabled modules.\nAfter local changes have been committed in all repos, you can create the pull request from the base repo, and all enabled modules with changes will create a separate pull request.",
+    "description": "Creating github pull request     Note\nIn order to create pull requests in github, you need to sure the gh command line tool is available and authentication to github is configured. See Github authenticationfor details.  The pull-request subcommand will create pull requests across the base repo and all enabled modules.\nNote\nThis command will create a pull request against the origin repository in github. You can run git remote show origin to confirm this is the repository you would like to use.",
     "inLanguage": "en",
     "isFamilyFriendly": "true",
     "mainEntityOfPage": {
@@ -140,7 +143,7 @@ After local changes have been committed in all repos, you can create the pull re
     "copyrightYear" : "0001",
     "dateCreated": "0001-01-01T00:00:00.00Z",
     "datePublished": "0001-01-01T00:00:00.00Z",
-    "dateModified": "2022-02-17T13:30:51.00Z",
+    "dateModified": "2022-03-31T16:09:10.00Z",
     "publisher":{
         "@type":"Organization",
         "name": "Evergreen Module Manager Documentation",
@@ -153,7 +156,7 @@ After local changes have been committed in all repos, you can create the pull re
         }
     },
     "url" : "https:\/\/evergreen-ci.github.io\/evg-module-manager\/subcommands\/pull-request\/",
-    "wordCount" : "160",
+    "wordCount" : "226",
     "genre" : [ ]
 }
 </script>
@@ -1789,6 +1792,21 @@ for details.
 
 <p>The <code>pull-request</code> subcommand will create pull requests across the base repo and all enabled
 modules.</p>
+<blockquote class="gdoc-hint warning">
+  <p><strong>Note</strong><br>
+This command will create a pull request against the <code>origin</code> repository in github.
+You can run <code>git remote show origin</code> to confirm this is the repository you would like to use.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ git remote show origin
+* remote origin
+  Fetch URL: git@github.com:mongodb/mongo.git
+  Push  URL: git@github.com:mongodb/mongo.git
+  HEAD branch: master
+  Remote branches:
+...
+</code></pre></div><p>You can change the <code>origin</code> repository with the <code>git remote set-url origin &lt;new_remote_url&gt;</code> command.</p>
+
+</blockquote>
+
 <p>After local changes have been committed in all repos, you can create the pull request from the base
 repo, and all enabled modules with changes will create a separate pull request. Each pull
 request will have comments that contain links for all other modules' pull requests.</p>
