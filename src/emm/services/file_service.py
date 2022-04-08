@@ -21,6 +21,16 @@ class FileService:
             return yaml.safe_load(file_contents)
 
     @staticmethod
+    def read_yaml_content(file_content: str) -> Dict[str, Any]:
+        """
+        Read the given yaml content into a dictionary.
+
+        :param file_content: Content of yaml file to read.
+        :return: Dictionary of yaml contents.
+        """
+        return yaml.safe_load(file_content)
+
+    @staticmethod
     def write_yaml_file(file_path: Path, contents: Dict[str, Any]) -> None:
         """Write the given contents to the specified file."""
         if not file_path.parent.exists():

@@ -141,3 +141,13 @@ class EvgCliService:
         # evergreen commit-queue merge --resume 5d3b120f1e2d1770d9f2104e
         args = ["commit-queue", "merge", "--resume", patch_id]
         self.evg_cli[args]()
+
+    def evaluate(self, directory: Path) -> str:
+        """
+        Retrieve the evergreen configuration base on given directory.
+
+        :param: directory: The path to an evergreen configuration.
+        :return: The content of evergreen configuration.
+        """
+        args = ["evaluate", directory]
+        return self.evg_cli[args]()

@@ -80,7 +80,7 @@ class TestGetModuleLocations:
         n_modules = 5
         mock_project = MagicMock(spec=Project, remote_path="path/to/config.yml")
         evg_api.all_projects.return_value = [mock_project]
-        file_service.read_yaml_file.return_value = {
+        file_service.read_yaml_content.return_value = {
             "modules": [
                 {
                     "name": f"module_name_{i}",
@@ -117,7 +117,7 @@ class TestGetModuleMap:
         n_modules = 5
         mock_project = MagicMock(spec=Project, remote_path="path/to/config.yml")
         evg_api.all_projects.return_value = [mock_project]
-        file_service.read_yaml_file.return_value = {
+        file_service.read_yaml_content.return_value = {
             "modules": [
                 {
                     "name": f"module_name_{i}",

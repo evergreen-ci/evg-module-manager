@@ -256,3 +256,31 @@ class TestFinalizeCqPatch:
         evg_cli_service.finalize_cq_patch(patch_id)
 
         evg_cli.__getitem__.assert_called_with(["commit-queue", "merge", "--resume", patch_id])
+
+
+class TestEvgEvaluate:
+    def test_evg_cli_should_call_with_given_path(self, evg_cli_service, evg_cli):
+        directory = Path("path/to/module")
+
+        evg_cli_service.evaluate(directory)
+        evg_cli.__getitem__.assert_called_with(["evaluate", directory])
+
+    def test_evg_cli_should_return_content_if_path_exist(self, evg_cli_service, evg_cli):
+        directory = Path("path/to/module")
+
+        content = """
+        modules:
+             - name: enterprise
+               branch: master
+               repo: git@github.com:10gen/mongo-enterprise-modules.git
+               prefix: src/mongo/db/modules
+             - name: wtdevelop
+               branch: develop
+               repo: git@github.com:wiredtiger/wiredtiger.git
+               prefix: src/third_party
+        """
+
+        evg_cli.__getitem__.return_value.return_value = content
+
+        return_content = evg_cli_service.evaluate(directory)
+        assert content == return_content

@@ -1,6 +1,5 @@
 """A service for working with evergreen data."""
 from functools import lru_cache
-from pathlib import Path
 from typing import Dict
 
 import inject
@@ -62,15 +61,14 @@ class EvgService:
         module_map = self.get_module_map(project_id)
         return {module.name: module.prefix for module in module_map.values()}
 
-    def get_module_map(self, project_id: str) -> Dict[str, EvgModule]:
+    def get_module_map(self, config_content: str) -> Dict[str, EvgModule]:
         """
         Get a dictionary of known modules and data about them.
 
-        :param project_id: Evergreen ID of project being queried.
-        :return: Dictionary of module names to module data.
+        :param config_content: Content of the evergreen config being read.
+        :return: Dictionary of module names to moetdule data.
         """
-        project_config_location = self.get_project_config_location(project_id)
-        project_config = self.file_service.read_yaml_file(Path(project_config_location))
+        project_config = self.file_service.read_yaml_content(config_content)
         return {module["name"]: EvgModule(**module) for module in project_config.get("modules", [])}
 
     def get_manifest(self, project_id: str, commit_hash: str) -> Manifest:

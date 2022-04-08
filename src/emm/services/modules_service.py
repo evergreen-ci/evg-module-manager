@@ -7,6 +7,7 @@ import inject
 import structlog
 from shrub.v3.evg_project import EvgModule
 
+from emm.clients.evg_cli_service import EvgCliService
 from emm.clients.evg_service import EvgService, Manifest
 from emm.clients.git_proxy import GitProxy
 from emm.models.repository import Repository
@@ -38,6 +39,7 @@ class ModulesService:
         self,
         emm_options: EmmOptions,
         evg_service: EvgService,
+        evg_cli_service: EvgCliService,
         git_service: GitProxy,
         file_service: FileService,
     ) -> None:
@@ -46,11 +48,13 @@ class ModulesService:
 
         :param emm_options: Configuration options for modules.
         :param evg_service: Service for working with evergreen.
+        :param evg_cli_service: Service for working with evergreen cli.
         :param git_service: Service for working with git.
         :param file_service: Service for working with files.
         """
         self.emm_options = emm_options
         self.evg_service = evg_service
+        self.evg_cli = evg_cli_service
         self.git_service = git_service
         self.file_service = file_service
 
@@ -96,6 +100,17 @@ class ModulesService:
 
         self.file_service.rm_symlink(target_location)
 
+    def get_config_content(self) -> str:
+        """
+        Get project config content through evergreen cli.
+
+        :return Content string.
+        """
+        project_config_location = self.evg_service.get_project_config_location(
+            self.emm_options.evg_project
+        )
+        return self.evg_cli.evaluate(Path(project_config_location))
+
     def get_module_data(self, module_name: str) -> EvgModule:
         """
         Get data about the specified module.
@@ -103,7 +118,8 @@ class ModulesService:
         :param module_name: Module to query.
         :return: Details about the module.
         """
-        modules_data = self.evg_service.get_module_map(self.emm_options.evg_project)
+        config_content = self.get_config_content()
+        modules_data = self.evg_service.get_module_map(config_content)
         if module_name not in modules_data:
             raise ValueError(f"Could not find module {module_name} in evergreen project config.")
 
@@ -116,7 +132,8 @@ class ModulesService:
         :param enabled: If True only return modules enabled locally.
         :return: Dictionary of module names to module information.
         """
-        all_modules = self.evg_service.get_module_map(self.emm_options.evg_project)
+        config_content = self.get_config_content()
+        all_modules = self.evg_service.get_module_map(config_content)
         pred = self.is_module_enabled if enabled else lambda _name, _: True
         return {k: v for k, v in all_modules.items() if pred(k, v)}
 

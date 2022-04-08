@@ -7,6 +7,7 @@ import pytest
 from shrub.v3.evg_project import EvgModule
 
 import emm.services.modules_service as under_test
+from emm.clients.evg_cli_service import EvgCliService
 from emm.clients.evg_service import EvgService
 from emm.clients.git_proxy import GitProxy
 from emm.models.repository import BASE_REPO
@@ -40,8 +41,16 @@ def file_service():
 
 
 @pytest.fixture()
-def modules_service(emm_options, evg_service, git_service, file_service):
-    modules_service = under_test.ModulesService(emm_options, evg_service, git_service, file_service)
+def evg_cli_service():
+    evg_cli = MagicMock(spec_set=EvgCliService)
+    return evg_cli
+
+
+@pytest.fixture()
+def modules_service(emm_options, evg_service, evg_cli_service, git_service, file_service):
+    modules_service = under_test.ModulesService(
+        emm_options, evg_service, evg_cli_service, git_service, file_service
+    )
     return modules_service
 
 
@@ -147,7 +156,9 @@ class TestDisable:
 
 
 class TestGetModuleData:
-    def test_missing_modules_should_raise_an_exception(self, modules_service, evg_service):
+    def test_missing_modules_should_raise_an_exception(
+        self, modules_service, evg_service, evg_cli_service
+    ):
         evg_service.get_module_map.return_value = {}
 
         with pytest.raises(ValueError):
@@ -161,6 +172,23 @@ class TestGetModuleData:
         returned_module = modules_service.get_module_data(module_name)
 
         assert returned_module == module_data
+
+
+class TestConfigContent:
+    def test_evg_cli_should_return_config_content(
+        self, modules_service, file_service, evg_service, evg_cli_service
+    ):
+        content = """
+        modules:
+             - name: enterprise
+               branch: master
+               repo: git@github.com:10gen/mongo-enterprise-modules.git
+               prefix: src/mongo/db/modules
+        """
+        evg_cli_service.evaluate.return_value = content
+        retrieved_content = modules_service.get_config_content()
+
+        assert retrieved_content == content
 
 
 class TestGetAllModules:
