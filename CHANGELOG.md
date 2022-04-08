@@ -1,7 +1,10 @@
 # Changelog
 
+## 1.1.5 - 2022-04-08
+- Use evergreen cli evaluate to retrieve modules.
+
 ## 1.1.4 - 2022-03-31
-- Update documents to notify user set remote before pull-request
+- Update documents to notify user set remote before pull-request.
 
 ## 1.1.3 - 2022-03-28
 - Output message when no pull requests are being created.
