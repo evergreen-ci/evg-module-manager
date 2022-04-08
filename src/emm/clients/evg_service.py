@@ -51,14 +51,14 @@ class EvgService:
             raise ValueError(f"Could not find unique project configuration for : '{project_id}'.")
         return project_config_list[0]
 
-    def get_module_locations(self, project_id: str) -> Dict[str, str]:
+    def get_module_locations(self, config_content: str) -> Dict[str, str]:
         """
         Get the paths that project modules are stored.
 
-        :param project_id: ID of project to query.
+        :param config_content: Content of the evergreen config being read.
         :return: Dictionary of modules and their paths.
         """
-        module_map = self.get_module_map(project_id)
+        module_map = self.get_module_map(config_content)
         return {module.name: module.prefix for module in module_map.values()}
 
     def get_module_map(self, config_content: str) -> Dict[str, EvgModule]:

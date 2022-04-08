@@ -186,7 +186,7 @@ class TestConfigContent:
                prefix: src/mongo/db/modules
         """
         evg_cli_service.evaluate.return_value = content
-        retrieved_content = modules_service.get_config_content()
+        retrieved_content = modules_service.get_config_content("projectid")
 
         assert retrieved_content == content
 

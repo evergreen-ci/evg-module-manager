@@ -54,7 +54,7 @@ class ModulesService:
         """
         self.emm_options = emm_options
         self.evg_service = evg_service
-        self.evg_cli = evg_cli_service
+        self.evg_cli_service = evg_cli_service
         self.git_service = git_service
         self.file_service = file_service
 
@@ -100,16 +100,15 @@ class ModulesService:
 
         self.file_service.rm_symlink(target_location)
 
-    def get_config_content(self) -> str:
+    def get_config_content(self, project_id: str) -> str:
         """
         Get project config content through evergreen cli.
 
+        :param project_id: ID of project to lookup.
         :return Content string.
         """
-        project_config_location = self.evg_service.get_project_config_location(
-            self.emm_options.evg_project
-        )
-        return self.evg_cli.evaluate(Path(project_config_location))
+        project_config_location = self.evg_service.get_project_config_location(project_id)
+        return self.evg_cli_service.evaluate(Path(project_config_location))
 
     def get_module_data(self, module_name: str) -> EvgModule:
         """
@@ -118,7 +117,7 @@ class ModulesService:
         :param module_name: Module to query.
         :return: Details about the module.
         """
-        config_content = self.get_config_content()
+        config_content = self.get_config_content(self.emm_options.evg_project)
         modules_data = self.evg_service.get_module_map(config_content)
         if module_name not in modules_data:
             raise ValueError(f"Could not find module {module_name} in evergreen project config.")
@@ -132,7 +131,7 @@ class ModulesService:
         :param enabled: If True only return modules enabled locally.
         :return: Dictionary of module names to module information.
         """
-        config_content = self.get_config_content()
+        config_content = self.get_config_content(self.emm_options.evg_project)
         all_modules = self.evg_service.get_module_map(config_content)
         pred = self.is_module_enabled if enabled else lambda _name, _: True
         return {k: v for k, v in all_modules.items() if pred(k, v)}

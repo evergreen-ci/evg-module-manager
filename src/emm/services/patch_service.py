@@ -34,13 +34,23 @@ class PatchService:
         self.evg_service = evg_service
         self.emm_options = emm_options
 
+    def get_config_content(self, project_id: str) -> str:
+        """
+        Get project config content through evergreen cli.
+
+        :return Content string.
+        """
+        project_config_location = self.evg_service.get_project_config_location(project_id)
+        return self.evg_cli_service.evaluate(Path(project_config_location))
+
     def create_patch(self, extra_args: List[str]) -> PatchInfo:
         """
         Create an evergreen patch and add any modules to it.
 
         :param extra_args: Extra arguments to pass to the patch command.
         """
-        modules_data = self.evg_service.get_module_map(self.emm_options.evg_project)
+        config_content = self.get_config_content(self.emm_options.evg_project)
+        modules_data = self.evg_service.get_module_map(config_content)
         base_patch = self.evg_cli_service.create_patch(extra_args)
         for module, module_data in modules_data.items():
             module_location = Path(module_data.prefix) / module
@@ -57,7 +67,8 @@ class PatchService:
 
         :param extra_args: Extra arguments to pass to the patch command.
         """
-        modules_data = self.evg_service.get_module_map(self.emm_options.evg_project)
+        config_content = self.get_config_content(self.emm_options.evg_project)
+        modules_data = self.evg_service.get_module_map(config_content)
         base_patch = self.evg_cli_service.create_cq_patch(extra_args)
         for module, module_data in modules_data.items():
             module_location = Path(module_data.prefix) / module
