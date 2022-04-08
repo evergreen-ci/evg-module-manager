@@ -50,6 +50,7 @@ class TestCreatePatch:
     def test_a_patch_with_no_modules_should_be_created_and_finalized(
         self, patch_service, evg_cli_service, evg_service
     ):
+        evg_service.get_project_config_location.return_value = "path/to/module"
         evg_service.get_module_map.return_value = {}
 
         patch_info = patch_service.create_patch([])
@@ -60,6 +61,7 @@ class TestCreatePatch:
     def test_a_patch_with_no_enabled_modules_should_be_created_and_finalized(
         self, patch_service, evg_cli_service, evg_service, file_service
     ):
+        evg_service.get_project_config_location.return_value = "path/to/module"
         evg_service.get_module_map.return_value = {
             f"module_{i}": build_module_data(i) for i in range(10)
         }
@@ -73,6 +75,7 @@ class TestCreatePatch:
     def test_a_patch_with_enabled_modules_should_be_created_and_finalized(
         self, patch_service, evg_cli_service, evg_service, file_service
     ):
+        evg_service.get_project_config_location.return_value = "path/to/module"
         evg_service.get_module_map.return_value = {
             f"module_{i}": build_module_data(i) for i in range(5)
         }
@@ -86,6 +89,7 @@ class TestCreatePatch:
     def test_patches_should_pass_along_extra_args(
         self, patch_service, evg_cli_service, evg_service, file_service
     ):
+        evg_service.get_project_config_location.return_value = "path/to/module"
         evg_service.get_module_map.return_value = {
             f"module_{i}": build_module_data(i) for i in range(5)
         }
@@ -103,6 +107,7 @@ class TestCreateCqPatch:
     def test_a_patch_with_no_modules_should_be_created_and_finalized(
         self, patch_service, evg_cli_service, evg_service
     ):
+        evg_service.get_project_config_location.return_value = "path/to/module"
         evg_service.get_module_map.return_value = {}
 
         patch_info = patch_service.create_cq_patch([])
@@ -114,6 +119,7 @@ class TestCreateCqPatch:
     def test_a_patch_with_no_enabled_modules_should_be_created_and_finalized(
         self, patch_service, evg_cli_service, evg_service, file_service
     ):
+        evg_service.get_project_config_location.return_value = "path/to/module"
         evg_service.get_module_map.return_value = {
             f"module_{i}": build_module_data(i) for i in range(10)
         }
@@ -128,6 +134,7 @@ class TestCreateCqPatch:
     def test_a_patch_with_enabled_modules_should_be_created_and_finalized(
         self, patch_service, evg_cli_service, evg_service, file_service
     ):
+        evg_service.get_project_config_location.return_value = "path/to/module"
         evg_service.get_module_map.return_value = {
             f"module_{i}": build_module_data(i) for i in range(5)
         }
@@ -142,6 +149,7 @@ class TestCreateCqPatch:
     def test_a_patch_should_pass_extra_args_to_commands(
         self, patch_service, evg_cli_service, evg_service, file_service
     ):
+        evg_service.get_project_config_location.return_value = "path/to/module"
         evg_service.get_module_map.return_value = {
             f"module_{i}": build_module_data(i) for i in range(5)
         }

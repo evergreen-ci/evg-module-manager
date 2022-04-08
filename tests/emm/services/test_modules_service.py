@@ -78,6 +78,7 @@ class TestEnable:
         module_name = "mock_module"
         mock_module = build_module_data()
         evg_service.get_module_map.return_value = {module_name: mock_module}
+        evg_service.get_project_config_location.return_value = "path/to/module"
         file_service.path_exists.return_value = True
 
         with pytest.raises(ValueError):
@@ -91,6 +92,7 @@ class TestEnable:
         module_name = "mock_module"
         mock_module = build_module_data()
         evg_service.get_module_map.return_value = {module_name: mock_module}
+        evg_service.get_project_config_location.return_value = "path/to/module"
         file_service.path_exists.side_effect = [False, False, True]
 
         modules_service.enable(module_name)
@@ -104,6 +106,7 @@ class TestEnable:
         module_name = "mock_module"
         mock_module = build_module_data()
         evg_service.get_module_map.return_value = {module_name: mock_module}
+        evg_service.get_project_config_location.return_value = "path/to/module"
         file_service.path_exists.side_effect = [False, False, True]
 
         modules_service.enable(module_name)
@@ -118,6 +121,7 @@ class TestEnable:
         module_name = "mock_module"
         mock_module = build_module_data()
         evg_service.get_module_map.return_value = {module_name: mock_module}
+        evg_service.get_project_config_location.return_value = "path/to/module"
         file_service.path_exists.return_value = False
 
         modules_service.enable(module_name)
@@ -136,6 +140,7 @@ class TestDisable:
     ):
         module_name = "mock_module"
         evg_service.get_module_map.return_value = {module_name: build_module_data()}
+        evg_service.get_project_config_location.return_value = "path/to/module"
         file_service.path_exists.return_value = False
 
         with pytest.raises(ValueError):
@@ -147,6 +152,7 @@ class TestDisable:
         module_name = "mock_module"
         mock_module = build_module_data()
         evg_service.get_module_map.return_value = {module_name: mock_module}
+        evg_service.get_project_config_location.return_value = "path/to/module"
         file_service.path_exists.return_value = True
 
         modules_service.disable(module_name)
@@ -159,6 +165,7 @@ class TestGetModuleData:
     def test_missing_modules_should_raise_an_exception(
         self, modules_service, evg_service, evg_cli_service
     ):
+        evg_service.get_project_config_location.return_value = "path/to/module"
         evg_service.get_module_map.return_value = {}
 
         with pytest.raises(ValueError):
@@ -167,6 +174,7 @@ class TestGetModuleData:
     def test_existing_modules_should_be_returned(self, modules_service, evg_service):
         module_name = "my module"
         module_data = build_module_data()
+        evg_service.get_project_config_location.return_value = "path/to/module"
         evg_service.get_module_map.return_value = {module_name: module_data}
 
         returned_module = modules_service.get_module_data(module_name)
@@ -186,6 +194,8 @@ class TestConfigContent:
                prefix: src/mongo/db/modules
         """
         evg_cli_service.evaluate.return_value = content
+        evg_service.get_project_config_location.return_value = "path/to/module"
+
         retrieved_content = modules_service.get_config_content("projectid")
 
         assert retrieved_content == content
@@ -198,6 +208,7 @@ class TestGetAllModules:
         evg_service.get_module_map.return_value = {
             f"module_name_{i}": build_module_data() for i in range(5)
         }
+        evg_service.get_project_config_location.return_value = "path/to/module"
         file_service.path_exists.side_effect = [True, False, True, False, True]
 
         modules = modules_service.get_all_modules(enabled=True)
@@ -210,6 +221,7 @@ class TestGetAllModules:
         evg_service.get_module_map.return_value = {
             f"module_name_{i}": build_module_data() for i in range(5)
         }
+        evg_service.get_project_config_location.return_value = "path/to/module"
         file_service.path_exists.side_effect = [True, False, True, False, True]
 
         modules = modules_service.get_all_modules(enabled=False)
@@ -284,6 +296,7 @@ class TestCollectRepositories:
         evg_service: EvgService,
         file_service: FileService,
     ):
+        evg_service.get_project_config_location.return_value = "path/to/module"
         evg_service.get_module_map.return_value = {}
         file_service.path_exists.return_value = True
 
@@ -303,6 +316,7 @@ class TestCollectRepositories:
     ):
         n_modules = 3
         module_list = [build_module_data(i) for i in range(n_modules)]
+        evg_service.get_project_config_location.return_value = "path/to/module"
         evg_service.get_module_map.return_value = {module.name: module for module in module_list}
         file_service.path_exists.return_value = True
 
