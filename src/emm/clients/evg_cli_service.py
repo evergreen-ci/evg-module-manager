@@ -141,3 +141,13 @@ class EvgCliService:
         # evergreen commit-queue merge --resume 5d3b120f1e2d1770d9f2104e
         args = ["commit-queue", "merge", "--resume", patch_id]
         self.evg_cli[args]()
+
+    def evaluate(self, project_config_location: Path) -> str:
+        """
+        Evaluate the given evergreen project configuration.
+
+        :param project_config_location: Location of project configuration to evaluate.
+        :return: Evaluated project configuration.
+        """
+        args = ["evaluate", "--path", project_config_location]
+        return self.evg_cli[args]()

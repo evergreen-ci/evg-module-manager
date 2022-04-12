@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.5 - 2022-04-12
+
+- Evaluate evergreen project configuration before using it.
+
 ## 1.1.4 - 2022-03-31
 - Update documents to notify user set remote before pull-request
 

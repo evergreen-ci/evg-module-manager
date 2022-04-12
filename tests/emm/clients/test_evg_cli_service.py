@@ -256,3 +256,12 @@ class TestFinalizeCqPatch:
         evg_cli_service.finalize_cq_patch(patch_id)
 
         evg_cli.__getitem__.assert_called_with(["commit-queue", "merge", "--resume", patch_id])
+
+
+class TestEvaluate:
+    def test_evaluate_should_call_out_to_evg_cli(self, evg_cli_service, evg_cli):
+        project_location = Path("project_location")
+
+        evg_cli_service.evaluate(project_location)
+
+        evg_cli.__getitem__.assert_called_with(["evaluate", "--path", project_location])

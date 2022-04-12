@@ -4,20 +4,26 @@ from pathlib import Path
 from typing import Dict
 
 import inject
+import yaml
 from evergreen import EvergreenApi, Manifest, Project
 from shrub.v3.evg_project import EvgModule
 
-from emm.services.file_service import FileService
+from emm.clients.evg_cli_service import EvgCliService
 
 
 class EvgService:
     """A service for working with evergreen data."""
 
     @inject.autoparams()
-    def __init__(self, evg_api: EvergreenApi, file_service: FileService) -> None:
-        """Initialize the service."""
+    def __init__(self, evg_api: EvergreenApi, evg_cli_service: EvgCliService) -> None:
+        """
+        Initialize the service.
+
+        :param evg_api: Evergreen API Client.
+        :param evg_cli_service: Service for working with the evergreen CLI.
+        """
         self.evg_api = evg_api
-        self.file_service = file_service
+        self.evg_cli_service = evg_cli_service
 
     def get_project_config_location(self, project_id: str) -> str:
         """
@@ -70,7 +76,9 @@ class EvgService:
         :return: Dictionary of module names to module data.
         """
         project_config_location = self.get_project_config_location(project_id)
-        project_config = self.file_service.read_yaml_file(Path(project_config_location))
+        project_config = yaml.safe_load(
+            self.evg_cli_service.evaluate(Path(project_config_location))
+        )
         return {module["name"]: EvgModule(**module) for module in project_config.get("modules", [])}
 
     def get_manifest(self, project_id: str, commit_hash: str) -> Manifest:
