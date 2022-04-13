@@ -1,7 +1,9 @@
 # Changelog
 
-## 1.1.5 - 2022-04-12
+## 1.1.6 - 2022-04-13
+- Document how to handle common pipx install error.
 
+## 1.1.5 - 2022-04-12
 - Evaluate evergreen project configuration before using it.
 
 ## 1.1.4 - 2022-03-31
