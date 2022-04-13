@@ -2,10 +2,11 @@
 from unittest.mock import MagicMock
 
 import pytest
+import yaml
 from evergreen import EvergreenApi, Project
 
 import emm.clients.evg_service as under_test
-from emm.services.file_service import FileService
+from emm.clients.evg_cli_service import EvgCliService
 
 
 @pytest.fixture()
@@ -15,14 +16,14 @@ def evg_api():
 
 
 @pytest.fixture()
-def file_service():
-    mock_file_service = MagicMock(spec_set=FileService)
-    return mock_file_service
+def evg_cli_service():
+    evg_cli_service = MagicMock(spec_set=EvgCliService)
+    return evg_cli_service
 
 
 @pytest.fixture()
-def evg_service(evg_api, file_service):
-    evg_service = under_test.EvgService(evg_api, file_service)
+def evg_service(evg_api, evg_cli_service):
+    evg_service = under_test.EvgService(evg_api, evg_cli_service)
     return evg_service
 
 
@@ -64,23 +65,23 @@ class TestGetEvgProject:
 
 class TestGetModuleLocations:
     def test_project_with_no_modules_should_return_empty_dict(
-        self, evg_service, evg_api, file_service
+        self, evg_service, evg_api, evg_cli_service
     ):
         mock_project = MagicMock(spec=Project, remote_path="path/to/config.yml")
         evg_api.all_projects.return_value = [mock_project]
-        file_service.read_yaml_file.return_value = {}
+        evg_cli_service.evaluate.return_value = yaml.safe_dump({})
 
         module_dict = evg_service.get_module_locations("my-project")
 
         assert module_dict == {}
 
     def test_project_with_modules_should_return_all_modules(
-        self, evg_service, evg_api, file_service
+        self, evg_service, evg_api, evg_cli_service
     ):
         n_modules = 5
         mock_project = MagicMock(spec=Project, remote_path="path/to/config.yml")
         evg_api.all_projects.return_value = [mock_project]
-        file_service.read_yaml_file.return_value = {
+        modules_section = {
             "modules": [
                 {
                     "name": f"module_name_{i}",
@@ -91,6 +92,7 @@ class TestGetModuleLocations:
                 for i in range(n_modules)
             ]
         }
+        evg_cli_service.evaluate.return_value = yaml.safe_dump(modules_section)
 
         module_dict = evg_service.get_module_locations("my-project")
 
@@ -101,33 +103,35 @@ class TestGetModuleLocations:
 
 class TestGetModuleMap:
     def test_project_with_no_modules_should_return_empty_dict(
-        self, evg_service, evg_api, file_service
+        self, evg_service, evg_api, evg_cli_service
     ):
         mock_project = MagicMock(spec=Project, remote_path="path/to/config.yml")
         evg_api.all_projects.return_value = [mock_project]
-        file_service.read_yaml_file.return_value = {}
+        evg_cli_service.evaluate.return_value = yaml.safe_dump({})
 
         module_dict = evg_service.get_module_map("my-project")
 
         assert module_dict == {}
 
     def test_project_with_modules_should_return_all_modules(
-        self, evg_service, evg_api, file_service
+        self, evg_service, evg_api, evg_cli_service
     ):
         n_modules = 5
         mock_project = MagicMock(spec=Project, remote_path="path/to/config.yml")
         evg_api.all_projects.return_value = [mock_project]
-        file_service.read_yaml_file.return_value = {
-            "modules": [
-                {
-                    "name": f"module_name_{i}",
-                    "repo": f"git@github.com:myorg/mymodule_{i}.git",
-                    "branch": "main",
-                    "prefix": "src/modules",
-                }
-                for i in range(n_modules)
-            ]
-        }
+        evg_cli_service.evaluate.return_value = yaml.safe_dump(
+            {
+                "modules": [
+                    {
+                        "name": f"module_name_{i}",
+                        "repo": f"git@github.com:myorg/mymodule_{i}.git",
+                        "branch": "main",
+                        "prefix": "src/modules",
+                    }
+                    for i in range(n_modules)
+                ]
+            }
+        )
 
         module_dict = evg_service.get_module_map("my-project")
 
