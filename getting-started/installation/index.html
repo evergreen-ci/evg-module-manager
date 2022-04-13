@@ -44,7 +44,7 @@ To fully utilize this tool, the following commands also need to be installed and
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://evergreen-ci.github.io/evg-module-manager/getting-started/installation/" /><meta property="article:section" content="getting-started" />
 
-<meta property="article:modified_time" content="2022-03-10T17:05:39-05:00" />
+<meta property="article:modified_time" content="2022-04-13T11:28:34-04:00" />
 
 
 <meta name="twitter:card" content="summary"/>
@@ -140,7 +140,7 @@ To fully utilize this tool, the following commands also need to be installed and
     "copyrightYear" : "0001",
     "dateCreated": "0001-01-01T00:00:00.00Z",
     "datePublished": "0001-01-01T00:00:00.00Z",
-    "dateModified": "2022-03-10T17:05:39.00Z",
+    "dateModified": "2022-04-13T11:28:34.00Z",
     "publisher":{
         "@type":"Organization",
         "name": "Evergreen Module Manager Documentation",
@@ -153,7 +153,7 @@ To fully utilize this tool, the following commands also need to be installed and
         }
     },
     "url" : "https:\/\/evergreen-ci.github.io\/evg-module-manager\/getting-started\/installation\/",
-    "wordCount" : "165",
+    "wordCount" : "293",
     "genre" : [ ]
 }
 </script>
@@ -1857,6 +1857,33 @@ evergreen. Details on ensure the evergreen cli is setup correctly can be found
 </div>
 <p>Use <code>pipx</code> to install the tool:</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">pipx install evg-module-manager
+</code></pre></div><div class="gdoc-page__anchorwrap">
+    <h3 id="debugging-installation-issues">
+        Debugging installation issues
+        <a data-clipboard-text="https://evergreen-ci.github.io/evg-module-manager/getting-started/installation/#debugging-installation-issues" class="gdoc-page__anchor gdoc-page__anchor--right clip" title="Anchor to: Debugging installation issues" aria-label="Anchor to: Debugging installation issues" href="#debugging-installation-issues">
+            <svg class="icon gdoc_link"><use xlink:href="#gdoc_link"></use></svg>
+        </a>
+    </h3>
+</div>
+<p>A common issue that arises during installation is pipx failing to install emm and printing out the following error:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ pipx install evg-module-manager
+Fatal error from pip prevented installation. Full pip output in file:
+    /home/ubuntu/.local/pipx/logs/cmd_2022-03-31_13.24.42_pip_errors.log
+ 
+Some possibly relevant errors from pip install:
+    ERROR: Could not find a version that satisfies the requirement evg-module-manager <span class="o">(</span>from versions: none<span class="o">)</span>
+    ERROR: No matching distribution found <span class="k">for</span> evg-module-manager
+ 
+Error installing evg-module-manager.
+</code></pre></div><p>This error indicates that pipx could not find a version of emm that was built to support the version of Python installed on your machine.
+Make sure to check that your version of Python matches the requirements called out in the <a
+  class="gdoc-markdown__link"
+  href="/evg-module-manager/getting-started/installation/#prerequisites"
+  
+  >Prerequisites</a
+> section. You
+can check the version of Python that is on your computer by running</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ python --version
 </code></pre></div><div class="gdoc-page__anchorwrap">
     <h2 id="updating-evg-module-manager">
         Updating evg-module-manager
