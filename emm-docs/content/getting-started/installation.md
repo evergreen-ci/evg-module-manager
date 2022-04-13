@@ -47,6 +47,28 @@ Use `pipx` to install the tool:
 pipx install evg-module-manager
 ```
 
+### Debugging installation issues
+
+A common issue that arises during installation is pipx failing to install emm and printing out the following error:
+```bash
+$ pipx install evg-module-manager
+Fatal error from pip prevented installation. Full pip output in file:
+    /home/ubuntu/.local/pipx/logs/cmd_2022-03-31_13.24.42_pip_errors.log
+ 
+Some possibly relevant errors from pip install:
+    ERROR: Could not find a version that satisfies the requirement evg-module-manager (from versions: none)
+    ERROR: No matching distribution found for evg-module-manager
+ 
+Error installing evg-module-manager.
+```
+
+This error indicates that pipx could not find a version of emm that was built to support the version of Python installed on your machine.
+Make sure to check that your version of Python matches the requirements called out in the [Prerequisites]({{< relref "installation.md#prerequisites" >}}) section. You
+can check the version of Python that is on your computer by running
+```bash
+$ python --version
+```
+
 ## Updating evg-module-manager
 
 You can also use `pipx` to update to the latest version:
