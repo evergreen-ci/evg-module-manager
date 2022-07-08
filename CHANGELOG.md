@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.7 - 2022-07-08
+- Add getting help section.
+
 ## 1.1.6 - 2022-04-13
 - Document how to handle common pipx install error.
 
