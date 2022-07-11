@@ -29,7 +29,7 @@ rich = "^10.9.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
-black = "^21.8b0"
+black = "^22.3"
 pytest-black = "^0.3"
 pytest-cov = "^2.8"
 pytest-flake8 = "^1.0"
