@@ -9,7 +9,7 @@ import pytest
 import emm.services.git_branch_service as under_test
 from emm.clients.git_proxy import GitProxy
 from emm.models.repository import Repository
-from emm.services.modules_service import ModulesService, UpdateStrategy
+from emm.services.modules_service import ModulesService, SyncedModuleInformation, UpdateStrategy
 
 
 @pytest.fixture()
@@ -45,14 +45,23 @@ class TestCreateBranch:
         modules_service: ModulesService,
         git_proxy: GitProxy,
     ):
-        module_list = [build_mock_repository(i, Path(f"/path/to/module_{i}")) for i in range(3)]
+        modules = [MagicMock() for _ in range(3)]
+        synced_modules = {
+            f"module_{i}": SyncedModuleInformation(revision=f"revision_{i}", module=module)
+            for i, module in enumerate(modules)
+        }
+        module_list = [
+            build_mock_repository(i, Path(f"/path/to/module_{i}")) for i in range(len(modules))
+        ]
         modules_service.collect_repositories.return_value = module_list
+        modules_service.sync_all_modules.return_value = synced_modules
 
         repos = git_branch_service.create_branch("my-branch", "HEAD")
 
         assert len(repos) == len(module_list)
         assert git_proxy.checkout.call_count == len(module_list) + 1
         modules_service.sync_all_modules.assert_called_once()
+        modules_service.collect_repositories.assert_called_with(modules)
         for module in module_list:
             assert module.name in repos
 
@@ -120,7 +129,10 @@ class TestUpdateBranch:
         git_proxy: GitProxy,
     ):
         n_modules = 3
-        modules = {f"module_{i}": f"revision_{i}" for i in range(n_modules)}
+        modules = {
+            f"module_{i}": SyncedModuleInformation(revision=f"revision_{i}", module=MagicMock())
+            for i in range(n_modules)
+        }
         repos = [build_mock_repository(i) for i in range(n_modules)]
         modules_service.sync_all_modules.return_value = modules
         modules_service.collect_repositories.return_value = repos
@@ -141,7 +153,10 @@ class TestUpdateBranch:
         git_proxy: GitProxy,
     ):
         n_modules = 3
-        modules = {f"module_{i}": f"revision_{i}" for i in range(n_modules)}
+        modules = {
+            f"module_{i}": SyncedModuleInformation(revision=f"revision_{i}", module=MagicMock())
+            for i in range(n_modules)
+        }
         repos = [build_mock_repository(i) for i in range(n_modules)]
         modules_service.sync_all_modules.return_value = modules
         modules_service.collect_repositories.return_value = repos
@@ -163,7 +178,10 @@ class TestPull:
         modules_service: ModulesService,
         git_proxy: GitProxy,
     ):
-        modules = {f"module_{i}": f"revision_{i}" for i in range(3)}
+        modules = {
+            f"module_{i}": SyncedModuleInformation(revision=f"revision_{i}", module=MagicMock())
+            for i in range(3)
+        }
         modules_service.sync_all_modules.return_value = modules
 
         result = git_branch_service.pull(False)
