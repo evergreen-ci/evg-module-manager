@@ -1,7 +1,7 @@
 """Service for working with evergreen modules."""
 from enum import Enum
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, NamedTuple, Optional
 
 import inject
 import structlog
@@ -28,6 +28,18 @@ class UpdateStrategy(str, Enum):
     MERGE = "merge"
     REBASE = "rebase"
     CHECKOUT = "checkout"
+
+
+class SyncedModuleInformation(NamedTuple):
+    """
+    Information about modules that have been synced.
+
+    * module: The module that was synced.
+    * revision: What revision the module has been synced to.
+    """
+
+    module: EvgModule
+    revision: str
 
 
 class ModulesService:
@@ -120,15 +132,18 @@ class ModulesService:
         pred = self.is_module_enabled if enabled else lambda _name, _: True
         return {k: v for k, v in all_modules.items() if pred(k, v)}
 
-    def collect_repositories(self) -> List[Repository]:
+    def collect_repositories(self, modules: Optional[List[EvgModule]] = None) -> List[Repository]:
         """
         Create a list of potential repositories for the base and all enabled modules.
 
-        :param project_id: Evergreen Project ID of base repository.
+        :param modules: The list of modules to collect repos for. Will get enabled modules if None.
         :return: List of repositories associated the base repository.
         """
-        enabled_modules = self.get_all_modules(enabled=True)
-        repository_list = [Repository.from_module(module) for module in enabled_modules.values()]
+        if modules is not None:
+            enabled_modules = modules
+        else:
+            enabled_modules = [module for module in self.get_all_modules(enabled=True).values()]
+        repository_list = [Repository.from_module(module) for module in enabled_modules]
         evg_project_id = self.emm_options.evg_project
         repository_list.append(
             Repository.base_repo(self.evg_service.get_project_branch(evg_project_id))
@@ -196,16 +211,19 @@ class ModulesService:
 
     def sync_all_modules(
         self, enabled: bool, update_strategy: UpdateStrategy = UpdateStrategy.CHECKOUT
-    ) -> Dict[str, str]:
+    ) -> Dict[str, SyncedModuleInformation]:
         """
         Sync all modules with the current commit of the base module.
 
-        :param active: Only sync enabled modules.
+        :param enabled: Only sync enabled modules.
         :param update_strategy: How module should be synced to target commit.
         :return: Dictionary of modules synced and git hash modules were synced to.
         """
         modules = self.get_all_modules(enabled)
         return {
-            module_name: self.sync_module(module_name, module_data, update_strategy)
+            module_name: SyncedModuleInformation(
+                revision=self.sync_module(module_name, module_data, update_strategy),
+                module=module_data,
+            )
             for module_name, module_data in modules.items()
         }

@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.8 - 2022-08-15
+- Cache the results of `evergreen evaluate` when creating a new branch.
+
 ## 1.1.7 - 2022-07-08
 - Add getting help section.
 

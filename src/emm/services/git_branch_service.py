@@ -36,10 +36,11 @@ class GitBranchService:
         # First checkout the desired revision in the base module and sync all the
         # other modules to it.
         self.git_proxy.checkout(branch_base)
-        self.modules_service.sync_all_modules(enabled=True)
+        synced_module_info = self.modules_service.sync_all_modules(enabled=True)
 
         # Now create the branch in all the modules.
-        repository_list = self.modules_service.collect_repositories()
+        synced_modules = [information.module for information in synced_module_info.values()]
+        repository_list = self.modules_service.collect_repositories(synced_modules)
         for repo in repository_list:
             self.git_proxy.checkout(branch_name=branch_name, directory=repo.directory)
 
@@ -102,8 +103,8 @@ class GitBranchService:
             update_strategy = UpdateStrategy.MERGE
 
         return [
-            GitCommandOutput(module_name=module_name, output=revision)
-            for module_name, revision in self.modules_service.sync_all_modules(
+            GitCommandOutput(module_name=module_name, output=information.revision)
+            for module_name, information in self.modules_service.sync_all_modules(
                 enabled=True, update_strategy=update_strategy
             ).items()
         ]
@@ -118,8 +119,8 @@ class GitBranchService:
         self.git_proxy.pull(rebase)
         update_strategy = UpdateStrategy.REBASE if rebase else UpdateStrategy.MERGE
         return [
-            GitCommandOutput(module_name=module_name, output=revision)
-            for module_name, revision in self.modules_service.sync_all_modules(
+            GitCommandOutput(module_name=module_name, output=information.revision)
+            for module_name, information in self.modules_service.sync_all_modules(
                 enabled=True, update_strategy=update_strategy
             ).items()
         ]
