@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "evg-module-manager"
-version = "1.1.8"
+version = "1.2.0"
 description = "Manage Evergreen modules locally."
 authors = ["Dev Prod DAG <dev-prod-dag@mongodb.com>"]
 license = "Apache-2.0"

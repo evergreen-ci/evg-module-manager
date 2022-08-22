@@ -43,13 +43,16 @@ class GitProxy:
         with local.cwd(self._determine_directory(directory)):
             self.git[args]()
 
-    def fetch(self, directory: Optional[Path] = None) -> None:
+    def fetch(self, directory: Optional[Path] = None, branch: Optional[str] = None) -> None:
         """
         Fetch commit from origin.
 
         :param directory: Path to root of repo to operate on.
+        :param branch: Local branch to update.
         """
         args = ["fetch", "origin"]
+        if branch is not None:
+            args.append(f"{branch}:{branch}")
         with local.cwd(self._determine_directory(directory)):
             self.git[args]()
 

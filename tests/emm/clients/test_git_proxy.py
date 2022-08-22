@@ -66,6 +66,18 @@ class TestFetch:
         local_mock.cwd.assert_called_with(test_path)
 
     @patch(ns("local"))
+    @patch(ns("Path"))
+    def test_fetch_should_call_git_fetch_with_base_local_branch_update(
+        self, path_mock, local_mock, git_proxy, mock_git
+    ):
+        test_path = make_fake_path()
+        path_mock.return_value = test_path
+        git_proxy.fetch(branch="master")
+
+        mock_git.assert_git_call(["fetch", "origin", "master:master"])
+        local_mock.cwd.assert_called_with(test_path)
+
+    @patch(ns("local"))
     def test_fetch_with_directory_should_call_git_fetch_from_dir(
         self, local_mock, git_proxy, mock_git
     ):

@@ -129,14 +129,15 @@ class GitOrchestrator:
         for module in modules:
             rprint(f" - [yellow]{module}[/yellow]")
 
-    def update_branch(self, branch: str, rebase: bool) -> None:
+    def update_branch(self, branch: str, local: bool, rebase: bool) -> None:
         """
         Pull in changes from the specified branch.
 
         :param branch: Branch to pull changes from.
+        :param local: If True, update base local branch, else do nothing.
         :param rebase: If True, rebase on top of changes, else merge changes in.
         """
-        modules = self.git_branch_service.update_branch(branch, rebase)
+        modules = self.git_branch_service.update_branch(branch, local, rebase)
         rprint(f"[yellow]Base[/yellow]: updated to latest '{branch}'")
         for module in modules:
             rprint(f"- [yellow]{module.module_name}[/yellow]: {module.output}")
@@ -258,6 +259,7 @@ def branch_pull(ctx: click.Context, rebase: bool) -> None:
 
 @git_cli.command(context_settings=dict(max_content_width=100))
 @click.option("-b", "--branch", type=str, required=True, help="Branch to pull updates from.")
+@click.option("--local", is_flag=True, default=False, help="Update base local branch.")
 @click.option(
     "--rebase",
     is_flag=True,
@@ -265,12 +267,12 @@ def branch_pull(ctx: click.Context, rebase: bool) -> None:
     help="Rebase on top of any changes instead of merging changes.",
 )
 @click.pass_context
-def branch_update(ctx: click.Context, branch: str, rebase: bool) -> None:
+def branch_update(ctx: click.Context, branch: str, local: bool, rebase: bool) -> None:
     """Get the latest changes from remote repositories and update the current branch with them."""
     validation_service = inject.instance(ValidationService)
     validation_service.validate_git_command()
     orchestrator = inject.instance(GitOrchestrator)
-    orchestrator.update_branch(branch, rebase)
+    orchestrator.update_branch(branch, local, rebase)
 
 
 @git_cli.command(context_settings=dict(max_content_width=100))
