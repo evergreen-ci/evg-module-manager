@@ -134,7 +134,7 @@ class GitOrchestrator:
         Pull in changes from the specified branch.
 
         :param branch: Branch to pull changes from.
-        :param local: If True, update base local branch, else do nothing.
+        :param local: Indicate whether the branch is local, otherwise remote.
         :param rebase: If True, rebase on top of changes, else merge changes in.
         """
         modules = self.git_branch_service.update_branch(branch, local, rebase)

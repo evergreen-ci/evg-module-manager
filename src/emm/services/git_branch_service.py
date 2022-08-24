@@ -88,7 +88,7 @@ class GitBranchService:
         Update the current branch with commits from the given branch.
 
         :param branch: Branch to get updates from.
-        :param local: If True, update base local branch, else do nothing.
+        :param local: Indicate whether the branch is local, otherwise remote.
         :param rebase: If True, rebase on top of changes, else merge changes in.
         :return: List of what commit each module was checked out to.
         """
