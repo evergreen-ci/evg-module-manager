@@ -72,6 +72,7 @@ functions:
             dos2unix "venv/Scripts/activate"
             . "venv/Scripts/activate"
             $PYTHON -m ensurepip
+            pip install --upgrade pip
             pip install poetry
           else
             git clone https://github.com/pyenv/pyenv.git pyenv
