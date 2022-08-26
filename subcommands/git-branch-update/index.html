@@ -11,7 +11,7 @@
 
   <meta name="description" content="Use the git branch-update subcommand to update your current branch with the changes made remotely.
 The git branch-update subcommand will:
- fetch the latest changes from the origin of all the repositories. update your branch with the latest changes in the base repository. update all enabled modules up to the change associated with where the base repository was updated to.  $ evg-module-manager git branch-update Base: updated to latest &#39;master&#39; - enterprise: 07c4792479f85fb8af129a87ee6e116c4b7d7808 " />
+ fetch the latest changes from the origin of all the repositories. update base local branch with the latest changes, if requested. update your branch with the latest changes in the base repository. update all enabled modules up to the change associated with where the base repository was updated to.  The -b/--branch option allows you to specify the base branch, --local option can be used if you are specifying a local base branch rather than remote, --rebase option allows to rebase on top of changes rather than merge changes in." />
 
 
 
@@ -40,18 +40,18 @@ The git branch-update subcommand will:
     <meta property="og:title" content="" />
 <meta property="og:description" content="Use the git branch-update subcommand to update your current branch with the changes made remotely.
 The git branch-update subcommand will:
- fetch the latest changes from the origin of all the repositories. update your branch with the latest changes in the base repository. update all enabled modules up to the change associated with where the base repository was updated to.  $ evg-module-manager git branch-update Base: updated to latest &#39;master&#39; - enterprise: 07c4792479f85fb8af129a87ee6e116c4b7d7808 " />
+ fetch the latest changes from the origin of all the repositories. update base local branch with the latest changes, if requested. update your branch with the latest changes in the base repository. update all enabled modules up to the change associated with where the base repository was updated to.  The -b/--branch option allows you to specify the base branch, --local option can be used if you are specifying a local base branch rather than remote, --rebase option allows to rebase on top of changes rather than merge changes in." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://evergreen-ci.github.io/evg-module-manager/subcommands/git-branch-update/" /><meta property="article:section" content="subcommands" />
 
-<meta property="article:modified_time" content="2022-02-17T13:30:51-05:00" />
+<meta property="article:modified_time" content="2022-08-26T12:15:37+03:00" />
 
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content=""/>
 <meta name="twitter:description" content="Use the git branch-update subcommand to update your current branch with the changes made remotely.
 The git branch-update subcommand will:
- fetch the latest changes from the origin of all the repositories. update your branch with the latest changes in the base repository. update all enabled modules up to the change associated with where the base repository was updated to.  $ evg-module-manager git branch-update Base: updated to latest &#39;master&#39; - enterprise: 07c4792479f85fb8af129a87ee6e116c4b7d7808 "/>
+ fetch the latest changes from the origin of all the repositories. update base local branch with the latest changes, if requested. update your branch with the latest changes in the base repository. update all enabled modules up to the change associated with where the base repository was updated to.  The -b/--branch option allows you to specify the base branch, --local option can be used if you are specifying a local base branch rather than remote, --rebase option allows to rebase on top of changes rather than merge changes in."/>
 
 
     <script src="/evg-module-manager/js/main-8b6f2ee8.bundle.min.js"></script>
@@ -129,7 +129,7 @@ The git branch-update subcommand will:
     "name": "",
     "headline": "",
     "alternativeHeadline": "",
-    "description": "Use the git branch-update subcommand to update your current branch with the changes made remotely.\nThe git branch-update subcommand will:\n fetch the latest changes from the origin of all the repositories. update your branch with the latest changes in the base repository. update all enabled modules up to the change associated with where the base repository was updated to.  $ evg-module-manager git branch-update Base: updated to latest \u0026#39;master\u0026#39; - enterprise: 07c4792479f85fb8af129a87ee6e116c4b7d7808 ",
+    "description": "Use the git branch-update subcommand to update your current branch with the changes made remotely.\nThe git branch-update subcommand will:\n fetch the latest changes from the origin of all the repositories. update base local branch with the latest changes, if requested. update your branch with the latest changes in the base repository. update all enabled modules up to the change associated with where the base repository was updated to.  The -b\/--branch option allows you to specify the base branch, --local option can be used if you are specifying a local base branch rather than remote, --rebase option allows to rebase on top of changes rather than merge changes in.",
     "inLanguage": "en",
     "isFamilyFriendly": "true",
     "mainEntityOfPage": {
@@ -140,7 +140,7 @@ The git branch-update subcommand will:
     "copyrightYear" : "0001",
     "dateCreated": "0001-01-01T00:00:00.00Z",
     "datePublished": "0001-01-01T00:00:00.00Z",
-    "dateModified": "2022-02-17T13:30:51.00Z",
+    "dateModified": "2022-08-26T12:15:37.00Z",
     "publisher":{
         "@type":"Organization",
         "name": "Evergreen Module Manager Documentation",
@@ -153,7 +153,7 @@ The git branch-update subcommand will:
         }
     },
     "url" : "https:\/\/evergreen-ci.github.io\/evg-module-manager\/subcommands\/git-branch-update\/",
-    "wordCount" : "71",
+    "wordCount" : "182",
     "genre" : [ ]
 }
 </script>
@@ -1807,11 +1807,24 @@ The git branch-update subcommand will:
 <p>The <code>git branch-update</code> subcommand will:</p>
 <ul>
 <li>fetch the latest changes from the origin of all the repositories.</li>
+<li>update base local branch with the latest changes, if requested.</li>
 <li>update your branch with the latest changes in the base repository.</li>
 <li>update all enabled modules up to the change associated with where the base repository was updated to.</li>
 </ul>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git branch-update
+<p>The <code>-b</code>/<code>--branch</code> option allows you to specify the base branch, <code>--local</code> option can be used if you
+are specifying a local base branch rather than remote, <code>--rebase</code> option allows to rebase on top of
+changes rather than merge changes in.</p>
+<p>Updating local base branch and merge changes in on your branch:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git branch-update --branch master --local
 Base: updated to latest <span class="s1">&#39;master&#39;</span>
+- enterprise: 07c4792479f85fb8af129a87ee6e116c4b7d7808
+</code></pre></div><p>Updating local base branch and rebase your branch on top of it:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git branch-update --branch master --local --rebase
+Base: updated to latest <span class="s1">&#39;master&#39;</span>
+- enterprise: 07c4792479f85fb8af129a87ee6e116c4b7d7808
+</code></pre></div><p>Updating with remote base branch:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ evg-module-manager git branch-update --branch origin/master
+Base: updated to latest <span class="s1">&#39;origin/master&#39;</span>
 - enterprise: 07c4792479f85fb8af129a87ee6e116c4b7d7808
 </code></pre></div>
   </article>
