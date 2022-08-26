@@ -69,6 +69,15 @@ can check the version of Python that is on your computer by running
 $ python --version
 ```
 
+If you are running into the issue above but are sure that the correct version of Python is installed on your computer,
+you can explicitly specify a path to the correct Python version during installation.
+
+```bash
+$ which python3.9
+/usr/bin/python3.9
+$ pipx install evg-module-manager --python /usr/bin/python3.9
+```
+
 ## Updating evg-module-manager
 
 You can also use `pipx` to update to the latest version:
