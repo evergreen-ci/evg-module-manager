@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.1 - 2022-08-26
+- Document how to install with a specific Python version.
+
 ## 1.2.0 - 2022-08-22
 - Add `--local` option to `git branch-update` subcommand.
 
