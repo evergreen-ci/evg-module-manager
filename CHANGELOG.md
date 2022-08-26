@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.2.0 - 2022-08-22
+- Add `--local` option to `git branch-update` subcommand.
+
 ## 1.1.8 - 2022-08-15
 - Cache the results of `evergreen evaluate` when creating a new branch.
 

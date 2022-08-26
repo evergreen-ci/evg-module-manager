@@ -137,10 +137,36 @@ class TestUpdateBranch:
         modules_service.sync_all_modules.return_value = modules
         modules_service.collect_repositories.return_value = repos
 
-        result = git_branch_service.update_branch(branch="master", rebase=False)
+        result = git_branch_service.update_branch(branch="master", local=False, rebase=False)
 
         assert len(result) == len(modules)
         assert len(modules) == git_proxy.fetch.call_count
+        git_proxy.fetch.assert_called_with(directory=None)
+        git_proxy.merge.assert_called_with("master")
+        modules_service.sync_all_modules.assert_called_with(
+            enabled=True, update_strategy=UpdateStrategy.MERGE
+        )
+
+    def test_update_branch_should_update_all_modules_with_base_local_branch(
+        self,
+        git_branch_service: under_test.GitBranchService,
+        modules_service: ModulesService,
+        git_proxy: GitProxy,
+    ):
+        n_modules = 3
+        modules = {
+            f"module_{i}": SyncedModuleInformation(revision=f"revision_{i}", module=MagicMock())
+            for i in range(n_modules)
+        }
+        repos = [build_mock_repository(i) for i in range(n_modules)]
+        modules_service.sync_all_modules.return_value = modules
+        modules_service.collect_repositories.return_value = repos
+
+        result = git_branch_service.update_branch(branch="master", local=True, rebase=False)
+
+        assert len(result) == len(modules)
+        assert len(modules) == git_proxy.fetch.call_count
+        git_proxy.fetch.assert_called_with(directory=None, branch="master")
         git_proxy.merge.assert_called_with("master")
         modules_service.sync_all_modules.assert_called_with(
             enabled=True, update_strategy=UpdateStrategy.MERGE
@@ -161,10 +187,11 @@ class TestUpdateBranch:
         modules_service.sync_all_modules.return_value = modules
         modules_service.collect_repositories.return_value = repos
 
-        result = git_branch_service.update_branch(branch="master", rebase=True)
+        result = git_branch_service.update_branch(branch="master", local=False, rebase=True)
 
         assert len(result) == len(modules)
         assert len(modules) == git_proxy.fetch.call_count
+        git_proxy.fetch.assert_called_with(directory=None)
         git_proxy.rebase.assert_called_with("master")
         modules_service.sync_all_modules.assert_called_with(
             enabled=True, update_strategy=UpdateStrategy.REBASE

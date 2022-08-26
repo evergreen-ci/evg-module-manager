@@ -83,17 +83,21 @@ class GitBranchService:
 
         return [repo.name for repo in repository_list]
 
-    def update_branch(self, branch: str, rebase: bool) -> List[GitCommandOutput]:
+    def update_branch(self, branch: str, local: bool, rebase: bool) -> List[GitCommandOutput]:
         """
         Update the current branch with commits from the given branch.
 
         :param branch: Branch to get updates from.
+        :param local: Indicate whether the branch is local, otherwise remote.
         :param rebase: If True, rebase on top of changes, else merge changes in.
         :return: List of what commit each module was checked out to.
         """
         repository_list = self.modules_service.collect_repositories()
         for repo in repository_list:
-            self.git_proxy.fetch(directory=repo.directory)
+            if local:
+                self.git_proxy.fetch(directory=repo.directory, branch=branch)
+            else:
+                self.git_proxy.fetch(directory=repo.directory)
 
         if rebase:
             self.git_proxy.rebase(branch)
