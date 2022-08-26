@@ -44,7 +44,7 @@ To fully utilize this tool, the following commands also need to be installed and
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://evergreen-ci.github.io/evg-module-manager/getting-started/installation/" /><meta property="article:section" content="getting-started" />
 
-<meta property="article:modified_time" content="2022-04-13T11:28:34-04:00" />
+<meta property="article:modified_time" content="2022-08-26T10:49:09-04:00" />
 
 
 <meta name="twitter:card" content="summary"/>
@@ -140,7 +140,7 @@ To fully utilize this tool, the following commands also need to be installed and
     "copyrightYear" : "0001",
     "dateCreated": "0001-01-01T00:00:00.00Z",
     "datePublished": "0001-01-01T00:00:00.00Z",
-    "dateModified": "2022-04-13T11:28:34.00Z",
+    "dateModified": "2022-08-26T10:49:09.00Z",
     "publisher":{
         "@type":"Organization",
         "name": "Evergreen Module Manager Documentation",
@@ -153,7 +153,7 @@ To fully utilize this tool, the following commands also need to be installed and
         }
     },
     "url" : "https:\/\/evergreen-ci.github.io\/evg-module-manager\/getting-started\/installation\/",
-    "wordCount" : "293",
+    "wordCount" : "338",
     "genre" : [ ]
 }
 </script>
@@ -1921,6 +1921,11 @@ Make sure to check that your version of Python matches the requirements called o
 > section. You
 can check the version of Python that is on your computer by running</p>
 <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ python --version
+</code></pre></div><p>If you are running into the issue above but are sure that the correct version of Python is installed on your computer,
+you can explicitly specify a path to the correct Python version during installation.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash">$ which python3.9
+/usr/bin/python3.9
+$ pipx install evg-module-manager --python /usr/bin/python3.9
 </code></pre></div><div class="gdoc-page__anchorwrap">
     <h2 id="updating-evg-module-manager">
         Updating evg-module-manager
