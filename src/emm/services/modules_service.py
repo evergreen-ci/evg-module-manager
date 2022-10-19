@@ -227,3 +227,20 @@ class ModulesService:
             )
             for module_name, module_data in modules.items()
         }
+
+    def get_module_commits(self, enabled: bool, commit: str) -> Dict[str, str]:
+        """
+        Get a dictionary of module names to module commits for a given commit for the current repo.
+
+        :param enabled: If True only return for modules enabled locally.
+        :param commit: Commit for the current repo.
+        :return: Dictionary of module names to module commits.
+        """
+        modules = self.get_all_modules(enabled)
+        manifest = self.evg_service.get_manifest(self.emm_options.evg_project, commit)
+        manifest_modules = manifest.modules
+        if manifest_modules is None:
+            raise ValueError("Modules not found in manifest")
+        return {
+            module_name: manifest_modules[module_name].revision for module_name in modules.keys()
+        }

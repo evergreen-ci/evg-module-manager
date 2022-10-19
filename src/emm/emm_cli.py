@@ -103,6 +103,17 @@ class EmmOrchestrator:
         else:
             print("No pull requests are being created.")
 
+    def display_module_commits(self, enabled: bool, commit: str) -> None:
+        """
+        Display module commits for a given commit for the current repo.
+
+        :param enabled: Only display for enabled modules.
+        :param commit: Commit for the current repo.
+        """
+        modules = self.modules_service.get_module_commits(enabled, commit)
+        for module_name, module_commit in modules.items():
+            print(f"- {module_name}: {module_commit}")
+
 
 def configure_logging(verbose: bool) -> None:
     """
@@ -277,6 +288,21 @@ def save_local_config(ctx: click.Context) -> None:
         evg_project=ctx.obj.evg_project, modules_directory=str(ctx.obj.modules_directory)
     )
     emm_config.save_yaml_file(Path(DEFAULT_LOCAL_FILE))
+
+
+@cli.command(context_settings=dict(max_content_width=100))
+@click.option(
+    "--enabled", is_flag=True, default=False, help="Only list for enabled modules [default=False]."
+)
+@click.option("--commit", help="Commit for the current repo.")
+@click.pass_context
+def module_commits(ctx: click.Context, enabled: bool, commit: str) -> None:
+    """List module commits for a given commit for the current repo."""
+    if commit is None:
+        raise click.UsageError("please provide a commit with the `--commit` option.")
+
+    orchestrator = inject.instance(EmmOrchestrator)
+    orchestrator.display_module_commits(enabled, commit)
 
 
 cli.add_command(evg_cli)

@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.0 - 2022-10-18
+- Add module-commits subcommand.
+
 ## 1.2.1 - 2022-08-26
 - Document how to install with a specific Python version.
 
