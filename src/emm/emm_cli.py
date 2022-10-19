@@ -299,7 +299,7 @@ def save_local_config(ctx: click.Context) -> None:
 def module_commits(ctx: click.Context, enabled: bool, commit: str) -> None:
     """List module commits for a given commit for the current repo."""
     if commit is None:
-        raise click.UsageError("please provide a commit with the `--commit` option.")
+        raise click.UsageError("Please provide a commit with the `--commit` option.")
 
     orchestrator = inject.instance(EmmOrchestrator)
     orchestrator.display_module_commits(enabled, commit)
