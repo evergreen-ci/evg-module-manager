@@ -1,7 +1,7 @@
 """Unit tests for modules_service.py."""
 from pathlib import Path
 from typing import Optional
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 from shrub.v3.evg_project import EvgModule
@@ -283,3 +283,53 @@ class TestCollectRepositories:
         assert len(repo_list) == n_modules + 1  # +1 for the base repository.
         for module in module_list:
             assert module.name in [repo.name for repo in repo_list]
+
+
+class TestGetModuleCommits:
+    @patch.object(under_test.ModulesService, "get_all_modules")
+    def test_module_commits_should_be_returned_when_enabled_not_requested(
+        self,
+        mock_get_all_modules: MagicMock,
+        modules_service: under_test.ModulesService,
+        evg_service: MagicMock,
+        git_service: MagicMock,
+    ) -> None:
+        mock_get_all_modules.return_value = {
+            "module_name_1": MagicMock(),
+        }
+
+        evg_service.get_manifest.return_value = MagicMock(
+            modules={
+                "module_name_1": MagicMock(revision="module_1_commit_1"),
+                "module_name_2": MagicMock(revision="module_2_commit_2"),
+            }
+        )
+
+        assert {
+            "module_name_1": "module_1_commit_1",
+        } == modules_service.get_module_commits(False, "commit-hash")
+
+    @patch.object(under_test.ModulesService, "get_all_modules")
+    def test_module_commits_should_be_returned_when_enabled_requested(
+        self,
+        mock_get_all_modules: MagicMock,
+        modules_service: under_test.ModulesService,
+        evg_service: MagicMock,
+        git_service: MagicMock,
+    ) -> None:
+        mock_get_all_modules.return_value = {
+            "module_name_1": MagicMock(),
+            "module_name_2": MagicMock(),
+        }
+
+        evg_service.get_manifest.return_value = MagicMock(
+            modules={
+                "module_name_1": MagicMock(revision="module_1_commit_1"),
+                "module_name_2": MagicMock(revision="module_2_commit_2"),
+            }
+        )
+
+        assert {
+            "module_name_1": "module_1_commit_1",
+            "module_name_2": "module_2_commit_2",
+        } == modules_service.get_module_commits(True, "commit-hash")
