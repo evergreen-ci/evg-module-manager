@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.1 - 2023-05-29
+- Pin urllib3 to support older OpenSSL versions.
+
 ## 1.3.0 - 2022-10-18
 - Add module-commits subcommand.
 
