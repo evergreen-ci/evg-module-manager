@@ -4,7 +4,7 @@ weight: 0
 To see what modules are available for the current project, use the `list-modules` command:
 
 ```bash
-$ evg-modules-manager --evg-project sys-perf list-modules
+$ evg-module-manager --evg-project sys-perf list-modules
 - enterprise
 - wtdevelop
 ```
