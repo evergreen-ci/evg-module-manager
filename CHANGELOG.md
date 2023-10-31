@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.2 - 2023-10-31
+- Pin PyYAML to fix cython_source issue.
+
 ## 1.3.1 - 2023-05-29
 - Pin urllib3 to support older OpenSSL versions.
 
