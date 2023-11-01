@@ -75,8 +75,11 @@ class ModulesService:
         """
         module_data = self.get_module_data(module_name)
         modules_dir = self.emm_options.modules_directory
-        module_location = modules_dir / module_data.get_repository_name()
+        module_repository_name = module_data.get_repository_name()
+        if not module_repository_name:
+            raise ValueError(f"Module repository {module_name} is not in {module_data}")
 
+        module_location = modules_dir / module_repository_name
         target_dir = Path(module_data.prefix)
 
         if not self.file_service.path_exists(target_dir):
@@ -88,7 +91,7 @@ class ModulesService:
 
         if not module_location.exists():
             self.git_service.clone(
-                module_data.get_repository_name(), module_data.repo, modules_dir, module_data.branch
+                module_repository_name, module_data.repo, modules_dir, module_data.branch
             )
 
         print(f"Create symlink: {target_location} -> {module_location.resolve()}")
